@@ -3,6 +3,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
 import type { RootTabParamList } from "../types/navigation";
 import { LibraryStack } from "./LibraryStack";
+import { StatsScreen } from "../screens/library/StatsScreen";
 import { SettingsScreen } from "../screens/settings/SettingsScreen";
 
 const Tab = createBottomTabNavigator<RootTabParamList>();
@@ -13,10 +14,14 @@ export function RootTabs() {
           screenOptions={({ route }) => ({
             headerShown: false,
             tabBarIcon: ({ color, size }) => {
-                const iconName =
-                  route.name === "LibraryTab"
-                    ? "library-outline"
-                    : 'settings-outline';
+                let iconName: keyof typeof Ionicons.glyphMap = "library-outline";
+                if (route.name === "LibraryTab") {
+                  iconName = "library-outline";
+                } else if (route.name === "StatsTab") {
+                  iconName = "stats-chart-outline";
+                } else if (route.name === "SettingsTab") {
+                  iconName = "settings-outline";
+                }
                 return <Ionicons name={iconName} size={size} color={color} />;
             },
           })}
@@ -24,7 +29,12 @@ export function RootTabs() {
             <Tab.Screen
              name="LibraryTab"
              component={LibraryStack}
-             options={{ title: "library"}}
+             options={{ title: "Library"}}
+            />
+            <Tab.Screen
+             name="StatsTab"
+             component={StatsScreen}
+             options={{ title: "Stats" }}
             />
             <Tab.Screen
              name="SettingsTab"
