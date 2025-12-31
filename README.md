@@ -163,4 +163,4 @@ eas build --profile production --platform android
 ## Licence
 
 No licence has been added yet.
-If you plan to open source this, add a licence file and update this section.
+Until you add a licence, you should assume this project is not licensed for reuse.
