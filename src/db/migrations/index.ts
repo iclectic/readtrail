@@ -1,8 +1,7 @@
-import type * as SQLite from "expo-sqlite";
 import { migration001 } from "./001_baseline";
 import { migration002 } from "./002_library_expansion";
 import { migration003 } from "./003_reading_memory";
-import type { Migration } from "./types";
+import type { Migration, MigrationDatabase } from "./types";
 import { logger } from "../../utils/logger";
 
 export const MIGRATIONS: Migration[] = [migration001, migration002, migration003];
@@ -12,17 +11,17 @@ export const LATEST_SCHEMA_VERSION = MIGRATIONS.reduce(
   0
 );
 
-async function getUserVersion(db: SQLite.SQLiteDatabase): Promise<number> {
+async function getUserVersion(db: MigrationDatabase): Promise<number> {
   const row = await db.getFirstAsync<{ user_version: number }>("PRAGMA user_version;");
   return row?.user_version ?? 0;
 }
 
-async function setUserVersion(db: SQLite.SQLiteDatabase, version: number): Promise<void> {
+async function setUserVersion(db: MigrationDatabase, version: number): Promise<void> {
   await db.execAsync(`PRAGMA user_version = ${version};`);
 }
 
 async function recordMigration(
-  db: SQLite.SQLiteDatabase,
+  db: MigrationDatabase,
   migration: Migration
 ): Promise<void> {
   await db.runAsync(
@@ -36,7 +35,7 @@ async function recordMigration(
  * Existing installs that already have books/progress tables but user_version=0
  * are treated as version 1 after ensuring baseline tables exist.
  */
-export async function runMigrations(db: SQLite.SQLiteDatabase): Promise<void> {
+export async function runMigrations(db: MigrationDatabase): Promise<void> {
   await db.execAsync("PRAGMA foreign_keys = ON;");
 
   let current = await getUserVersion(db);

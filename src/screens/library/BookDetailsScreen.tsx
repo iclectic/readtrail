@@ -33,7 +33,7 @@ type Props = NativeStackScreenProps<LibraryStackParamList, "BookDetails">;
 
 export function BookDetailsScreen({ navigation, route }: Props) {
   const { bookId } = route.params;
-  const { colors, typography, spacing, radii } = useTheme();
+  const { colors, typography, spacing, radii, reduceMotion } = useTheme();
   const [book, setBook] = useState<Book | null>(null);
   const [entries, setEntries] = useState<ProgressEntry[]>([]);
   const [tags, setTags] = useState<Tag[]>([]);
@@ -122,7 +122,9 @@ export function BookDetailsScreen({ navigation, route }: Props) {
     try {
       const updated = await removeProgressEntry(entryId, bookId);
       successHaptic();
-      LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+      if (!reduceMotion) {
+        LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+      }
       setEntries((prev) => prev.filter((e) => e.id !== entryId));
       if (updated) setBook(updated);
     } catch (e) {

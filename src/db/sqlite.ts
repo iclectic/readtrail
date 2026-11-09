@@ -1,5 +1,6 @@
 import * as SQLite from "expo-sqlite";
 import { logger } from "../utils/logger";
+import { CLEAR_ALL_USER_DATA_SQL } from "./clearDataSql";
 import { runMigrations } from "./migrations";
 
 let dbPromise: Promise<SQLite.SQLiteDatabase> | null = null;
@@ -65,18 +66,7 @@ export async function runInTransaction<T>(
 
 export async function clearAllData(): Promise<void> {
   try {
-    await runExec(`
-      DELETE FROM book_tags;
-      DELETE FROM book_collections;
-      DELETE FROM notes;
-      DELETE FROM reading_sessions;
-      DELETE FROM progress_entries;
-      DELETE FROM books;
-      DELETE FROM tags;
-      DELETE FROM collections;
-      DELETE FROM goals;
-      DELETE FROM achievements;
-    `);
+    await runExec(CLEAR_ALL_USER_DATA_SQL);
   } catch (error) {
     logger.error("[db] clear all data failed", error);
     throw error;
@@ -87,7 +77,8 @@ export async function initDb(): Promise<void> {
   if (initialised) return;
   try {
     const db = await getDb();
-    await runMigrations(db);
+    // expo-sqlite's overload signatures are wider than our migration surface.
+    await runMigrations(db as unknown as import("./migrations/types").MigrationDatabase);
     initialised = true;
     logger.log("[db] initialised");
   } catch (error) {

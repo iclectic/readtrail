@@ -1,6 +1,6 @@
 # ReadTrail test strategy
 
-**Current state:** no executable tests. `__tests__/db`, `__tests__/domain`, and `__tests__/services` directories exist but are empty. `package.json` has no `test`, `lint`, or `typecheck` scripts. `.github/workflows` has no workflow files. CI gates described here are **planned**, not active.
+**Current state:** Jest unit + Node SQLite integration tests run in CI. Maestro flows exist under `.maestro/` but are not executed in the cloud agent environment.
 
 ---
 
@@ -8,9 +8,9 @@
 
 1. Protect data integrity (progress, migrations, deletes) before expanding features.  
 2. Keep domain logic pure and fast under Jest.  
-3. Use integration tests for SQLite repositories and migrations.  
-4. Add a thin e2e smoke suite before store submission.  
-5. Fail CI on type errors and failing unit/integration tests.
+3. Use integration tests for SQLite migrations and cascade/clear SQL.  
+4. Keep a thin Maestro smoke suite for release candidates.  
+5. Fail CI on type errors, lint, and failing tests.
 
 ---
 
@@ -18,168 +18,77 @@
 
 ### 2.1 Unit tests (Jest)
 
-**Where:** `__tests__/domain/**`, colocated `*.test.ts` next to pure modules when useful.
+**Where:** `__tests__/domain/**`, `__tests__/services/**`, `__tests__/config/**`.
 
-**Cover:**
+**Covered:** progress invariants, streaks, goals, analytics, charts, duplicates, Reading Memory scheduling, CSV/tags, backup parse guards, release URL helpers.
 
-| Area | Examples |
-|------|----------|
-| Domain types / parsers | `parseBookStatus`, reject unknown status |
-| Progress invariants | `page` bounds vs `totalPages`; recompute `currentPage` from entries |
-| Stats pure functions | streak calculation; counts by status; week/month windows |
-| Goal progress | pages toward daily/weekly target (Phase 5) |
-| Export payload builders | stable shape + schema version (Phase 6) |
+**Rules:** no React Native rendering; no real device filesystem; deterministic clocks via injected `now` where needed.
 
-**Rules:** no React Native rendering; no real filesystem; deterministic clocks via injected `now`.
-
-### 2.2 Integration tests (Jest + SQLite)
+### 2.2 Integration tests (Jest + Node SQLite)
 
 **Where:** `__tests__/db/**`.
 
-**Cover:**
+**Approach:** migrations speak a narrow `MigrationDatabase` interface. Production uses expo-sqlite; tests use `better-sqlite3` via `__tests__/db/helpers/nodeSqlite.ts`.
 
-| Area | Examples |
+**Covered:**
+
+| Area | Evidence |
 |------|----------|
-| Migrations | empty DB → latest `user_version`; idempotent re-run |
-| booksRepo CRUD | create/update/delete/get |
-| progressEntriesRepo | add/list/delete |
-| Transactions | add progress + update book commits atomically; rollback on failure |
-| Recompute on delete | deleting latest entry lowers `currentPage` |
-| Cascade | deleting book removes progress (and later sessions/notes) |
-| clearAllData | tables empty afterwards |
+| Migrations on empty DB | `__tests__/db/migrations.test.ts` |
+| Idempotent re-run | same |
+| Legacy `user_version=0` upgrade | same |
+| FK cascade on book delete | `__tests__/db/integrity.test.ts` |
+| Clear-all SQL | shared `CLEAR_ALL_USER_DATA_SQL` |
+| Recompute page after delete | domain helper assertion in integrity suite |
 
-**Expo note:** prefer testing persistence modules against `expo-sqlite` in a Jest environment configured for Expo, or extract SQL behind a narrow driver interface and run integration tests on a Node SQLite driver that executes the same SQL. Choose one approach in Phase 1 and document it in the Jest setup; do not leave repositories untested.
+Repository modules still talk to expo-sqlite at runtime; critical SQL and migration behaviour are locked by the Node adapter.
 
-### 2.3 Component / screen tests (optional early, React Native Testing Library)
+### 2.3 End-to-end (Maestro)
 
-**When:** after design-system primitives exist.
-
-**Cover:** form validation messages (title required, page bounds); filter chips; empty states. Keep shallow — screens that need navigation can use mocked navigation props.
-
-### 2.4 End-to-end (Detox or Maestro)
-
-**When:** Phase 9 approach / late Phase 2 smoke.
+**Where:** `.maestro/*.yaml`.
 
 **Minimum flows:**
 
-1. Cold start → library loads (after bootstrap gate).  
-2. Add book → appears in list.  
-3. Update progress → details show history and updated page.  
-4. Delete progress entry → current page recomputes.  
-5. Export JSON produces a shareable file (assert file write where possible).  
-6. Clear data → empty library.
+1. Cold start → library  
+2. Add book → appears in list (`smoke-add-book.yaml` / `smoke-library.yaml`)  
+3. Settings export / clear controls visible  
+4. Screenshot navigation stubs for store capture  
 
-E2E is a **gate for release candidates**, not for every commit, until the suite is fast and stable.
+Run on a simulator/emulator with the app installed, e.g. `npx maestro test .maestro/smoke-library.yaml`.
 
 ---
 
-## 3. Jest setup plan (Phase 1)
+## 3. Scripts and CI
 
-None of this is implemented yet. Planned steps:
-
-1. Add devDependencies: `jest`, `jest-expo`, `@types/jest`, `@testing-library/react-native` (when UI tests start), `typescript` already present.  
-2. Add `jest.config.js` using `jest-expo` preset.  
-3. Add scripts to `package.json`:
-
-```json
-{
-  "scripts": {
-    "typecheck": "tsc --noEmit",
-    "test": "jest",
-    "test:watch": "jest --watch",
-    "lint": "eslint ."
-  }
-}
+```bash
+npm run typecheck
+npm test
+npm run lint
 ```
 
-4. Add ESLint (Expo or flat config) with TypeScript + `no-restricted-imports` for layer boundaries when ready.  
-5. Seed first tests:
+GitHub Actions workflow `.github/workflows/ci.yml` runs these on pull requests and `main`.
 
-   - `__tests__/domain/bookStatus.test.ts`  
-   - `__tests__/domain/progressInvariants.test.ts`  
-   - `__tests__/db/migrations.test.ts` (once runner exists)  
-   - `__tests__/db/progressTransaction.test.ts`
-
-6. Ensure `__DEV__` seed logic is disabled or irrelevant in tests (empty DB fixtures).
-
-### 3.1 Coverage expectations (initial)
-
-Not a vanity 100% target. Phase 1–2 aim:
-
-- Domain invariants: high coverage.  
-- Repositories + migrations: critical paths covered.  
-- Screens: only fragile validation logic until design system lands.
+`better-sqlite3` is a **devDependency** for migration/integrity tests only.
 
 ---
 
-## 4. What to cover first (priority order)
-
-1. **Migration runner** — upgrade from version 0 schema to version N without data loss.  
-2. **Transactional progress update** — atomicity.  
-3. **Recompute `currentPage` after delete**.  
-4. **`page <= totalPages` validation**.  
-5. **BookStatus parsing / typing**.  
-6. **Streak and stats pure functions** (pin behaviour before changing UI).  
-7. **Export JSON shape**.  
-8. **Import merge/replace** (Phase 6).
-
----
-
-## 5. CI gates
-
-### 5.1 Planned GitHub Actions workflow
-
-Trigger: pull requests and pushes to `main`.
-
-Jobs (minimum):
-
-| Gate | Command | Required |
-|------|---------|----------|
-| Install | `npm ci` | yes |
-| Typecheck | `npm run typecheck` | yes |
-| Unit/integration | `npm test -- --ci --coverage=false` | yes |
-| Lint | `npm run lint` | yes once ESLint configured |
-
-Optional later:
-
-- E2E on schedule or `release/*` branches  
-- `eas build` is **not** a default PR gate (cost/time)
-
-### 5.2 Local pre-push hygiene (recommended)
-
-Developers run `npm run typecheck && npm test` before push. A husky hook is optional; CI remains authoritative.
-
-### 5.3 Current CI reality
-
-**No gates are enforcing anything today.** Empty `.github/workflows` does not protect `main`.
-
----
-
-## 6. Test data and fixtures
-
-- Use factories: `makeBook({ … })`, `makeProgressEntry({ … })`.  
-- Prefer fixed ISO timestamps for streak tests.  
-- Never depend on `seedDevData` for assertions; call repositories directly.  
-- Migration tests should start from a raw legacy schema dump matching production v0.
-
----
-
-## 7. Manual test charter (until e2e exists)
-
-For each PR touching persistence or progress:
+## 4. Manual test charter (release candidates)
 
 - [ ] Fresh install: library loads without error  
 - [ ] Add book → update progress → kill app → reopen → data persists  
 - [ ] Delete latest progress → current page updates correctly  
-- [ ] Progress at `totalPages` behaves as designed (validation / finished)  
-- [ ] Export JSON opens share sheet  
+- [ ] Progress at `totalPages` marks finished as designed  
+- [ ] Export JSON / CSV opens share sheet  
 - [ ] Clear all data empties library and stats  
+- [ ] Reduce motion disables library/details layout animations  
+- [ ] Privacy screen and Settings backup controls reachable  
 
 ---
 
-## 8. Related documents
+## 5. Related documents
 
-- [ARCHITECTURE.md](./ARCHITECTURE.md) — testable layer boundaries  
-- [DATABASE_DESIGN.md](./DATABASE_DESIGN.md) — migration cases  
-- [PRODUCT_ROADMAP.md](./PRODUCT_ROADMAP.md) — Phase 1/2/9 testing work  
-- [RELEASE_CHECKLIST.md](./RELEASE_CHECKLIST.md) — release verification  
+- [ARCHITECTURE.md](./ARCHITECTURE.md)  
+- [DATABASE_DESIGN.md](./DATABASE_DESIGN.md)  
+- [FEATURE_AUDIT.md](./FEATURE_AUDIT.md)  
+- [RELEASE_CHECKLIST.md](./RELEASE_CHECKLIST.md)  
+- [IMPLEMENTATION_PROGRESS.md](./IMPLEMENTATION_PROGRESS.md)  

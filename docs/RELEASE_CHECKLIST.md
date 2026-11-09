@@ -31,7 +31,7 @@ Legend: ☐ not done · ☑ done with evidence in repo or CI · ◐ prepared / d
 |------|--------|-------|
 | TypeScript strict CI gate | ☑ | `npm run typecheck` in CI |
 | Unit tests for domain invariants | ☑ | Jest suite (progress, goals, CSV, tags, …) |
-| Integration tests for DB/migrations | ◐ | Migrations present; deeper SQLite integration still light |
+| Integration tests for DB/migrations | ☑ | Node SQLite adapter; migrations + cascade/clear tests |
 | Lint script + CI | ☑ | ESLint `--max-warnings 0` |
 | E2E smoke (add book, progress, clear) | ◐ | Maestro stubs in `.maestro/`; not run on device here |
 | Manual test charter executed on device | ☐ | See TEST_STRATEGY / SCREENSHOT_GUIDE |

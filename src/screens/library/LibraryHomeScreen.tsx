@@ -42,7 +42,7 @@ type StatusFilter = "all" | BookStatus;
 type SortOption = "recent" | "title" | "author" | "progress";
 
 export function LibraryHomeScreen({ navigation }: Props) {
-  const { colors, typography, spacing } = useTheme();
+  const { colors, typography, spacing, reduceMotion } = useTheme();
   const copy = t();
   const [books, setBooks] = useState<Book[]>([]);
   const [loading, setLoading] = useState(true);
@@ -104,7 +104,9 @@ export function LibraryHomeScreen({ navigation }: Props) {
       else setLoading(true);
       setError(null);
       const rows = await getAllBooks();
-      LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+      if (!reduceMotion) {
+        LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+      }
       setBooks(rows);
       setDuplicateCount(findDuplicateGroups(rows).length);
       setTags(await getAllTags());
@@ -115,7 +117,7 @@ export function LibraryHomeScreen({ navigation }: Props) {
       setLoading(false);
       setRefreshing(false);
     }
-  }, []);
+  }, [reduceMotion]);
 
   const onSelectTag = useCallback(async (tagId: string | null) => {
     setTagFilter(tagId);

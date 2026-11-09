@@ -1,0 +1,6 @@
+# Library loads; progress updates require seeded data on device/simulator.
+appId: com.iclectic.readtrail
+---
+- launchApp
+- tapOn: "Library"
+- assertVisible: "Library"

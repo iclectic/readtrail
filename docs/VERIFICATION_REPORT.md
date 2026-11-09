@@ -3,7 +3,7 @@
 Evidence of checks completed during autonomous implementation. Do not treat unverified device or store steps as done.
 
 **Report date:** 9 November 2026 (Europe/London)  
-**Branches verified:** foundation (#1 merged), hardening (#2), production polish (#3), release prep (this stage)
+**Branches verified:** foundation (#1 merged), hardening (#2), production polish (#3), release prep (#4), quality gate (this stage)
 
 ---
 
@@ -12,7 +12,7 @@ Evidence of checks completed during autonomous implementation. Do not treat unve
 | Check | Command | Result |
 |-------|---------|--------|
 | TypeScript | `npm run typecheck` | Passed |
-| Unit tests | `npm test` | Passed (32 tests) |
+| Unit tests | `npm test` | Passed (38 tests) |
 | Lint | `npm run lint` | Passed (`--max-warnings 0`) |
 
 ---
@@ -25,6 +25,8 @@ Evidence of checks completed during autonomous implementation. Do not treat unve
 - Tag name parsing
 - Backup JSON parse guards
 - Release config URL helpers (unset until authorised)
+- Migration runner on empty, idempotent, and legacy schemas
+- FK cascade + clear-all SQL integrity
 
 ---
 
