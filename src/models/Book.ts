@@ -1,10 +1,2 @@
-export interface Book {
-  id: string;
-  title: string;
-  author: string;
-  totalPages: number;
-  status: string;
-  currentPage: number;
-  createdAt: string;
-  updatedAt: string;
-}
+export type { Book, BookStatus, BookFormat, OwnershipType } from "../domain/types";
+export { BOOK_STATUSES, BOOK_FORMATS, OWNERSHIP_TYPES } from "../domain/types";

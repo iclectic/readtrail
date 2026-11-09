@@ -1,32 +1,52 @@
 import React, { useCallback, useMemo, useState } from "react";
-import { ActivityIndicator, RefreshControl, ScrollView, StyleSheet, Text, View } from "react-native";
+import {
+  ActivityIndicator,
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import type { Book } from "../../models/Book";
-import type { ProgressEntry } from "../../models/ProgressEntry";
-import { getAllBooks, getAllProgressEntries } from "../../db";
+import type { Book, ProgressEntry, ReadingSession } from "../../domain/types";
+import { getAllBooks, getAllProgressEntries, getAllSessions, getSettings } from "../../db";
+import { computeReadingAnalytics, formatDuration } from "../../domain/analytics";
+import { evaluateAchievements } from "../../services/achievementsService";
+import { useTheme } from "../../theme";
 import { logger } from "../../utils/logger";
 
 export function StatsScreen() {
   const insets = useSafeAreaInsets();
+  const { colors, typography, spacing } = useTheme();
   const [books, setBooks] = useState<Book[]>([]);
   const [entries, setEntries] = useState<ProgressEntry[]>([]);
+  const [sessions, setSessions] = useState<ReadingSession[]>([]);
+  const [streakEnabled, setStreakEnabled] = useState(true);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [achievements, setAchievements] = useState<string[]>([]);
 
   const loadData = useCallback(async (isRefresh = false) => {
     try {
-      if (isRefresh) {
-        setRefreshing(true);
-      } else {
-        setLoading(true);
-      }
-      const [booksData, entriesData] = await Promise.all([
+      if (isRefresh) setRefreshing(true);
+      else setLoading(true);
+      const [booksData, entriesData, sessionsData, settings] = await Promise.all([
         getAllBooks(),
         getAllProgressEntries(),
+        getAllSessions(),
+        getSettings(),
       ]);
       setBooks(booksData);
       setEntries(entriesData);
+      setSessions(sessionsData);
+      setStreakEnabled(settings.streakTrackingEnabled);
+      const unlocked = await evaluateAchievements({
+        books: booksData,
+        entries: entriesData,
+        sessions: sessionsData,
+      });
+      setAchievements(unlocked.newlyUnlocked);
     } catch (e) {
       logger.error("[stats] failed to load data", e);
     } finally {
@@ -35,209 +55,176 @@ export function StatsScreen() {
     }
   }, []);
 
-  const onRefresh = useCallback(() => {
-    loadData(true);
-  }, [loadData]);
-
   useFocusEffect(
     useCallback(() => {
-      loadData();
+      void loadData();
     }, [loadData])
   );
 
-  const stats = useMemo(() => {
-    const totalBooks = books.length;
-    const booksReading = books.filter((b) => b.status === "reading").length;
-    const booksPaused = books.filter((b) => b.status === "paused").length;
-    const booksFinished = books.filter((b) => b.status === "finished").length;
-
-    const totalPagesRead = books.reduce((sum, b) => sum + b.currentPage, 0);
-    const totalPagesInLibrary = books.reduce((sum, b) => sum + (b.totalPages || 0), 0);
-
-    // Calculate pages read this week
-    const now = new Date();
-    const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-    const entriesThisWeek = entries.filter((e) => new Date(e.createdAt) >= weekAgo);
-
-    // Get unique pages per book this week (latest entry per book)
-    const pagesThisWeek = entriesThisWeek.length > 0
-      ? entriesThisWeek.reduce((max, e) => Math.max(max, e.page), 0)
-      : 0;
-
-    // Calculate pages read this month
-    const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
-    const entriesThisMonth = entries.filter((e) => new Date(e.createdAt) >= monthAgo);
-
-    // Reading streak (consecutive days with progress entries)
-    const uniqueDays = new Set(
-      entries.map((e) => new Date(e.createdAt).toDateString())
-    );
-
-    let streak = 0;
-    const today = new Date();
-    for (let i = 0; i < 365; i++) {
-      const checkDate = new Date(today.getTime() - i * 24 * 60 * 60 * 1000);
-      if (uniqueDays.has(checkDate.toDateString())) {
-        streak++;
-      } else if (i > 0) {
-        break;
-      }
-    }
-
-    // Average progress percentage
-    const booksWithTotal = books.filter((b) => b.totalPages > 0);
-    const avgProgress = booksWithTotal.length > 0
-      ? Math.round(
-          booksWithTotal.reduce(
-            (sum, b) => sum + (b.currentPage / b.totalPages) * 100,
-            0
-          ) / booksWithTotal.length
-        )
-      : 0;
-
-    return {
-      totalBooks,
-      booksReading,
-      booksPaused,
-      booksFinished,
-      totalPagesRead,
-      totalPagesInLibrary,
-      entriesThisWeek: entriesThisWeek.length,
-      entriesThisMonth: entriesThisMonth.length,
-      streak,
-      avgProgress,
-    };
-  }, [books, entries]);
+  const stats = useMemo(
+    () => computeReadingAnalytics(books, entries, sessions),
+    [books, entries, sessions]
+  );
 
   if (loading) {
     return (
-      <View style={[styles.loadingContainer, { paddingTop: insets.top }]}>
-        <ActivityIndicator />
-        <Text style={styles.loadingText}>Loading stats…</Text>
+      <View style={[styles.loading, { paddingTop: insets.top, backgroundColor: colors.paper }]}>
+        <ActivityIndicator color={colors.accent} />
+        <Text style={{ color: colors.inkMuted }}>Loading insights…</Text>
       </View>
     );
   }
 
   return (
     <ScrollView
-      style={styles.container}
-      contentContainerStyle={[
-        styles.content,
-        { paddingTop: insets.top + 16, paddingBottom: insets.bottom + 16 },
-      ]}
+      style={{ flex: 1, backgroundColor: colors.paper }}
+      contentContainerStyle={{
+        paddingTop: insets.top + spacing.md,
+        paddingBottom: insets.bottom + spacing.md,
+        paddingHorizontal: spacing.md,
+        gap: spacing.sm,
+      }}
       refreshControl={
-        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        <RefreshControl refreshing={refreshing} onRefresh={() => loadData(true)} />
       }
     >
-      <Text style={styles.title}>Reading Stats</Text>
+      <Text style={[typography.title, { color: colors.ink }]}>Reading insights</Text>
+      <Text style={[typography.body, { color: colors.inkMuted }]}>
+        Figures are calculated from your local reading history.
+      </Text>
 
-      <View style={styles.card}>
-        <Text style={styles.cardTitle}>📚 Library Overview</Text>
-        <View style={styles.statRow}>
-          <View style={styles.statItem}>
-            <Text style={styles.statValue}>{stats.totalBooks}</Text>
-            <Text style={styles.statLabel}>Total Books</Text>
-          </View>
-          <View style={styles.statItem}>
-            <Text style={styles.statValue}>{stats.booksFinished}</Text>
-            <Text style={styles.statLabel}>Finished</Text>
-          </View>
-        </View>
-        <View style={styles.statRow}>
-          <View style={styles.statItem}>
-            <Text style={styles.statValue}>{stats.booksReading}</Text>
-            <Text style={styles.statLabel}>Reading</Text>
-          </View>
-          <View style={styles.statItem}>
-            <Text style={styles.statValue}>{stats.booksPaused}</Text>
-            <Text style={styles.statLabel}>Paused</Text>
-          </View>
-        </View>
-      </View>
+      <StatCard title="Library">
+        <StatGrid
+          items={[
+            { label: "Total books", value: String(stats.totalBooks) },
+            { label: "Finished", value: String(stats.booksFinished) },
+            { label: "Reading", value: String(stats.booksReading) },
+            { label: "Want to read", value: String(stats.booksWantToRead) },
+          ]}
+        />
+      </StatCard>
 
-      <View style={styles.card}>
-        <Text style={styles.cardTitle}>📖 Pages</Text>
-        <View style={styles.statRow}>
-          <View style={styles.statItem}>
-            <Text style={styles.statValue}>{stats.totalPagesRead.toLocaleString()}</Text>
-            <Text style={styles.statLabel}>Pages Read</Text>
-          </View>
-          <View style={styles.statItem}>
-            <Text style={styles.statValue}>{stats.avgProgress}%</Text>
-            <Text style={styles.statLabel}>Avg Progress</Text>
-          </View>
-        </View>
-      </View>
+      <StatCard title="Progress">
+        <StatGrid
+          items={[
+            {
+              label: "Pages advanced",
+              value: stats.pagesReadFromHistory.toLocaleString("en-GB"),
+            },
+            {
+              label: "Current page sum",
+              value: stats.currentPagesSum.toLocaleString("en-GB"),
+            },
+            {
+              label: "Time reading",
+              value: formatDuration(stats.totalReadingSeconds),
+            },
+            {
+              label: "Avg session",
+              value: formatDuration(stats.averageSessionSeconds),
+            },
+          ]}
+        />
+      </StatCard>
 
-      <View style={styles.card}>
-        <Text style={styles.cardTitle}>🔥 Activity</Text>
-        <View style={styles.statRow}>
-          <View style={styles.statItem}>
-            <Text style={styles.statValue}>{stats.streak}</Text>
-            <Text style={styles.statLabel}>Day Streak</Text>
-          </View>
-          <View style={styles.statItem}>
-            <Text style={styles.statValue}>{stats.entriesThisWeek}</Text>
-            <Text style={styles.statLabel}>Updates This Week</Text>
-          </View>
-        </View>
-        <View style={styles.statRow}>
-          <View style={styles.statItem}>
-            <Text style={styles.statValue}>{stats.entriesThisMonth}</Text>
-            <Text style={styles.statLabel}>Updates This Month</Text>
-          </View>
-        </View>
-      </View>
+      <StatCard title="Activity">
+        <StatGrid
+          items={[
+            {
+              label: streakEnabled ? "Day streak" : "Streak (off)",
+              value: streakEnabled ? String(stats.streakCurrent) : "—",
+            },
+            { label: "Longest streak", value: String(stats.streakLongest) },
+            { label: "Updates this week", value: String(stats.updatesThisWeek) },
+            { label: "Updates this month", value: String(stats.updatesThisMonth) },
+          ]}
+        />
+      </StatCard>
 
-      {stats.totalBooks === 0 && (
-        <View style={styles.emptyHint}>
-          <Text style={styles.emptyHintText}>
-            Add some books to start tracking your reading stats!
+      {stats.averageRating != null ? (
+        <StatCard title="Ratings">
+          <Text style={[typography.display, { color: colors.ink }]}>
+            {stats.averageRating.toFixed(1)}
           </Text>
-        </View>
-      )}
+          <Text style={[typography.caption, { color: colors.inkMuted }]}>
+            Average rating across rated books
+          </Text>
+        </StatCard>
+      ) : null}
+
+      {Object.keys(stats.formatDistribution).length > 0 ? (
+        <StatCard title="Formats">
+          {Object.entries(stats.formatDistribution).map(([format, count]) => (
+            <Text key={format} style={[typography.body, { color: colors.ink }]}>
+              {format}: {count}
+            </Text>
+          ))}
+        </StatCard>
+      ) : null}
+
+      {stats.authorCounts.length > 0 ? (
+        <StatCard title="Top authors">
+          {stats.authorCounts.slice(0, 5).map((row) => (
+            <Text key={row.author} style={[typography.body, { color: colors.ink }]}>
+              {row.author} · {row.count}
+            </Text>
+          ))}
+        </StatCard>
+      ) : null}
+
+      {achievements.length > 0 ? (
+        <Text style={[typography.caption, { color: colors.success }]}>
+          New milestone unlocked: {achievements.join(", ")}
+        </Text>
+      ) : null}
+
+      {stats.totalBooks === 0 ? (
+        <Text style={[typography.body, { color: colors.inkMuted, textAlign: "center" }]}>
+          Add books and log progress to unlock richer insights.
+        </Text>
+      ) : null}
     </ScrollView>
   );
 }
 
+function StatCard({ title, children }: { title: string; children: React.ReactNode }) {
+  const { colors, typography, radii, spacing } = useTheme();
+  return (
+    <View
+      style={[
+        styles.card,
+        {
+          borderColor: colors.line,
+          backgroundColor: colors.paperElevated,
+          borderRadius: radii.lg,
+          padding: spacing.md,
+          gap: spacing.sm,
+        },
+      ]}
+    >
+      <Text style={[typography.subtitle, { color: colors.ink }]}>{title}</Text>
+      {children}
+    </View>
+  );
+}
+
+function StatGrid({ items }: { items: { label: string; value: string }[] }) {
+  const { colors, typography } = useTheme();
+  return (
+    <View style={styles.grid}>
+      {items.map((item) => (
+        <View key={item.label} style={styles.statItem} accessible accessibilityLabel={`${item.label}: ${item.value}`}>
+          <Text style={[typography.title, { color: colors.ink }]}>{item.value}</Text>
+          <Text style={[typography.caption, { color: colors.inkMuted }]}>{item.label}</Text>
+        </View>
+      ))}
+    </View>
+  );
+}
+
 const styles = StyleSheet.create({
-  container: { flex: 1 },
-  content: { paddingHorizontal: 16, gap: 12 },
-  loadingContainer: { flex: 1, justifyContent: "center", alignItems: "center", gap: 8 },
-  loadingText: { opacity: 0.7 },
-  title: { fontSize: 24, fontWeight: "700", marginBottom: 4 },
-  card: {
-    borderWidth: StyleSheet.hairlineWidth,
-    borderColor: "#ccc",
-    borderRadius: 12,
-    padding: 14,
-    gap: 12,
-  },
-  cardTitle: { fontSize: 16, fontWeight: "700" },
-  statRow: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-  },
-  statItem: {
-    alignItems: "center",
-    flex: 1,
-  },
-  statValue: {
-    fontSize: 28,
-    fontWeight: "700",
-    color: "#111",
-  },
-  statLabel: {
-    fontSize: 12,
-    opacity: 0.7,
-    marginTop: 2,
-  },
-  emptyHint: {
-    padding: 16,
-    alignItems: "center",
-  },
-  emptyHintText: {
-    opacity: 0.7,
-    textAlign: "center",
-  },
+  loading: { flex: 1, justifyContent: "center", alignItems: "center", gap: 8 },
+  card: { borderWidth: StyleSheet.hairlineWidth },
+  grid: { flexDirection: "row", flexWrap: "wrap" },
+  statItem: { width: "50%", paddingVertical: 8 },
 });

@@ -1,12 +1,33 @@
+import type { NavigatorScreenParams } from "@react-navigation/native";
+
+export type PartialBookPrefill = {
+  title?: string;
+  author?: string;
+  totalPages?: number;
+  isbn?: string;
+  publisher?: string;
+  publishedYear?: number;
+  description?: string;
+  coverUri?: string;
+  genre?: string;
+};
+
 export type LibraryStackParamList = {
-    LibraryHome: undefined;
-    BookDetails: { bookId:string };
-    AddEditBook: { bookId?: string } | undefined;
-    UpdateProgress: { bookId: string };
+  LibraryHome: undefined;
+  BookDetails: { bookId: string };
+  AddEditBook: { bookId?: string; prefill?: PartialBookPrefill } | undefined;
+  UpdateProgress: { bookId: string };
+  ReadingSession: { bookId: string; sessionId?: string };
+  NotesList: { bookId: string };
+  NoteEditor: { bookId: string; noteId?: string };
+  Collections: undefined;
+  CollectionDetails: { collectionId: string };
 };
 
 export type RootTabParamList = {
-    LibraryTab: undefined;
-    StatsTab: undefined;
-    SettingsTab: undefined;
+  LibraryTab: NavigatorScreenParams<LibraryStackParamList>;
+  DiscoverTab: undefined;
+  GoalsTab: undefined;
+  StatsTab: undefined;
+  SettingsTab: undefined;
 };

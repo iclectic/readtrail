@@ -1,38 +1,35 @@
 # ReadTrail
 
-ReadTrail is a small, offline first reading tracker built with Expo and React Native.
+ReadTrail is an offline-first reading companion for Android and iOS, built with Expo and React Native.
 
-It is designed to be quick to use and easy to understand.
-No accounts.
-No syncing.
-Just your library, your reading progress, and a simple history of updates stored locally on your device.
+It helps you build a personal library, track progress and sessions, keep a reading journal, set goals, and review insights — without requiring an account for core use.
 
 ## What you can do
 
-- **Add books** with title, author, total pages, and a reading status.
-- **Update progress** (and optionally add a note) to build a progress history.
-- **Search, filter, and sort** your library.
-- **View reading stats** like streaks and recent activity.
-- **Export your data** as JSON.
-- **Clear all local data** if you want a fresh start.
+- **Library** — add books manually or look up titles/ISBNs; organise by status, format, ownership, genre, tags and collections
+- **Progress** — page updates with validation, history, and automatic status changes
+- **Sessions** — timed reading sessions with duration tracking
+- **Journal** — notes, quotations and reflections attached to books
+- **Goals** — daily, weekly, monthly and annual targets you control
+- **Insights** — streaks, pages advanced, reading time, formats and authors
+- **Discover** — catalogue search plus personal recommendations from your own library
+- **Backup** — export and import a full JSON backup
+- **Privacy** — data stays on device unless you export it; catalogue lookup is optional
 
 ## Tech stack
 
-- **Expo** (SDK 54)
-- **React Native**
-- **TypeScript**
-- **React Navigation**
-  - Bottom tabs
-  - Native stack for the Library flow
-- **SQLite** via `expo-sqlite` (local on device)
+- Expo SDK 54 · React Native · TypeScript
+- React Navigation (tabs + native stack)
+- SQLite via `expo-sqlite` with versioned migrations
+- Jest unit tests · ESLint · GitHub Actions CI
 
 ## Getting started
 
 ### Requirements
 
-- Node.js (LTS recommended)
+- Node.js LTS
 - npm
-- Expo Go (on your phone) or an iOS Simulator / Android emulator
+- Expo Go, or iOS Simulator / Android emulator
 
 ### Install
 
@@ -46,121 +43,44 @@ npm install
 npm run start
 ```
 
-Other handy commands:
+### Quality checks
 
 ```bash
-npm run ios
-npm run android
-npm run web
+npm run typecheck
+npm test
+npm run lint
 ```
 
-## How the app is organised
+## Project map
 
-If you are trying to understand the codebase, this is the high level map.
-
-### Entry point
-
-- `index.ts` registers the app with Expo.
-- `App.tsx` is the real starting point.
-  - It initialises the SQLite database (`initDb()`)
-  - It seeds a few sample books in development (`seedDevData()`)
-  - It mounts navigation (`<AppNavigation />`)
-
-### Navigation
-
-- `src/navigation/index.tsx` sets up the `NavigationContainer`.
-- `src/navigation/RootTabs.tsx` defines the bottom tabs: Library, Stats, Settings.
-- `src/navigation/LibraryStack.tsx` defines the Library stack:
-  - LibraryHome
-  - BookDetails
-  - AddEditBook
-  - UpdateProgress
-- `src/types/navigation.ts` holds the TypeScript route param types.
-
-### Database layer
-
-The app uses a small repository pattern.
-Screens call the repository functions, not raw SQL.
-
-- `src/db/sqlite.ts`
-  - Opens the database
-  - Creates tables
-  - Provides `runQuery`, `runWrite`, `runExec`
-  - Contains `clearAllData()`
-- `src/db/repositories/booksRepo.ts` (CRUD for books)
-- `src/db/repositories/progressEntriesRepo.ts` (CRUD for progress entries)
-- `src/db/index.ts` re-exports the db helpers and repositories
-
-### Screens
-
-- `src/screens/library/LibraryHomeScreen.tsx`
-  - Lists books
-  - Search, filter, sort
-  - Pull to refresh
-- `src/screens/library/BookDetailsScreen.tsx`
-  - Book details
-  - Progress history
-  - Delete book
-  - Delete a progress entry
-- `src/screens/library/AddEditBookScreen.tsx`
-  - Add or edit a book
-- `src/screens/library/UpdateProgressScreen.tsx`
-  - Add a progress entry and update the book’s current page
-- `src/screens/library/StatsScreen.tsx`
-  - Reading stats derived from your local data
-- `src/screens/settings/SettingsScreen.tsx`
-  - Export JSON
-  - Clear all local data
-  - Rate app (placeholder until published)
-  - Contact and feedback
-
-### Utilities
-
-- `src/utils/logger.ts` wraps console logging so noisy logs do not end up in production builds.
-- `src/utils/formatDate.ts` formats ISO timestamps into a readable date.
-- `src/utils/haptics.ts` provides small haptic helpers used on key actions.
+- `App.tsx` — bootstrap (await DB), theme, onboarding, navigation
+- `src/domain/` — pure business rules (progress, streaks, goals, analytics)
+- `src/db/` — SQLite, migrations, repositories
+- `src/services/` — progress/session/backup/metadata/recommendations
+- `src/theme/` · `src/components/` — design system
+- `src/screens/` — Library, Discover, Goals, Stats, Settings, Notes, Onboarding
+- `docs/` — architecture, audit, roadmap, database design, test strategy, release checklist, progress
 
 ## Data and privacy
 
-All data is stored locally on your device in SQLite.
+All core reading data is stored locally in SQLite.
 
-- No authentication
-- No network requests
-- No cloud sync
-
-If you export your data, it is saved as a JSON file and shared using the native share sheet.
-
-## Development notes
-
-### Seeding sample data
-
-In development, the app will insert a few sample books the first time it runs.
-See `src/db/seedDev.ts`.
-
-### Common troubleshooting
-
-- **Port already in use**: Expo might tell you that `8081` is already running.
-  - You can accept the suggested alternative port.
-- **Metro cache oddities**: If you see a strange runtime error after changes, try:
-
-```bash
-npx expo start --clear
-```
+- No authentication required for offline use
+- No cloud sync in the current release path
+- Optional Open Library requests only when you search or look up an ISBN
+- Export creates a JSON file shared via the system share sheet
 
 ## Builds (EAS)
 
-This project includes an `eas.json` with `development`, `preview`, and `production` profiles.
-
-If you use EAS, you can build with something like:
+`eas.json` includes `development`, `preview` and `production` profiles.
 
 ```bash
 eas build --profile production --platform ios
 eas build --profile production --platform android
 ```
 
-(You will need EAS CLI set up and an Expo account for builds and store submissions.)
+Do not submit to stores or change production credentials without explicit authorisation.
 
 ## Licence
 
-No licence has been added yet.
-Until you add a licence, you should assume this project is not licensed for reuse.
+No licence has been added yet. Until one is added, assume the project is not licensed for reuse.
