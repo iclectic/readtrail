@@ -8,6 +8,8 @@ import {
   Text,
   View,
 } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as DocumentPicker from "expo-document-picker";
 import * as FileSystem from "expo-file-system/legacy";
@@ -18,6 +20,9 @@ import {
   importBackup,
   parseBackupJson,
 } from "../../services/backupService";
+import { exportLibraryCsv, importLibraryCsv } from "../../services/csvService";
+import { exportNotesMarkdown } from "../../services/notesExportService";
+import { trackEvent } from "../../services/analyticsEvents";
 import { Button, Chip, TextField } from "../../components";
 import { useTheme } from "../../theme";
 import { useAppSettings } from "../../context/AppSettingsContext";
@@ -25,14 +30,19 @@ import { syncReminderSchedule } from "../../services/reminderService";
 import { lightHaptic, warningHaptic, successHaptic } from "../../utils/haptics";
 import { logger } from "../../utils/logger";
 import type { AppSettings } from "../../domain/types";
+import type { SettingsStackParamList } from "../../navigation/SettingsStack";
 
 export function SettingsScreen() {
   const insets = useSafeAreaInsets();
+  const navigation =
+    useNavigation<NativeStackNavigationProp<SettingsStackParamList>>();
   const { colors, typography, spacing } = useTheme();
   const { settings, save } = useAppSettings();
   const [exporting, setExporting] = useState(false);
   const [importing, setImporting] = useState(false);
   const [clearing, setClearing] = useState(false);
+  const [csvBusy, setCsvBusy] = useState(false);
+  const [notesBusy, setNotesBusy] = useState(false);
 
   const appVersionText = useMemo(() => {
     const v = Application.nativeApplicationVersion ?? "1.0.0";
@@ -44,6 +54,7 @@ export function SettingsScreen() {
     try {
       setExporting(true);
       await exportBackupToShareSheet(appVersionText);
+      await trackEvent("export_completed", { format: "json" });
       successHaptic();
     } catch (e) {
       logger.error("[settings] export failed", e);
@@ -53,6 +64,65 @@ export function SettingsScreen() {
       );
     } finally {
       setExporting(false);
+    }
+  }
+
+  async function onExportCsv() {
+    try {
+      setCsvBusy(true);
+      await exportLibraryCsv();
+      await trackEvent("export_completed", { format: "csv" });
+      successHaptic();
+    } catch (e) {
+      Alert.alert(
+        "CSV export failed",
+        e instanceof Error ? e.message : "Could not export CSV."
+      );
+    } finally {
+      setCsvBusy(false);
+    }
+  }
+
+  async function onImportCsv() {
+    try {
+      setCsvBusy(true);
+      const picked = await DocumentPicker.getDocumentAsync({
+        type: ["text/csv", "text/comma-separated-values", "text/plain", "*/*"],
+        copyToCacheDirectory: true,
+      });
+      if (picked.canceled || !picked.assets?.[0]) return;
+      const raw = await FileSystem.readAsStringAsync(picked.assets[0].uri, {
+        encoding: FileSystem.EncodingType.UTF8,
+      });
+      const result = await importLibraryCsv(raw, "skip_existing");
+      await trackEvent("import_completed", { format: "csv", imported: result.imported });
+      successHaptic();
+      Alert.alert(
+        "CSV import complete",
+        `Imported ${result.imported} book${result.imported === 1 ? "" : "s"}; skipped ${result.skipped} existing.`
+      );
+    } catch (e) {
+      Alert.alert(
+        "CSV import failed",
+        e instanceof Error ? e.message : "Could not import this CSV file."
+      );
+    } finally {
+      setCsvBusy(false);
+    }
+  }
+
+  async function onExportNotes() {
+    try {
+      setNotesBusy(true);
+      await exportNotesMarkdown();
+      successHaptic();
+    } catch (e) {
+      Alert.alert(
+        "Notes export failed",
+        e instanceof Error ? e.message : "Could not export notes."
+      );
+    } finally {
+      setNotesBusy(false);
     }
   }
 
@@ -82,6 +152,10 @@ export function SettingsScreen() {
                 });
                 const backup = parseBackupJson(raw);
                 const result = await importBackup(backup);
+                await trackEvent("import_completed", {
+                  format: "json",
+                  books: result.books,
+                });
                 successHaptic();
                 Alert.alert(
                   "Import complete",
@@ -167,6 +241,7 @@ export function SettingsScreen() {
       return;
     }
     if (enabled) {
+      await trackEvent("reminder_enabled");
       successHaptic();
       Alert.alert(
         "Daily reminder on",
@@ -257,7 +332,8 @@ export function SettingsScreen() {
 
       <Card title="Backup and restore">
         <Text style={[typography.body, { color: colors.inkMuted }]}>
-          Export a full JSON backup, or restore one previously exported from ReadTrail.
+          Export a full JSON backup, CSV library sheet, or Markdown notes. Import restores
+          data you previously exported.
         </Text>
         <Button
           label={exporting ? "Exporting…" : "Export JSON"}
@@ -269,6 +345,24 @@ export function SettingsScreen() {
           variant="secondary"
           loading={importing}
           onPress={onImport}
+        />
+        <Button
+          label={csvBusy ? "Working…" : "Export CSV"}
+          variant="secondary"
+          loading={csvBusy}
+          onPress={onExportCsv}
+        />
+        <Button
+          label="Import CSV"
+          variant="secondary"
+          loading={csvBusy}
+          onPress={onImportCsv}
+        />
+        <Button
+          label={notesBusy ? "Exporting…" : "Export notes (Markdown)"}
+          variant="ghost"
+          loading={notesBusy}
+          onPress={onExportNotes}
         />
       </Card>
 
@@ -295,6 +389,11 @@ export function SettingsScreen() {
           optional and only runs when you request it. ReadTrail does not require an account
           for offline use.
         </Text>
+        <Button
+          label="Read privacy notice"
+          variant="secondary"
+          onPress={() => navigation.navigate("Privacy")}
+        />
       </Card>
     </ScrollView>
   );

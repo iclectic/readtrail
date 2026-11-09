@@ -7,6 +7,7 @@ import {
   type PressableProps,
 } from "react-native";
 import { useTheme } from "../../theme";
+import { ensureMinTouchSize } from "../../utils/accessibility";
 
 type Variant = "primary" | "secondary" | "danger" | "ghost";
 
@@ -26,6 +27,7 @@ export function Button({
 }: Props) {
   const { colors, radii, typography, touchTarget } = useTheme();
   const isDisabled = disabled || loading;
+  const minHeight = ensureMinTouchSize(touchTarget);
 
   const backgroundColor =
     variant === "primary"
@@ -54,7 +56,7 @@ export function Button({
       style={(state) => [
         styles.base,
         {
-          minHeight: touchTarget,
+          minHeight,
           backgroundColor,
           borderColor,
           borderRadius: radii.md,

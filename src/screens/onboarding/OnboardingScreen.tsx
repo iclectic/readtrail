@@ -4,6 +4,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Button } from "../../components";
 import { useTheme } from "../../theme";
 import { t } from "../../i18n";
+import { trackEvent } from "../../services/analyticsEvents";
 
 type Props = {
   onComplete: () => void | Promise<void>;
@@ -46,8 +47,21 @@ export function OnboardingScreen({ onComplete, onSkip }: Props) {
         </View>
       </View>
       <View style={{ gap: spacing.sm }}>
-        <Button label={copy.onboarding.cta} onPress={onComplete} />
-        <Button label={copy.onboarding.skip} variant="ghost" onPress={onSkip} />
+        <Button
+          label={copy.onboarding.cta}
+          onPress={() => {
+            void trackEvent("onboarding_completed");
+            void onComplete();
+          }}
+        />
+        <Button
+          label={copy.onboarding.skip}
+          variant="ghost"
+          onPress={() => {
+            void trackEvent("onboarding_skipped");
+            void onSkip();
+          }}
+        />
       </View>
     </View>
   );

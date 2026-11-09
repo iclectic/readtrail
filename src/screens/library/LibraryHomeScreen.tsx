@@ -18,7 +18,8 @@ import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { LibraryStackParamList } from "../../types/navigation";
 import type { Book, BookStatus } from "../../domain/types";
 import { BOOK_STATUSES } from "../../domain/types";
-import { getAllBooks, getAllCollections } from "../../db";
+import type { Tag } from "../../domain/types";
+import { getAllBooks, getAllCollections, getAllTags, getBookIdsByTagId } from "../../db";
 import { findDuplicateGroups } from "../../domain/duplicates";
 import {
   bulkAddToCollection,
@@ -53,11 +54,17 @@ export function LibraryHomeScreen({ navigation }: Props) {
   const [selectionMode, setSelectionMode] = useState(false);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [duplicateCount, setDuplicateCount] = useState(0);
+  const [tags, setTags] = useState<Tag[]>([]);
+  const [tagFilter, setTagFilter] = useState<string | null>(null);
+  const [tagBookIds, setTagBookIds] = useState<Set<string> | null>(null);
 
   const filteredBooks = useMemo(() => {
     let result = [...books];
     if (statusFilter !== "all") {
       result = result.filter((b) => b.status === statusFilter);
+    }
+    if (tagFilter && tagBookIds) {
+      result = result.filter((b) => tagBookIds.has(b.id));
     }
     const query = searchQuery.trim().toLowerCase();
     if (query) {
@@ -89,7 +96,7 @@ export function LibraryHomeScreen({ navigation }: Props) {
         );
     }
     return result;
-  }, [books, statusFilter, searchQuery, sortBy]);
+  }, [books, statusFilter, searchQuery, sortBy, tagFilter, tagBookIds]);
 
   const loadBooks = useCallback(async (isRefresh = false) => {
     try {
@@ -100,6 +107,7 @@ export function LibraryHomeScreen({ navigation }: Props) {
       LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
       setBooks(rows);
       setDuplicateCount(findDuplicateGroups(rows).length);
+      setTags(await getAllTags());
     } catch (e) {
       setError("Could not load your library.");
       logger.error("[library] failed to load books", e);
@@ -107,6 +115,16 @@ export function LibraryHomeScreen({ navigation }: Props) {
       setLoading(false);
       setRefreshing(false);
     }
+  }, []);
+
+  const onSelectTag = useCallback(async (tagId: string | null) => {
+    setTagFilter(tagId);
+    if (!tagId) {
+      setTagBookIds(null);
+      return;
+    }
+    const ids = await getBookIdsByTagId(tagId);
+    setTagBookIds(new Set(ids));
   }, []);
 
   useFocusEffect(
@@ -242,6 +260,25 @@ export function LibraryHomeScreen({ navigation }: Props) {
           />
         ))}
       </View>
+
+      {tags.length > 0 ? (
+        <View style={styles.filterRow}>
+          <Text style={[typography.caption, { color: colors.inkMuted }]}>Tags</Text>
+          <Chip
+            label="Any tag"
+            selected={tagFilter == null}
+            onPress={() => void onSelectTag(null)}
+          />
+          {tags.slice(0, 12).map((tag) => (
+            <Chip
+              key={tag.id}
+              label={tag.name}
+              selected={tagFilter === tag.id}
+              onPress={() => void onSelectTag(tag.id)}
+            />
+          ))}
+        </View>
+      ) : null}
 
       <View style={styles.links}>
         <Pressable onPress={() => navigation.navigate("Collections")} accessibilityRole="button">

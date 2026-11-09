@@ -14,10 +14,12 @@ import { useFocusEffect } from "@react-navigation/native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { Book, ProgressEntry } from "../../domain/types";
 import type { LibraryStackParamList } from "../../types/navigation";
-import { deleteBook, getBookById, getProgressEntriesByBookId } from "../../db";
+import type { Tag } from "../../domain/types";
+import { deleteBook, getBookById, getProgressEntriesByBookId, getTagsForBook } from "../../db";
 import { removeProgressEntry } from "../../services/progressService";
 import { progressPercent, statusLabel } from "../../domain/progress";
-import { Button, ProgressBar } from "../../components";
+import { Button, Chip, ProgressBar } from "../../components";
+import { BookCover } from "../../components/library/BookCover";
 import { useTheme } from "../../theme";
 import { formatDate } from "../../utils/formatDate";
 import { warningHaptic, successHaptic } from "../../utils/haptics";
@@ -34,6 +36,7 @@ export function BookDetailsScreen({ navigation, route }: Props) {
   const { colors, typography, spacing, radii } = useTheme();
   const [book, setBook] = useState<Book | null>(null);
   const [entries, setEntries] = useState<ProgressEntry[]>([]);
+  const [tags, setTags] = useState<Tag[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
@@ -54,9 +57,13 @@ export function BookDetailsScreen({ navigation, route }: Props) {
         setError("This book no longer exists.");
         return;
       }
-      const history = await getProgressEntriesByBookId(bookId);
+      const [history, bookTags] = await Promise.all([
+        getProgressEntriesByBookId(bookId),
+        getTagsForBook(bookId),
+      ]);
       setBook(b);
       setEntries(history);
+      setTags(bookTags);
     } catch (e) {
       logger.error("[book-details] failed to load", e);
       setError("Could not load this book.");
@@ -153,15 +160,32 @@ export function BookDetailsScreen({ navigation, route }: Props) {
           },
         ]}
       >
-        <Text style={[typography.title, { color: colors.ink }]}>{book.title}</Text>
-        <Text style={[typography.body, { color: colors.inkMuted }]}>
-          {book.author || "Unknown author"}
-        </Text>
-        <Text style={[typography.caption, { color: colors.inkSubtle }]}>
-          {statusLabel(book.status)}
-          {book.format ? ` · ${book.format}` : ""}
-          {book.genre ? ` · ${book.genre}` : ""}
-        </Text>
+        <View style={{ flexDirection: "row", gap: spacing.sm }}>
+          <BookCover uri={book.coverUri} title={book.title} size="md" />
+          <View style={{ flex: 1, gap: 4 }}>
+            <Text style={[typography.title, { color: colors.ink }]} accessibilityRole="header">
+              {book.title}
+            </Text>
+            <Text style={[typography.body, { color: colors.inkMuted }]}>
+              {book.author || "Unknown author"}
+            </Text>
+            <Text style={[typography.caption, { color: colors.inkSubtle }]}>
+              {statusLabel(book.status)}
+              {book.format ? ` · ${book.format}` : ""}
+              {book.genre ? ` · ${book.genre}` : ""}
+            </Text>
+          </View>
+        </View>
+        {tags.length > 0 ? (
+          <View
+            style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}
+            accessibilityLabel={`Tags: ${tags.map((t) => t.name).join(", ")}`}
+          >
+            {tags.map((tag) => (
+              <Chip key={tag.id} label={tag.name} selected />
+            ))}
+          </View>
+        ) : null}
         <Text style={[typography.caption, { color: colors.inkMuted }]}>
           Page {book.currentPage}
           {book.totalPages > 0 ? ` of ${book.totalPages}` : ""}

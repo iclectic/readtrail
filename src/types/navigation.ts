@@ -26,6 +26,12 @@ export type LibraryStackParamList = {
   ReadingMemory: undefined;
   Duplicates: undefined;
   AnnualReport: undefined;
+  ReadingCalendar: undefined;
+};
+
+export type SettingsStackParamList = {
+  SettingsHome: undefined;
+  Privacy: undefined;
 };
 
 export type RootTabParamList = {
@@ -33,5 +39,5 @@ export type RootTabParamList = {
   DiscoverTab: undefined;
   GoalsTab: undefined;
   StatsTab: undefined;
-  SettingsTab: undefined;
+  SettingsTab: NavigatorScreenParams<SettingsStackParamList>;
 };

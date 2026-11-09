@@ -7,3 +7,4 @@ export * from "./ui/Screen";
 export * from "./ui/BarChart";
 export * from "./library/BookListItem";
 export * from "./library/BookCover";
+export * from "./library/TagEditor";

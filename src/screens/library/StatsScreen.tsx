@@ -118,6 +118,13 @@ export function StatsScreen() {
             navigation.navigate("LibraryTab", { screen: "AnnualReport" })
           }
         />
+        <Button
+          label="Calendar"
+          variant="secondary"
+          onPress={() =>
+            navigation.navigate("LibraryTab", { screen: "ReadingCalendar" })
+          }
+        />
       </View>
 
       <StatCard title="Library">

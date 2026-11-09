@@ -1,0 +1,11 @@
+# Maestro smoke: open Settings and confirm export controls are visible.
+appId: com.iclectic.readtrail
+---
+- launchApp
+- extendedWaitUntil:
+    visible: "Settings"
+    timeout: 20000
+- tapOn: "Settings"
+- assertVisible: "Export JSON"
+- assertVisible: "Export CSV"
+- assertVisible: "Read privacy notice"

@@ -15,6 +15,7 @@ import { BarcodeScanScreen } from "../screens/library/BarcodeScanScreen";
 import { ReadingMemoryScreen } from "../screens/memory/ReadingMemoryScreen";
 import { DuplicatesScreen } from "../screens/library/DuplicatesScreen";
 import { AnnualReportScreen } from "../screens/stats/AnnualReportScreen";
+import { ReadingCalendarScreen } from "../screens/stats/ReadingCalendarScreen";
 import { useTheme } from "../theme";
 
 const Stack = createNativeStackNavigator<LibraryStackParamList>();
@@ -114,6 +115,11 @@ export function LibraryStack() {
         name="AnnualReport"
         component={AnnualReportScreen}
         options={{ title: "Annual report", headerShown: false }}
+      />
+      <Stack.Screen
+        name="ReadingCalendar"
+        component={ReadingCalendarScreen}
+        options={{ title: "Reading calendar" }}
       />
     </Stack.Navigator>
   );
