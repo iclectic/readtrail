@@ -287,7 +287,20 @@ export function AddEditBookScreen({ navigation, route }: Props) {
           keyboardType={Platform.select({ ios: "number-pad", android: "numeric" })}
         />
         <TextField label="ISBN" value={isbn} onChangeText={setIsbn} autoCapitalize="characters" />
-        <Button label="Look up ISBN" variant="secondary" loading={lookingUp} onPress={onLookupIsbn} />
+        <View style={styles.row}>
+          <View style={{ flex: 1 }}>
+            <Button label="Look up ISBN" variant="secondary" loading={lookingUp} onPress={onLookupIsbn} />
+          </View>
+          {!isEdit ? (
+            <View style={{ flex: 1 }}>
+              <Button
+                label="Scan barcode"
+                variant="secondary"
+                onPress={() => navigation.navigate("BarcodeScan")}
+              />
+            </View>
+          ) : null}
+        </View>
 
         <Text style={[typography.label, { color: colors.ink }]}>Status</Text>
         <View style={styles.row}>

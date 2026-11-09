@@ -4,3 +4,6 @@ export * from "./backupService";
 export * from "./achievementsService";
 export * from "./recommendations";
 export * from "./metadata";
+export * from "./reminderService";
+export * from "./libraryBulkService";
+export * from "./memoryService";

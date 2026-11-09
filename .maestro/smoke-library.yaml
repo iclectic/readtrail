@@ -1,0 +1,19 @@
+# Maestro smoke flow for ReadTrail (run on a simulator/emulator with the app installed).
+# npx maestro test .maestro/smoke-library.yaml
+appId: com.iclectic.readtrail
+---
+- launchApp
+- extendedWaitUntil:
+    visible: "ReadTrail"
+    timeout: 15000
+- tapOn: "Add your first book"
+- extendedWaitUntil:
+    visible: "Title"
+    timeout: 10000
+- tapOn: "Title *"
+- inputText: "Smoke Test Book"
+- tapOn: "Author"
+- inputText: "Test Author"
+- tapOn: "Save"
+- assertVisible: "Your library"
+- assertVisible: "Smoke Test Book"

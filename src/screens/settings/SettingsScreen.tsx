@@ -18,9 +18,10 @@ import {
   importBackup,
   parseBackupJson,
 } from "../../services/backupService";
-import { Button, Chip } from "../../components";
+import { Button, Chip, TextField } from "../../components";
 import { useTheme } from "../../theme";
 import { useAppSettings } from "../../context/AppSettingsContext";
+import { syncReminderSchedule } from "../../services/reminderService";
 import { lightHaptic, warningHaptic, successHaptic } from "../../utils/haptics";
 import { logger } from "../../utils/logger";
 import type { AppSettings } from "../../domain/types";
@@ -157,6 +158,48 @@ export function SettingsScreen() {
     await save({ theme });
   }
 
+  async function setDailyReminder(enabled: boolean) {
+    const next = await save({ dailyReminderEnabled: enabled });
+    const result = await syncReminderSchedule(next);
+    if (enabled && !result.ok) {
+      await save({ dailyReminderEnabled: false });
+      Alert.alert("Reminders unavailable", result.message ?? "Permission was not granted.");
+      return;
+    }
+    if (enabled) {
+      successHaptic();
+      Alert.alert(
+        "Daily reminder on",
+        `You will get a gentle prompt around ${String(next.dailyReminderHour).padStart(2, "0")}:${String(next.dailyReminderMinute).padStart(2, "0")} each day. Turn it off anytime.`
+      );
+    }
+  }
+
+  async function saveReminderTime(hourText: string, minuteText: string) {
+    const hour = Number(hourText);
+    const minute = Number(minuteText);
+    if (
+      !Number.isInteger(hour) ||
+      !Number.isInteger(minute) ||
+      hour < 0 ||
+      hour > 23 ||
+      minute < 0 ||
+      minute > 59
+    ) {
+      Alert.alert("Invalid time", "Use a 24-hour time such as 20:00.");
+      return;
+    }
+    const next = await save({ dailyReminderHour: hour, dailyReminderMinute: minute });
+    if (next.dailyReminderEnabled) {
+      const result = await syncReminderSchedule(next);
+      if (!result.ok) {
+        Alert.alert("Could not update reminder", result.message ?? "Please try again.");
+        return;
+      }
+    }
+    successHaptic();
+  }
+
   return (
     <ScrollView
       style={{ flex: 1, backgroundColor: colors.paper }}
@@ -194,17 +237,22 @@ export function SettingsScreen() {
         <RowSwitch
           label="Daily reminder"
           value={settings?.dailyReminderEnabled ?? false}
-          onValueChange={(value) => void save({ dailyReminderEnabled: value })}
+          onValueChange={(value) => void setDailyReminder(value)}
+        />
+        <Text style={[typography.caption, { color: colors.inkSubtle }]}>
+          Optional local notifications only. ReadTrail asks for permission when you enable
+          reminders, and you can disable them here at any time.
+        </Text>
+        <ReminderTimeEditor
+          hour={settings?.dailyReminderHour ?? 20}
+          minute={settings?.dailyReminderMinute ?? 0}
+          onSave={saveReminderTime}
         />
         <RowSwitch
           label="Reduce motion"
           value={settings?.reduceMotion ?? false}
           onValueChange={(value) => void save({ reduceMotion: value })}
         />
-        <Text style={[typography.caption, { color: colors.inkSubtle }]}>
-          Reminders are optional. Notification scheduling will activate once platform
-          permissions are configured for release builds.
-        </Text>
       </Card>
 
       <Card title="Backup and restore">
@@ -291,6 +339,41 @@ function RowSwitch({
         onValueChange={onValueChange}
         accessibilityLabel={label}
         trackColor={{ true: colors.accent, false: colors.line }}
+      />
+    </View>
+  );
+}
+
+function ReminderTimeEditor({
+  hour,
+  minute,
+  onSave,
+}: {
+  hour: number;
+  minute: number;
+  onSave: (hour: string, minute: string) => Promise<void>;
+}) {
+  const [hourText, setHourText] = useState(String(hour));
+  const [minuteText, setMinuteText] = useState(String(minute).padStart(2, "0"));
+
+  return (
+    <View style={{ gap: 8 }}>
+      <TextField
+        label="Reminder hour (0–23)"
+        value={hourText}
+        onChangeText={setHourText}
+        keyboardType="number-pad"
+      />
+      <TextField
+        label="Reminder minute (0–59)"
+        value={minuteText}
+        onChangeText={setMinuteText}
+        keyboardType="number-pad"
+      />
+      <Button
+        label="Save reminder time"
+        variant="secondary"
+        onPress={() => void onSave(hourText, minuteText)}
       />
     </View>
   );

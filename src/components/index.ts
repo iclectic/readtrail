@@ -4,4 +4,6 @@ export * from "./ui/Chip";
 export * from "./ui/EmptyState";
 export * from "./ui/ProgressBar";
 export * from "./ui/Screen";
+export * from "./ui/BarChart";
 export * from "./library/BookListItem";
+export * from "./library/BookCover";

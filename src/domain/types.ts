@@ -81,6 +81,12 @@ export interface Note {
   body: string;
   tags: string;
   isFavourite: boolean;
+  intervalDays: number;
+  easeFactor: number;
+  repetitions: number;
+  nextReviewAt: string | null;
+  lastReviewedAt: string | null;
+  includedInMemory: boolean;
   createdAt: string;
   updatedAt: string;
 }
