@@ -7,17 +7,22 @@ import {
   Text,
   View,
 } from "react-native";
-import { useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import type { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import type { Book, ProgressEntry, ReadingSession } from "../../domain/types";
+import type { RootTabParamList } from "../../types/navigation";
 import { getAllBooks, getAllProgressEntries, getAllSessions, getSettings } from "../../db";
 import { computeReadingAnalytics, formatDuration } from "../../domain/analytics";
+import { buildMonthlySeries } from "../../domain/charts";
 import { evaluateAchievements } from "../../services/achievementsService";
+import { BarChart, Button } from "../../components";
 import { useTheme } from "../../theme";
 import { logger } from "../../utils/logger";
 
 export function StatsScreen() {
   const insets = useSafeAreaInsets();
+  const navigation = useNavigation<BottomTabNavigationProp<RootTabParamList>>();
   const { colors, typography, spacing } = useTheme();
   const [books, setBooks] = useState<Book[]>([]);
   const [entries, setEntries] = useState<ProgressEntry[]>([]);
@@ -66,6 +71,11 @@ export function StatsScreen() {
     [books, entries, sessions]
   );
 
+  const monthly = useMemo(
+    () => buildMonthlySeries(entries, sessions, books, 6),
+    [entries, sessions, books]
+  );
+
   if (loading) {
     return (
       <View style={[styles.loading, { paddingTop: insets.top, backgroundColor: colors.paper }]}>
@@ -92,6 +102,23 @@ export function StatsScreen() {
       <Text style={[typography.body, { color: colors.inkMuted }]}>
         Figures are calculated from your local reading history.
       </Text>
+
+      <View style={{ flexDirection: "row", gap: 8, flexWrap: "wrap" }}>
+        <Button
+          label="Reading memory"
+          variant="secondary"
+          onPress={() =>
+            navigation.navigate("LibraryTab", { screen: "ReadingMemory" })
+          }
+        />
+        <Button
+          label="Annual report"
+          variant="secondary"
+          onPress={() =>
+            navigation.navigate("LibraryTab", { screen: "AnnualReport" })
+          }
+        />
+      </View>
 
       <StatCard title="Library">
         <StatGrid
@@ -124,6 +151,17 @@ export function StatsScreen() {
               value: formatDuration(stats.averageSessionSeconds),
             },
           ]}
+        />
+      </StatCard>
+
+      <StatCard title="Last six months">
+        <BarChart
+          title="Pages advanced"
+          items={monthly.map((m) => ({
+            label: m.label.split(" ")[0] ?? m.label,
+            value: m.pages,
+          }))}
+          valueSuffix=" pages"
         />
       </StatCard>
 
@@ -213,7 +251,12 @@ function StatGrid({ items }: { items: { label: string; value: string }[] }) {
   return (
     <View style={styles.grid}>
       {items.map((item) => (
-        <View key={item.label} style={styles.statItem} accessible accessibilityLabel={`${item.label}: ${item.value}`}>
+        <View
+          key={item.label}
+          style={styles.statItem}
+          accessible
+          accessibilityLabel={`${item.label}: ${item.value}`}
+        >
           <Text style={[typography.title, { color: colors.ink }]}>{item.value}</Text>
           <Text style={[typography.caption, { color: colors.inkMuted }]}>{item.label}</Text>
         </View>

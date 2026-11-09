@@ -1,5 +1,6 @@
 import type { Note, NoteKind } from "../../domain/types";
-import { mapNote } from "../mappers";
+import { initialMemorySchedule } from "../../domain/memory";
+import { mapNote, NOTE_COLUMNS } from "../mappers";
 import { runQuery, runWrite } from "../sqlite";
 
 export type CreateNoteInput = {
@@ -11,12 +12,21 @@ export type CreateNoteInput = {
   sessionId?: string | null;
   tags?: string;
   isFavourite?: boolean;
+  includedInMemory?: boolean;
   createdAt?: string;
   updatedAt?: string;
 };
 
 export async function createNote(input: CreateNoteInput): Promise<Note> {
   const now = new Date().toISOString();
+  const enrol =
+    input.includedInMemory !== undefined
+      ? input.includedInMemory
+      : Boolean(input.isFavourite) ||
+        input.kind === "quote" ||
+        input.kind === "reflection";
+  const schedule = enrol ? initialMemorySchedule(new Date(now)) : null;
+
   const note: Note = {
     id: input.id,
     bookId: input.bookId,
@@ -26,14 +36,22 @@ export async function createNote(input: CreateNoteInput): Promise<Note> {
     body: input.body,
     tags: input.tags ?? "",
     isFavourite: input.isFavourite ?? false,
+    intervalDays: schedule?.intervalDays ?? 0,
+    easeFactor: schedule?.easeFactor ?? 2.5,
+    repetitions: schedule?.repetitions ?? 0,
+    nextReviewAt: schedule?.nextReviewAt ?? null,
+    lastReviewedAt: schedule?.lastReviewedAt ?? null,
+    includedInMemory: enrol,
     createdAt: input.createdAt ?? now,
     updatedAt: input.updatedAt ?? now,
   };
 
   await runWrite(
     `INSERT INTO notes
-      (id, bookId, sessionId, page, kind, body, tags, isFavourite, createdAt, updatedAt)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`,
+      (id, bookId, sessionId, page, kind, body, tags, isFavourite,
+       intervalDays, easeFactor, repetitions, nextReviewAt, lastReviewedAt, includedInMemory,
+       createdAt, updatedAt)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`,
     [
       note.id,
       note.bookId,
@@ -43,6 +61,12 @@ export async function createNote(input: CreateNoteInput): Promise<Note> {
       note.body,
       note.tags,
       note.isFavourite ? 1 : 0,
+      note.intervalDays,
+      note.easeFactor,
+      note.repetitions,
+      note.nextReviewAt,
+      note.lastReviewedAt,
+      note.includedInMemory ? 1 : 0,
       note.createdAt,
       note.updatedAt,
     ]
@@ -64,7 +88,9 @@ export async function updateNote(
   };
   await runWrite(
     `UPDATE notes SET
-      sessionId = ?, page = ?, kind = ?, body = ?, tags = ?, isFavourite = ?, updatedAt = ?
+      sessionId = ?, page = ?, kind = ?, body = ?, tags = ?, isFavourite = ?,
+      intervalDays = ?, easeFactor = ?, repetitions = ?, nextReviewAt = ?, lastReviewedAt = ?,
+      includedInMemory = ?, updatedAt = ?
      WHERE id = ?;`,
     [
       next.sessionId,
@@ -73,6 +99,12 @@ export async function updateNote(
       next.body,
       next.tags,
       next.isFavourite ? 1 : 0,
+      next.intervalDays,
+      next.easeFactor,
+      next.repetitions,
+      next.nextReviewAt,
+      next.lastReviewedAt,
+      next.includedInMemory ? 1 : 0,
       next.updatedAt,
       next.id,
     ]
@@ -87,8 +119,7 @@ export async function deleteNote(id: string): Promise<boolean> {
 
 export async function getNoteById(id: string): Promise<Note | null> {
   const rows = await runQuery<Parameters<typeof mapNote>[0]>(
-    `SELECT id, bookId, sessionId, page, kind, body, tags, isFavourite, createdAt, updatedAt
-     FROM notes WHERE id = ? LIMIT 1;`,
+    `SELECT ${NOTE_COLUMNS} FROM notes WHERE id = ? LIMIT 1;`,
     [id]
   );
   return rows[0] ? mapNote(rows[0]) : null;
@@ -96,8 +127,7 @@ export async function getNoteById(id: string): Promise<Note | null> {
 
 export async function getNotesByBookId(bookId: string): Promise<Note[]> {
   const rows = await runQuery<Parameters<typeof mapNote>[0]>(
-    `SELECT id, bookId, sessionId, page, kind, body, tags, isFavourite, createdAt, updatedAt
-     FROM notes WHERE bookId = ? ORDER BY updatedAt DESC;`,
+    `SELECT ${NOTE_COLUMNS} FROM notes WHERE bookId = ? ORDER BY updatedAt DESC;`,
     [bookId]
   );
   return rows.map(mapNote);
@@ -105,8 +135,7 @@ export async function getNotesByBookId(bookId: string): Promise<Note[]> {
 
 export async function getAllNotes(): Promise<Note[]> {
   const rows = await runQuery<Parameters<typeof mapNote>[0]>(
-    `SELECT id, bookId, sessionId, page, kind, body, tags, isFavourite, createdAt, updatedAt
-     FROM notes ORDER BY updatedAt DESC;`
+    `SELECT ${NOTE_COLUMNS} FROM notes ORDER BY updatedAt DESC;`
   );
   return rows.map(mapNote);
 }
@@ -114,8 +143,7 @@ export async function getAllNotes(): Promise<Note[]> {
 export async function searchNotes(query: string): Promise<Note[]> {
   const q = `%${query.trim().toLowerCase()}%`;
   const rows = await runQuery<Parameters<typeof mapNote>[0]>(
-    `SELECT id, bookId, sessionId, page, kind, body, tags, isFavourite, createdAt, updatedAt
-     FROM notes
+    `SELECT ${NOTE_COLUMNS} FROM notes
      WHERE lower(body) LIKE ? OR lower(tags) LIKE ?
      ORDER BY updatedAt DESC;`,
     [q, q]
@@ -125,8 +153,16 @@ export async function searchNotes(query: string): Promise<Note[]> {
 
 export async function getFavouriteNotes(): Promise<Note[]> {
   const rows = await runQuery<Parameters<typeof mapNote>[0]>(
-    `SELECT id, bookId, sessionId, page, kind, body, tags, isFavourite, createdAt, updatedAt
-     FROM notes WHERE isFavourite = 1 ORDER BY updatedAt DESC;`
+    `SELECT ${NOTE_COLUMNS} FROM notes WHERE isFavourite = 1 ORDER BY updatedAt DESC;`
+  );
+  return rows.map(mapNote);
+}
+
+export async function getMemoryNotes(): Promise<Note[]> {
+  const rows = await runQuery<Parameters<typeof mapNote>[0]>(
+    `SELECT ${NOTE_COLUMNS} FROM notes
+     WHERE includedInMemory = 1
+     ORDER BY IFNULL(nextReviewAt, createdAt) ASC;`
   );
   return rows.map(mapNote);
 }

@@ -22,6 +22,10 @@ export type LibraryStackParamList = {
   NoteEditor: { bookId: string; noteId?: string };
   Collections: undefined;
   CollectionDetails: { collectionId: string };
+  BarcodeScan: undefined;
+  ReadingMemory: undefined;
+  Duplicates: undefined;
+  AnnualReport: undefined;
 };
 
 export type RootTabParamList = {

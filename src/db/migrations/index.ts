@@ -1,10 +1,11 @@
 import type * as SQLite from "expo-sqlite";
 import { migration001 } from "./001_baseline";
 import { migration002 } from "./002_library_expansion";
+import { migration003 } from "./003_reading_memory";
 import type { Migration } from "./types";
 import { logger } from "../../utils/logger";
 
-export const MIGRATIONS: Migration[] = [migration001, migration002];
+export const MIGRATIONS: Migration[] = [migration001, migration002, migration003];
 
 export const LATEST_SCHEMA_VERSION = MIGRATIONS.reduce(
   (max, m) => Math.max(max, m.version),

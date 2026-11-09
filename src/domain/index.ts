@@ -4,3 +4,6 @@ export * from "./streaks";
 export * from "./goals";
 export * from "./analytics";
 export * from "./ids";
+export * from "./memory";
+export * from "./duplicates";
+export * from "./charts";

@@ -129,6 +129,12 @@ type NoteRow = {
   body: string;
   tags: string;
   isFavourite: number;
+  intervalDays?: number | null;
+  easeFactor?: number | null;
+  repetitions?: number | null;
+  nextReviewAt?: string | null;
+  lastReviewedAt?: string | null;
+  includedInMemory?: number | null;
   createdAt: string;
   updatedAt: string;
 };
@@ -144,10 +150,22 @@ export function mapNote(row: NoteRow): Note {
     body: row.body,
     tags: row.tags ?? "",
     isFavourite: Boolean(row.isFavourite),
+    intervalDays: row.intervalDays ?? 0,
+    easeFactor: row.easeFactor ?? 2.5,
+    repetitions: row.repetitions ?? 0,
+    nextReviewAt: row.nextReviewAt ?? null,
+    lastReviewedAt: row.lastReviewedAt ?? null,
+    includedInMemory: Boolean(row.includedInMemory),
     createdAt: row.createdAt,
     updatedAt: row.updatedAt,
   };
 }
+
+export const NOTE_COLUMNS = `
+  id, bookId, sessionId, page, kind, body, tags, isFavourite,
+  intervalDays, easeFactor, repetitions, nextReviewAt, lastReviewedAt, includedInMemory,
+  createdAt, updatedAt
+`;
 
 export function mapCollection(row: {
   id: string;

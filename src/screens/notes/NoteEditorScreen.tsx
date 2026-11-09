@@ -6,6 +6,7 @@ import type { NoteKind } from "../../domain/types";
 import { NOTE_KINDS } from "../../domain/types";
 import { createId } from "../../domain";
 import { createNote, deleteNote, getNoteById, updateNote } from "../../db";
+import { enrolNoteInMemory, removeNoteFromMemory } from "../../services/memoryService";
 import { Button, Chip, TextField } from "../../components";
 import { useTheme } from "../../theme";
 import { successHaptic, warningHaptic } from "../../utils/haptics";
@@ -22,6 +23,7 @@ export function NoteEditorScreen({ navigation, route }: Props) {
   const [tags, setTags] = useState("");
   const [kind, setKind] = useState<NoteKind>("note");
   const [isFavourite, setIsFavourite] = useState(false);
+  const [includedInMemory, setIncludedInMemory] = useState(false);
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
@@ -44,6 +46,7 @@ export function NoteEditorScreen({ navigation, route }: Props) {
         setTags(note.tags);
         setKind(note.kind);
         setIsFavourite(note.isFavourite);
+        setIncludedInMemory(note.includedInMemory);
       } catch (e) {
         logger.error("[note] load failed", e);
       }
@@ -62,6 +65,9 @@ export function NoteEditorScreen({ navigation, route }: Props) {
     }
     setSaving(true);
     try {
+      const enrol =
+        includedInMemory || isFavourite || kind === "quote" || kind === "reflection";
+
       if (isEdit && noteId) {
         await updateNote(noteId, {
           body: body.trim(),
@@ -70,8 +76,10 @@ export function NoteEditorScreen({ navigation, route }: Props) {
           kind,
           isFavourite,
         });
+        if (enrol) await enrolNoteInMemory(noteId);
+        else await removeNoteFromMemory(noteId);
       } else {
-        await createNote({
+        const created = await createNote({
           id: createId("note"),
           bookId,
           body: body.trim(),
@@ -79,7 +87,9 @@ export function NoteEditorScreen({ navigation, route }: Props) {
           tags: tags.trim(),
           kind,
           isFavourite,
+          includedInMemory: enrol,
         });
+        if (enrol) await enrolNoteInMemory(created.id);
       }
       successHaptic();
       navigation.goBack();
@@ -144,6 +154,14 @@ export function NoteEditorScreen({ navigation, route }: Props) {
         selected={isFavourite}
         onPress={() => setIsFavourite((v) => !v)}
       />
+      <Chip
+        label={includedInMemory ? "In Reading Memory" : "Add to Reading Memory"}
+        selected={includedInMemory}
+        onPress={() => setIncludedInMemory((v) => !v)}
+      />
+      <Text style={[typography.caption, { color: colors.inkSubtle }]}>
+        Reading Memory only revisits notes you saved. It never invents quotations from books.
+      </Text>
       <Button label={saving ? "Saving…" : "Save note"} loading={saving} onPress={onSave} />
       {isEdit ? <Button label="Delete note" variant="danger" onPress={confirmDelete} /> : null}
     </ScrollView>

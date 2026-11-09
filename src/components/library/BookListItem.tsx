@@ -1,29 +1,43 @@
 import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import type { Book } from "../../domain/types";
 import { progressPercent, statusLabel } from "../../domain/progress";
 import { useTheme } from "../../theme";
 import { ProgressBar } from "../ui/ProgressBar";
+import { BookCover } from "./BookCover";
 
 type Props = {
   book: Book;
   onPress: () => void;
   onQuickUpdate?: () => void;
+  selectionMode?: boolean;
+  selected?: boolean;
+  onToggleSelect?: () => void;
 };
 
-export function BookListItem({ book, onPress, onQuickUpdate }: Props) {
+export function BookListItem({
+  book,
+  onPress,
+  onQuickUpdate,
+  selectionMode = false,
+  selected = false,
+  onToggleSelect,
+}: Props) {
   const { colors, radii, typography, spacing } = useTheme();
   const percent = progressPercent(book.currentPage, book.totalPages);
 
   return (
     <Pressable
       accessibilityRole="button"
-      accessibilityLabel={`${book.title} by ${book.author}`}
-      onPress={onPress}
+      accessibilityState={selectionMode ? { selected } : undefined}
+      accessibilityLabel={`${book.title} by ${book.author}${selected ? ", selected" : ""}`}
+      onPress={selectionMode ? onToggleSelect : onPress}
+      onLongPress={onToggleSelect}
       style={({ pressed }) => [
         styles.item,
         {
-          borderColor: colors.line,
+          borderColor: selected ? colors.accent : colors.line,
           backgroundColor: colors.paperElevated,
           borderRadius: radii.md,
           opacity: pressed ? 0.92 : 1,
@@ -32,6 +46,15 @@ export function BookListItem({ book, onPress, onQuickUpdate }: Props) {
       ]}
     >
       <View style={styles.row}>
+        {selectionMode ? (
+          <Ionicons
+            name={selected ? "checkbox" : "square-outline"}
+            size={22}
+            color={selected ? colors.accent : colors.inkSubtle}
+            style={{ marginTop: 4 }}
+          />
+        ) : null}
+        <BookCover uri={book.coverUri} title={book.title} size="sm" />
         <View style={{ flex: 1, gap: 4 }}>
           <Text style={[typography.bodyStrong, { color: colors.ink }]} numberOfLines={2}>
             {book.title}
@@ -46,7 +69,7 @@ export function BookListItem({ book, onPress, onQuickUpdate }: Props) {
               : ` · page ${book.currentPage}`}
           </Text>
         </View>
-        {onQuickUpdate ? (
+        {!selectionMode && onQuickUpdate ? (
           <Pressable
             accessibilityRole="button"
             accessibilityLabel={`Update progress for ${book.title}`}

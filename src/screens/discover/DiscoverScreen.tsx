@@ -139,6 +139,13 @@ export function DiscoverScreen() {
         autoCapitalize="characters"
       />
       <Button label="Look up ISBN" variant="secondary" loading={loading} onPress={onIsbn} />
+      <Button
+        label="Scan ISBN barcode"
+        variant="ghost"
+        onPress={() =>
+          navigation.navigate("LibraryTab", { screen: "BarcodeScan" })
+        }
+      />
 
       {loading ? <ActivityIndicator color={colors.accent} /> : null}
       {error ? <Text style={{ color: colors.warning }}>{error}</Text> : null}

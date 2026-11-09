@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { initDb, getSettings } from "../db";
 import { seedDevData } from "../db/seedDev";
+import { syncReminderSchedule } from "../services/reminderService";
 import type { AppSettings } from "../domain/types";
 import { logger } from "../utils/logger";
 
@@ -20,6 +21,12 @@ export function useAppBootstrap(): BootstrapState {
         await initDb();
         await seedDevData();
         const settings = await getSettings();
+        // Re-apply local reminder schedule after relaunch when enabled.
+        try {
+          await syncReminderSchedule(settings);
+        } catch (reminderError) {
+          logger.log("[app] reminder sync skipped", reminderError);
+        }
         if (mounted) setState({ status: "ready", settings });
       } catch (error) {
         logger.error("[app] bootstrap failed", error);
