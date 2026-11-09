@@ -1,20 +1,40 @@
 import React, { useMemo, useState } from "react";
-import { Alert, Linking, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import {
+  Alert,
+  Linking,
+  ScrollView,
+  StyleSheet,
+  Switch,
+  Text,
+  View,
+} from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import * as DocumentPicker from "expo-document-picker";
 import * as FileSystem from "expo-file-system/legacy";
-import * as Sharing from "expo-sharing";
 import * as Application from "expo-application";
-import { clearAllData, getAllBooks, getAllProgressEntries } from "../../db";
+import { clearAllData } from "../../db";
+import {
+  exportBackupToShareSheet,
+  importBackup,
+  parseBackupJson,
+} from "../../services/backupService";
+import { Button, Chip } from "../../components";
+import { useTheme } from "../../theme";
+import { useAppSettings } from "../../context/AppSettingsContext";
 import { lightHaptic, warningHaptic, successHaptic } from "../../utils/haptics";
 import { logger } from "../../utils/logger";
+import type { AppSettings } from "../../domain/types";
 
 export function SettingsScreen() {
   const insets = useSafeAreaInsets();
+  const { colors, typography, spacing } = useTheme();
+  const { settings, save } = useAppSettings();
   const [exporting, setExporting] = useState(false);
+  const [importing, setImporting] = useState(false);
   const [clearing, setClearing] = useState(false);
 
   const appVersionText = useMemo(() => {
-    const v = Application.nativeApplicationVersion ?? "unknown";
+    const v = Application.nativeApplicationVersion ?? "1.0.0";
     const b = Application.nativeBuildVersion;
     return b ? `${v} (${b})` : v;
   }, []);
@@ -22,57 +42,78 @@ export function SettingsScreen() {
   async function onExport() {
     try {
       setExporting(true);
-
-      const [books, progressEntries] = await Promise.all([
-        getAllBooks(),
-        getAllProgressEntries(),
-      ]);
-
-      const payload = {
-        exportedAt: new Date().toISOString(),
-        appVersion: appVersionText,
-        books,
-        progressEntries,
-      };
-
-      const json = JSON.stringify(payload, null, 2);
-      const fileName = `readtrail-export-${Date.now()}.json`;
-      const fileUri = `${FileSystem.cacheDirectory}${fileName}`;
-
-      await FileSystem.writeAsStringAsync(fileUri, json, {
-        encoding: FileSystem.EncodingType.UTF8,
-      });
-
-      const canShare = await Sharing.isAvailableAsync();
-      if (!canShare) {
-        Alert.alert(
-          "Sharing not available",
-          "Sharing is not available on this device. The file was created in the app cache."
-        );
-        return;
-      }
-
-      await Sharing.shareAsync(fileUri, {
-        mimeType: "application/json",
-        dialogTitle: "Export your ReadTrail data",
-      });
+      await exportBackupToShareSheet(appVersionText);
+      successHaptic();
     } catch (e) {
       logger.error("[settings] export failed", e);
-      Alert.alert("Export failed", "Could not export your data.");
+      Alert.alert(
+        "Export failed",
+        e instanceof Error ? e.message : "Could not export your data."
+      );
     } finally {
       setExporting(false);
+    }
+  }
+
+  async function onImport() {
+    try {
+      setImporting(true);
+      const picked = await DocumentPicker.getDocumentAsync({
+        type: "application/json",
+        copyToCacheDirectory: true,
+      });
+      if (picked.canceled || !picked.assets?.[0]) return;
+
+      warningHaptic();
+      Alert.alert(
+        "Replace local data?",
+        "Importing a backup will replace books, progress, notes, goals and settings on this device. This cannot be undone.",
+        [
+          { text: "Cancel", style: "cancel" },
+          {
+            text: "Import",
+            style: "destructive",
+            onPress: async () => {
+              try {
+                const uri = picked.assets![0]!.uri;
+                const raw = await FileSystem.readAsStringAsync(uri, {
+                  encoding: FileSystem.EncodingType.UTF8,
+                });
+                const backup = parseBackupJson(raw);
+                const result = await importBackup(backup);
+                successHaptic();
+                Alert.alert(
+                  "Import complete",
+                  `Restored ${result.books} books, ${result.progressEntries} progress entries, ${result.notes} notes and ${result.sessions} sessions.`
+                );
+              } catch (e) {
+                logger.error("[settings] import failed", e);
+                Alert.alert(
+                  "Import failed",
+                  e instanceof Error ? e.message : "Could not import this file."
+                );
+              }
+            },
+          },
+        ]
+      );
+    } catch (e) {
+      logger.error("[settings] document picker failed", e);
+      Alert.alert("Import unavailable", "Could not open a backup file.");
+    } finally {
+      setImporting(false);
     }
   }
 
   function confirmClearData() {
     warningHaptic();
     Alert.alert(
-      "Clear All Data",
-      "Are you sure you want to delete all your books and progress history? This cannot be undone.",
+      "Clear all data",
+      "Are you sure you want to delete all books, progress, notes, sessions and goals? This cannot be undone.",
       [
         { text: "Cancel", style: "cancel" },
         {
-          text: "Delete Everything",
+          text: "Delete everything",
           style: "destructive",
           onPress: handleClearData,
         },
@@ -85,7 +126,7 @@ export function SettingsScreen() {
       setClearing(true);
       await clearAllData();
       successHaptic();
-      Alert.alert("Done", "All your data has been deleted.");
+      Alert.alert("Done", "All your local data has been deleted.");
     } catch (e) {
       logger.error("[settings] clear data failed", e);
       Alert.alert("Error", "Could not clear your data.");
@@ -96,143 +137,172 @@ export function SettingsScreen() {
 
   function handleRateApp() {
     lightHaptic();
-    // Replace these with your actual App Store / Play Store URLs when published
-    const iosUrl = "https://apps.apple.com/app/idYOUR_APP_ID";
-    const androidUrl = "https://play.google.com/store/apps/details?id=com.iclectic.readtrail";
-
-    // For now, show an alert since the app isn't published yet
     Alert.alert(
       "Rate ReadTrail",
-      "The app isn't published yet. Once it's live, this will open the App Store or Play Store.",
+      "The app is not published yet. Once it is live, this will open the App Store or Play Store.",
       [{ text: "OK" }]
     );
-
-    // When published, uncomment this:
-    // const url = Platform.OS === "ios" ? iosUrl : androidUrl;
-    // Linking.openURL(url).catch(() => {
-    //   Alert.alert("Error", "Could not open the store.");
-    // });
   }
 
   function handleContact() {
     lightHaptic();
-    Linking.openURL("mailto:support@readtrail.app?subject=ReadTrail%20Feedback").catch(() => {
-      Alert.alert("Error", "Could not open email app.");
+    Linking.openURL(
+      "mailto:support@readtrail.app?subject=ReadTrail%20Feedback"
+    ).catch(() => {
+      Alert.alert("Error", "Could not open the email app.");
     });
+  }
+
+  async function setTheme(theme: AppSettings["theme"]) {
+    await save({ theme });
   }
 
   return (
     <ScrollView
-      style={styles.container}
-      contentContainerStyle={[
-        styles.content,
-        { paddingTop: insets.top + 16, paddingBottom: insets.bottom + 16 },
-      ]}
+      style={{ flex: 1, backgroundColor: colors.paper }}
+      contentContainerStyle={{
+        paddingTop: insets.top + spacing.md,
+        paddingBottom: insets.bottom + spacing.md,
+        paddingHorizontal: spacing.md,
+        gap: spacing.sm,
+      }}
     >
-      <Text style={styles.title}>Settings</Text>
+      <Text style={[typography.title, { color: colors.ink }]}>Settings</Text>
 
-      <View style={styles.card}>
-        <Text style={styles.cardTitle}>Export local data</Text>
-        <Text style={styles.cardText}>
-          This exports your books and progress history to a JSON file.
+      <Card title="Appearance">
+        <Text style={[typography.body, { color: colors.inkMuted }]}>
+          Choose light, dark, or follow the system setting.
         </Text>
-        <Pressable
-          style={[styles.button, exporting ? styles.buttonDisabled : null]}
+        <View style={styles.row}>
+          {(["system", "light", "dark"] as const).map((theme) => (
+            <Chip
+              key={theme}
+              label={theme[0]!.toUpperCase() + theme.slice(1)}
+              selected={(settings?.theme ?? "system") === theme}
+              onPress={() => void setTheme(theme)}
+            />
+          ))}
+        </View>
+      </Card>
+
+      <Card title="Habits">
+        <RowSwitch
+          label="Streak tracking"
+          value={settings?.streakTrackingEnabled ?? true}
+          onValueChange={(value) => void save({ streakTrackingEnabled: value })}
+        />
+        <RowSwitch
+          label="Daily reminder"
+          value={settings?.dailyReminderEnabled ?? false}
+          onValueChange={(value) => void save({ dailyReminderEnabled: value })}
+        />
+        <RowSwitch
+          label="Reduce motion"
+          value={settings?.reduceMotion ?? false}
+          onValueChange={(value) => void save({ reduceMotion: value })}
+        />
+        <Text style={[typography.caption, { color: colors.inkSubtle }]}>
+          Reminders are optional. Notification scheduling will activate once platform
+          permissions are configured for release builds.
+        </Text>
+      </Card>
+
+      <Card title="Backup and restore">
+        <Text style={[typography.body, { color: colors.inkMuted }]}>
+          Export a full JSON backup, or restore one previously exported from ReadTrail.
+        </Text>
+        <Button
+          label={exporting ? "Exporting…" : "Export JSON"}
+          loading={exporting}
           onPress={onExport}
-          disabled={exporting}
-        >
-          <Text style={styles.buttonText}>{exporting ? "Exporting…" : "Export JSON"}</Text>
-        </Pressable>
-      </View>
+        />
+        <Button
+          label={importing ? "Importing…" : "Import JSON"}
+          variant="secondary"
+          loading={importing}
+          onPress={onImport}
+        />
+      </Card>
 
-      <View style={styles.card}>
-        <Text style={styles.cardTitle}>Clear all data</Text>
-        <Text style={styles.cardText}>
-          Delete all books and progress history from this device.
-        </Text>
-        <Pressable
-          style={[styles.dangerButton, clearing ? styles.buttonDisabled : null]}
+      <Card title="Danger zone">
+        <Button
+          label={clearing ? "Clearing…" : "Clear all data"}
+          variant="danger"
+          loading={clearing}
           onPress={confirmClearData}
-          disabled={clearing}
-        >
-          <Text style={styles.dangerButtonText}>
-            {clearing ? "Clearing…" : "Clear All Data"}
-          </Text>
-        </Pressable>
-      </View>
+        />
+      </Card>
 
-      <View style={styles.card}>
-        <Text style={styles.cardTitle}>Rate this app</Text>
-        <Text style={styles.cardText}>
-          Enjoying ReadTrail? Leave a review to help others discover it.
+      <Card title="About">
+        <Text style={[typography.body, { color: colors.inkMuted }]}>
+          Version {appVersionText}
         </Text>
-        <Pressable style={styles.outlineButton} onPress={handleRateApp}>
-          <Text style={styles.outlineButtonText}>Rate on App Store</Text>
-        </Pressable>
-      </View>
+        <Button label="Send feedback" variant="secondary" onPress={handleContact} />
+        <Button label="Rate ReadTrail" variant="ghost" onPress={handleRateApp} />
+      </Card>
 
-      <View style={styles.card}>
-        <Text style={styles.cardTitle}>Contact & Feedback</Text>
-        <Text style={styles.cardText}>
-          Have questions or suggestions? We'd love to hear from you.
+      <Card title="Privacy">
+        <Text style={[typography.body, { color: colors.inkMuted }]}>
+          Your reading data stays on this device unless you export it. Catalogue search is
+          optional and only runs when you request it. ReadTrail does not require an account
+          for offline use.
         </Text>
-        <Pressable style={styles.outlineButton} onPress={handleContact}>
-          <Text style={styles.outlineButtonText}>Send Feedback</Text>
-        </Pressable>
-      </View>
-
-      <View style={styles.card}>
-        <Text style={styles.cardTitle}>App version</Text>
-        <Text style={styles.cardText}>{appVersionText}</Text>
-      </View>
-
-      <View style={styles.card}>
-        <Text style={styles.cardTitle}>Privacy</Text>
-        <Text style={styles.cardText}>
-          Your data stays on your device. This app does not use cloud sync or authentication.
-        </Text>
-      </View>
+      </Card>
     </ScrollView>
   );
 }
 
+function Card({ title, children }: { title: string; children: React.ReactNode }) {
+  const { colors, typography, radii, spacing } = useTheme();
+  return (
+    <View
+      style={[
+        styles.card,
+        {
+          borderColor: colors.line,
+          backgroundColor: colors.paperElevated,
+          borderRadius: radii.lg,
+          padding: spacing.md,
+          gap: spacing.sm,
+        },
+      ]}
+    >
+      <Text style={[typography.subtitle, { color: colors.ink }]}>{title}</Text>
+      {children}
+    </View>
+  );
+}
+
+function RowSwitch({
+  label,
+  value,
+  onValueChange,
+}: {
+  label: string;
+  value: boolean;
+  onValueChange: (value: boolean) => void;
+}) {
+  const { colors, typography } = useTheme();
+  return (
+    <View style={styles.switchRow}>
+      <Text style={[typography.body, { color: colors.ink, flex: 1 }]}>{label}</Text>
+      <Switch
+        value={value}
+        onValueChange={onValueChange}
+        accessibilityLabel={label}
+        trackColor={{ true: colors.accent, false: colors.line }}
+      />
+    </View>
+  );
+}
+
 const styles = StyleSheet.create({
-  container: { flex: 1 },
-  content: { paddingHorizontal: 16, gap: 12 },
-  title: { fontSize: 24, fontWeight: "700" },
-  card: {
-    borderWidth: StyleSheet.hairlineWidth,
-    borderColor: "#ccc",
-    borderRadius: 12,
-    padding: 14,
-    gap: 8,
-  },
-  cardTitle: { fontSize: 16, fontWeight: "700" },
-  cardText: { opacity: 0.8 },
-  button: {
-    backgroundColor: "#111",
-    paddingVertical: 12,
-    borderRadius: 10,
+  card: { borderWidth: StyleSheet.hairlineWidth },
+  row: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
+  switchRow: {
+    flexDirection: "row",
     alignItems: "center",
+    justifyContent: "space-between",
+    gap: 12,
   },
-  buttonDisabled: { opacity: 0.6 },
-  buttonText: { color: "#fff", fontWeight: "700" },
-  dangerButton: {
-    backgroundColor: "#fff",
-    borderWidth: 1,
-    borderColor: "#B00020",
-    paddingVertical: 12,
-    borderRadius: 10,
-    alignItems: "center",
-  },
-  dangerButtonText: { color: "#B00020", fontWeight: "700" },
-  outlineButton: {
-    backgroundColor: "#fff",
-    borderWidth: 1,
-    borderColor: "#111",
-    paddingVertical: 12,
-    borderRadius: 10,
-    alignItems: "center",
-  },
-  outlineButtonText: { color: "#111", fontWeight: "700" },
 });

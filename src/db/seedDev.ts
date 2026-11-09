@@ -16,6 +16,9 @@ export async function seedDevData(): Promise<void> {
     totalPages: 320,
     status: "reading",
     currentPage: 42,
+    genre: "Self-help",
+    format: "physical",
+    ownership: "owned",
     createdAt: now,
     updatedAt: now,
   });
@@ -26,7 +29,10 @@ export async function seedDevData(): Promise<void> {
     author: "Cal Newport",
     totalPages: 304,
     status: "paused",
-    currentPage: 0,
+    currentPage: 18,
+    genre: "Productivity",
+    format: "ebook",
+    ownership: "owned",
     createdAt: now,
     updatedAt: now,
   });
@@ -38,6 +44,24 @@ export async function seedDevData(): Promise<void> {
     totalPages: 352,
     status: "finished",
     currentPage: 352,
+    genre: "Technology",
+    format: "physical",
+    ownership: "owned",
+    finishedAt: now,
+    createdAt: now,
+    updatedAt: now,
+  });
+
+  await createBook({
+    id: "seed-4",
+    title: "Project Hail Mary",
+    author: "Andy Weir",
+    totalPages: 476,
+    status: "want_to_read",
+    currentPage: 0,
+    genre: "Science fiction",
+    format: "audiobook",
+    ownership: "wishlist",
     createdAt: now,
     updatedAt: now,
   });

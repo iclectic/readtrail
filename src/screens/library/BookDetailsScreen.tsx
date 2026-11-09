@@ -5,7 +5,6 @@ import {
   FlatList,
   LayoutAnimation,
   Platform,
-  Pressable,
   StyleSheet,
   Text,
   UIManager,
@@ -13,16 +12,17 @@ import {
 } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-
-import type { Book } from "../../models/Book";
-import type { ProgressEntry } from "../../models/ProgressEntry";
+import type { Book, ProgressEntry } from "../../domain/types";
 import type { LibraryStackParamList } from "../../types/navigation";
-import { deleteBook, deleteProgressEntry, getBookById, getProgressEntriesByBookId } from "../../db";
+import { deleteBook, getBookById, getProgressEntriesByBookId } from "../../db";
+import { removeProgressEntry } from "../../services/progressService";
+import { progressPercent, statusLabel } from "../../domain/progress";
+import { Button, ProgressBar } from "../../components";
+import { useTheme } from "../../theme";
 import { formatDate } from "../../utils/formatDate";
 import { warningHaptic, successHaptic } from "../../utils/haptics";
 import { logger } from "../../utils/logger";
 
-// Enable LayoutAnimation on Android
 if (Platform.OS === "android" && UIManager.setLayoutAnimationEnabledExperimental) {
   UIManager.setLayoutAnimationEnabledExperimental(true);
 }
@@ -31,20 +31,17 @@ type Props = NativeStackScreenProps<LibraryStackParamList, "BookDetails">;
 
 export function BookDetailsScreen({ navigation, route }: Props) {
   const { bookId } = route.params;
-
+  const { colors, typography, spacing, radii } = useTheme();
   const [book, setBook] = useState<Book | null>(null);
   const [entries, setEntries] = useState<ProgressEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
 
-  const progressPercent = useMemo(() => {
-    if (!book) return null;
-    if (!book.totalPages || book.totalPages <= 0) return null;
-    const raw = (book.currentPage / book.totalPages) * 100;
-    const clamped = Math.max(0, Math.min(100, raw));
-    return Math.round(clamped);
-  }, [book]);
+  const percent = useMemo(
+    () => (book ? progressPercent(book.currentPage, book.totalPages) : null),
+    [book]
+  );
 
   const load = useCallback(async () => {
     try {
@@ -75,17 +72,14 @@ export function BookDetailsScreen({ navigation, route }: Props) {
   );
 
   function confirmDeleteBook() {
+    if (!book) return;
     warningHaptic();
     Alert.alert(
-      "Delete Book",
-      `Are you sure you want to delete "${book?.title}"? This will also delete all progress history for this book.`,
+      "Delete book",
+      `Are you sure you want to delete “${book.title}”? Progress, notes and sessions for this book will also be removed.`,
       [
         { text: "Cancel", style: "cancel" },
-        {
-          text: "Delete",
-          style: "destructive",
-          onPress: handleDeleteBook,
-        },
+        { text: "Delete", style: "destructive", onPress: handleDeleteBook },
       ]
     );
   }
@@ -107,169 +101,156 @@ export function BookDetailsScreen({ navigation, route }: Props) {
 
   function confirmDeleteEntry(entry: ProgressEntry) {
     warningHaptic();
-    Alert.alert(
-      "Delete Progress Entry",
-      `Delete the progress entry for page ${entry.page}?`,
-      [
-        { text: "Cancel", style: "cancel" },
-        {
-          text: "Delete",
-          style: "destructive",
-          onPress: () => handleDeleteEntry(entry.id),
-        },
-      ]
-    );
+    Alert.alert("Delete progress entry", `Delete the progress entry for page ${entry.page}?`, [
+      { text: "Cancel", style: "cancel" },
+      {
+        text: "Delete",
+        style: "destructive",
+        onPress: () => handleDeleteEntry(entry.id),
+      },
+    ]);
   }
 
   async function handleDeleteEntry(entryId: string) {
     try {
-      await deleteProgressEntry(entryId);
+      const updated = await removeProgressEntry(entryId, bookId);
       successHaptic();
       LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
       setEntries((prev) => prev.filter((e) => e.id !== entryId));
+      if (updated) setBook(updated);
     } catch (e) {
       logger.error("[book-details] failed to delete entry", e);
       Alert.alert("Error", "Could not delete this progress entry.");
     }
   }
 
+  if (loading) {
+    return (
+      <View style={styles.center}>
+        <ActivityIndicator color={colors.accent} />
+      </View>
+    );
+  }
+
+  if (error || !book) {
+    return (
+      <View style={styles.center}>
+        <Text style={{ color: colors.danger }}>{error ?? "Book not found."}</Text>
+      </View>
+    );
+  }
+
   return (
-    <View style={styles.container}>
-      {loading ? (
-        <View style={styles.center}>
-          <ActivityIndicator />
-          <Text style={styles.helperText}>Loading…</Text>
-        </View>
-      ) : error ? (
-        <View style={styles.center}>
-          <Text style={styles.errorText}>{error}</Text>
-        </View>
-      ) : !book ? (
-        <View style={styles.center}>
-          <Text style={styles.errorText}>Book not found.</Text>
-        </View>
-      ) : (
-        <>
-          <View style={styles.headerCard}>
-            <Text style={styles.title}>{book.title}</Text>
-            <Text style={styles.meta}>{book.author}</Text>
+    <View style={[styles.container, { backgroundColor: colors.paper, padding: spacing.md }]}>
+      <View
+        style={[
+          styles.headerCard,
+          {
+            borderColor: colors.line,
+            backgroundColor: colors.paperElevated,
+            borderRadius: radii.lg,
+            gap: spacing.xs,
+          },
+        ]}
+      >
+        <Text style={[typography.title, { color: colors.ink }]}>{book.title}</Text>
+        <Text style={[typography.body, { color: colors.inkMuted }]}>
+          {book.author || "Unknown author"}
+        </Text>
+        <Text style={[typography.caption, { color: colors.inkSubtle }]}>
+          {statusLabel(book.status)}
+          {book.format ? ` · ${book.format}` : ""}
+          {book.genre ? ` · ${book.genre}` : ""}
+        </Text>
+        <Text style={[typography.caption, { color: colors.inkMuted }]}>
+          Page {book.currentPage}
+          {book.totalPages > 0 ? ` of ${book.totalPages}` : ""}
+          {percent != null ? ` · ${percent}%` : ""}
+        </Text>
+        {percent != null ? <ProgressBar percent={percent} /> : null}
 
-            <View style={styles.row}>
-              <Text style={styles.meta}>Current page: {book.currentPage}</Text>
-              {progressPercent !== null ? (
-                <Text style={styles.meta}>{progressPercent}%</Text>
-              ) : null}
-            </View>
+        <Button
+          label="Update progress"
+          onPress={() => navigation.navigate("UpdateProgress", { bookId: book.id })}
+        />
+        <Button
+          label="Start reading session"
+          variant="secondary"
+          onPress={() => navigation.navigate("ReadingSession", { bookId: book.id })}
+        />
+        <Button
+          label="Notes & quotations"
+          variant="secondary"
+          onPress={() => navigation.navigate("NotesList", { bookId: book.id })}
+        />
+        <Button
+          label={deleting ? "Deleting…" : "Delete book"}
+          variant="danger"
+          loading={deleting}
+          onPress={confirmDeleteBook}
+        />
+      </View>
 
-            <Pressable
-              style={styles.primaryButton}
-              onPress={() => navigation.navigate("UpdateProgress", { bookId: book.id })}
-            >
-              <Text style={styles.primaryButtonText}>Update Progress</Text>
-            </Pressable>
+      <Text style={[typography.subtitle, { color: colors.ink, marginVertical: spacing.sm }]}>
+        Progress history
+      </Text>
 
-            <Pressable
-              style={[styles.deleteButton, deleting ? styles.deleteButtonDisabled : null]}
-              onPress={confirmDeleteBook}
-              disabled={deleting}
-            >
-              <Text style={styles.deleteButtonText}>
-                {deleting ? "Deleting…" : "Delete Book"}
-              </Text>
-            </Pressable>
-          </View>
-
-          <Text style={styles.sectionTitle}>Progress history</Text>
-
-          <FlatList
-            data={entries}
-            keyExtractor={(item) => item.id}
-            contentContainerStyle={entries.length === 0 ? styles.emptyContainer : undefined}
-            ListEmptyComponent={
-              <View style={styles.center}>
-                <Text style={styles.emptyTitle}>No progress yet</Text>
-                <Text style={styles.helperText}>
-                  Add your first progress update to start tracking.
+      <FlatList
+        data={entries}
+        keyExtractor={(item) => item.id}
+        ListEmptyComponent={
+          <Text style={{ color: colors.inkMuted }}>
+            Add your first progress update to start tracking.
+          </Text>
+        }
+        renderItem={({ item }) => (
+          <View
+            style={[
+              styles.entry,
+              {
+                borderColor: colors.line,
+                backgroundColor: colors.paperElevated,
+                borderRadius: radii.md,
+              },
+            ]}
+          >
+            <View style={styles.entryHeader}>
+              <View style={{ flex: 1 }}>
+                <Text style={[typography.bodyStrong, { color: colors.ink }]}>
+                  Page {item.page}
+                </Text>
+                <Text style={[typography.caption, { color: colors.inkSubtle }]}>
+                  {formatDate(item.createdAt)}
                 </Text>
               </View>
-            }
-            renderItem={({ item }) => (
-              <View style={styles.entryItem}>
-                <View style={styles.entryHeader}>
-                  <View style={styles.entryInfo}>
-                    <Text style={styles.entryTitle}>Page {item.page}</Text>
-                    <Text style={styles.entryMeta}>{formatDate(item.createdAt)}</Text>
-                  </View>
-                  <Pressable
-                    style={styles.entryDeleteButton}
-                    onPress={() => confirmDeleteEntry(item)}
-                  >
-                    <Text style={styles.entryDeleteText}>Delete</Text>
-                  </Pressable>
-                </View>
-                {item.note ? <Text style={styles.entryNote}>{item.note}</Text> : null}
-              </View>
-            )}
-          />
-        </>
-      )}
+              <Button
+                label="Delete"
+                variant="ghost"
+                onPress={() => confirmDeleteEntry(item)}
+              />
+            </View>
+            {item.note ? (
+              <Text style={[typography.body, { color: colors.inkMuted }]}>{item.note}</Text>
+            ) : null}
+          </View>
+        )}
+      />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 16 },
+  container: { flex: 1 },
   center: { flex: 1, justifyContent: "center", alignItems: "center", gap: 8 },
-  helperText: { opacity: 0.7, textAlign: "center" },
-  errorText: { color: "#B00020", textAlign: "center" },
   headerCard: {
     borderWidth: StyleSheet.hairlineWidth,
-    borderColor: "#ccc",
-    borderRadius: 12,
     padding: 14,
-    marginBottom: 16,
   },
-  title: { fontSize: 20, fontWeight: "700" },
-  meta: { marginTop: 6, opacity: 0.8 },
-  row: { flexDirection: "row", justifyContent: "space-between", marginTop: 8 },
-  primaryButton: {
-    marginTop: 12,
-    backgroundColor: "#111",
-    paddingVertical: 12,
-    borderRadius: 10,
-    alignItems: "center",
-  },
-  primaryButtonText: { color: "#fff", fontWeight: "700" },
-  deleteButton: {
-    marginTop: 10,
-    backgroundColor: "#fff",
-    borderWidth: 1,
-    borderColor: "#B00020",
-    paddingVertical: 12,
-    borderRadius: 10,
-    alignItems: "center",
-  },
-  deleteButtonDisabled: { opacity: 0.6 },
-  deleteButtonText: { color: "#B00020", fontWeight: "700" },
-  sectionTitle: { fontSize: 16, fontWeight: "700", marginBottom: 10 },
-  emptyContainer: { flexGrow: 1 },
-  emptyTitle: { fontSize: 18, fontWeight: "600" },
-  entryItem: {
+  entry: {
     borderWidth: StyleSheet.hairlineWidth,
-    borderColor: "#ccc",
-    borderRadius: 12,
     padding: 12,
     marginBottom: 10,
+    gap: 6,
   },
-  entryHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "flex-start",
-  },
-  entryInfo: { flex: 1 },
-  entryTitle: { fontWeight: "700" },
-  entryMeta: { marginTop: 4, opacity: 0.7 },
-  entryDeleteButton: { paddingLeft: 12 },
-  entryDeleteText: { color: "#B00020", fontWeight: "600" },
-  entryNote: { marginTop: 8 },
+  entryHeader: { flexDirection: "row", alignItems: "center", gap: 8 },
 });

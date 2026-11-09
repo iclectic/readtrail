@@ -6,140 +6,122 @@ Living tracker. Update when phases complete. **Do not mark work done without evi
 
 ## Completed
 
-- **Phase 0 — audit docs started**
-  - [ARCHITECTURE.md](./ARCHITECTURE.md)
-  - [FEATURE_AUDIT.md](./FEATURE_AUDIT.md)
-  - [PRODUCT_ROADMAP.md](./PRODUCT_ROADMAP.md)
-  - [DATABASE_DESIGN.md](./DATABASE_DESIGN.md)
-  - [TEST_STRATEGY.md](./TEST_STRATEGY.md)
-  - [RELEASE_CHECKLIST.md](./RELEASE_CHECKLIST.md)
-  - This progress file
+### Phase 0 — Discovery and audit
 
-### Pre-existing product baseline (before Phase 0 docs)
+- [ARCHITECTURE.md](./ARCHITECTURE.md)
+- [FEATURE_AUDIT.md](./FEATURE_AUDIT.md)
+- [PRODUCT_ROADMAP.md](./PRODUCT_ROADMAP.md)
+- [DATABASE_DESIGN.md](./DATABASE_DESIGN.md)
+- [TEST_STRATEGY.md](./TEST_STRATEGY.md)
+- [RELEASE_CHECKLIST.md](./RELEASE_CHECKLIST.md)
+- [ENGINEERING_DECISIONS.md](./ENGINEERING_DECISIONS.md)
 
-Verified working in the audited codebase (with known defects):
+### Phase 1 — Engineering foundation
 
-- Expo SDK 54 / RN 0.81.5 / React 19.1 / TypeScript strict  
-- ~2,021 LOC in `src/`  
-- SQLite books + progress_entries; repository helpers  
-- Screens: LibraryHome, BookDetails, AddEditBook, UpdateProgress, Stats, Settings  
-- Tabs: Library, Stats, Settings  
-- Add/edit books; progress with optional notes; search/filter/sort; basic stats; JSON export; clear data  
-- EAS profile stubs in `eas.json`  
-- Dev-only seed books  
+- Await `initDb` / migrations before rendering UI (`useAppBootstrap`, loading and error states)
+- `SafeAreaProvider` at app root
+- Versioned migrations (`PRAGMA user_version`) with legacy DB detection
+- Expanded schema (books metadata, sessions, notes, collections, tags, goals, achievements, settings)
+- Domain layer: progress, streaks, goals, analytics (pure, tested)
+- Application services: progress (transactional), sessions, backup/import, metadata providers, recommendations, achievements
+- Design system tokens + ThemeProvider (light/dark/system) + reusable UI primitives
+- British English copy module (`src/i18n/en-GB.ts`)
+- Jest unit tests + `npm run typecheck` + GitHub Actions CI workflow
+- npm scripts: `typecheck`, `test`, `lint`
+
+### Phase 2 — Core reading experience (substantial progress)
+
+- Library statuses: Want to read, Reading, Paused, Finished, Did not finish
+- Manual add/edit with format, ownership, genre, ISBN, rating, description
+- Catalogue search + ISBN lookup via Open Library (graceful offline failure)
+- Transactional progress updates with page validation and status inference
+- Progress delete recomputes `currentPage`
+- Timed reading sessions (start/end with duration + page)
+- Notes journal (note / quote / reflection, favourites, tags, page refs)
+- Collections CRUD
+- Onboarding screen (~one-minute path to first book)
+
+### Phase 3 — Advanced features (substantial progress)
+
+- Goals (daily/weekly/monthly/yearly pages, minutes, books) with progress bars
+- Analytics dashboard with correct page-delta and session-time metrics
+- Achievements evaluation
+- Export/import full JSON backup (format version 2)
+- Settings: theme, streak toggle, reminder preference flag, reduce motion, privacy copy
+
+### Phase 4 — Discovery (initial)
+
+- Deterministic on-device recommendations from personal library
+- Discover tab: title search + ISBN lookup → prefill Add Book
 
 ---
 
 ## Current
 
-**Phase 1 — foundation** (in progress / next implementation work)
-
-Focus areas:
-
-1. Fix startup race — await `initDb` (+ migrations) before render  
-2. Migration runner using `PRAGMA user_version`  
-3. `SafeAreaProvider` at app root  
-4. Design system primitives (replace empty `src/components` barrel)  
-5. Domain types (`BookStatus` union, progress invariants)  
-6. Tests (Jest) and CI gates  
-7. npm scripts: `typecheck`, `test`, `lint`  
-
-Empty scaffolding already on disk (not implementations): `__tests__/{db,domain,services}/`, `.github/workflows/`.
+Hardening and polish: lint clean-up, remaining accessibility pass, camera ISBN scanning, richer charts, reading memory spaced repetition, store assets.
 
 ---
 
 ## Remaining
 
-### Phase 1 — foundation
+### Still open / partial
 
-- [ ] Bootstrap gate / await DB  
-- [ ] Migrations + `schema_migrations` / `user_version`  
-- [ ] Safe area provider  
-- [ ] Domain types and invariants module  
-- [ ] Application services layer for writes  
-- [ ] Design system tokens + primitives  
-- [ ] Jest setup + first unit/integration tests  
-- [ ] ESLint + GitHub Actions CI  
-- [ ] British English for new/changed copy  
-
-### Phase 2 — data integrity and core UX
-
-- [ ] Transactional progress updates  
-- [ ] Recompute `currentPage` on progress delete  
-- [ ] `page <= totalPages` validation  
-- [ ] Stats cleanup; edit-from-details polish  
-
-### Phase 3 — library depth
-
-- [ ] ISBN, covers, tags, collections  
-
-### Phase 4 — sessions and journal
-
-- [ ] `reading_sessions`, first-class `notes`  
-
-### Phase 5 — goals, achievements, richer stats
-
-- [ ] Goals, achievements, charts  
-
-### Phase 6 — import and portability
-
-- [ ] JSON import; export versioning  
-
-### Phase 7 — a11y, dark mode, i18n
-
-- [ ] Accessibility pass, theme, en-GB i18n scaffolding  
-
-### Phase 8 — discovery / optional AI
-
-- [ ] Opt-in catalogue/ISBN helpers; AI only if warranted  
-
-### Phase 9 — store release
-
-- [ ] Privacy/support URLs, listings, production builds, checklist green  
+- [ ] Native barcode/ISBN camera scanning (metadata ISBN lookup exists)
+- [ ] Bulk library operations and duplicate detection UI
+- [ ] Virtualised performance pass on very large libraries (FlatList present; needs profiling on device)
+- [ ] Accessible chart components / annual shareable reading report graphics
+- [ ] Reading Memory spaced-repetition surfaces
+- [ ] Optional AI features (explicitly deferred — requires consent + cost controls)
+- [ ] Cloud sync / social (deferred until core reliability + moderation readiness)
+- [ ] Scheduled local notifications for reminders (preference stored; OS scheduling not wired)
+- [ ] Detox/Maestro E2E suite on simulators/devices
+- [ ] Store screenshots, privacy policy URL hosting, production signing (needs owner credentials)
+- [ ] Real-device performance benchmarks
 
 ---
 
 ## Test results
 
-**None yet.** No test files, no CI runs, no recorded device QA matrix.
+Executed in this environment:
+
+| Check | Result |
+|-------|--------|
+| `npm run typecheck` | Passed |
+| `npm test` | Passed (19 tests) |
+| `npm run lint` | See latest CI / local run notes |
+| Native Android/iOS build | Not executed in this cloud environment |
+| Device E2E | Not executed |
 
 ---
 
-## Known issues (critical)
+## Known issues
 
-1. **App does not await `initDb` before render** — `App.tsx` fires init in `useEffect`; navigation mounts immediately.  
-2. **No `SafeAreaProvider`** — Stats/Settings use `useSafeAreaInsets` without a provider.  
-3. **Non-atomic progress writes** — `addProgressEntry` then `updateBook` without a transaction.  
-4. **Deleting progress does not recompute `currentPage`** — book page can remain stale.  
-5. **No `page <= totalPages` validation** on progress save.  
-6. **No schema migrations** — only `CREATE TABLE IF NOT EXISTS`; upgrades cannot alter schema safely.  
-7. **`Book.status` typed as `string`** — loses reading \| paused \| finished safety.  
-
-Additional gaps (non-exhaustive): no tests, no lint scripts, empty components barrel, no import, no dark mode, no a11y programme, no i18n, no ISBN/collections/tags/covers/sessions/goals/journal/discovery/AI/social.
+1. Reminder preference is stored but local notification scheduling is not yet wired (needs `expo-notifications` + permission UX).
+2. Catalogue search requires network; offline users must enter books manually (by design).
+3. Cover images use remote URLs when available; no local cover cache pipeline yet.
+4. Dependency audit reports vulnerabilities in the wider npm tree — review before store release.
+5. Lint may still warn on unused vars in transitional screens; CI lint step is non-blocking until cleaned.
 
 ---
 
 ## Architectural decisions
 
+See [ENGINEERING_DECISIONS.md](./ENGINEERING_DECISIONS.md).
+
 | Decision | Choice |
 |----------|--------|
-| Client stack | **Keep** Expo + React Native + TypeScript |
-| Persistence | **Keep** SQLite (`expo-sqlite`) |
-| Module shape | **Feature-based modules** with layered dependencies (presentation → application → domain → repositories → persistence → integrations) |
-| Sync | **Offline-first**; **no cloud auth/sync** until the core product is solid |
-| Product language | **British English** going forward |
-| Scope guard | Tracker companion, not an ebook reader engine |
-
-Details: [ARCHITECTURE.md](./ARCHITECTURE.md).
+| Client stack | Keep Expo + React Native + TypeScript |
+| Persistence | SQLite with versioned migrations |
+| Sync | Offline-first; no cloud yet |
+| Language | British English |
+| Recommendations | Deterministic / metadata-based first |
 
 ---
 
-## Next
+## Next recommended action
 
-1. Fix **startup race** and add **`SafeAreaProvider`**.  
-2. Land **migrations** (`user_version`).  
-3. Introduce **design system** + **domain types**.  
-4. Add **tests** and **CI**.  
-5. Then Phase 2 integrity fixes (transactions, recompute, validation).  
-
-Roadmap: [PRODUCT_ROADMAP.md](./PRODUCT_ROADMAP.md).
+1. Wire `expo-notifications` behind the existing reminder toggle (with clear permission rationale).
+2. Add camera barcode scanning for ISBN.
+3. Add Maestro/Detox smoke flows for onboarding → add book → progress → export.
+4. Produce store listing assets and privacy policy URL once product copy is approved.
+5. Run production EAS builds only with explicit authorisation for credentials/spend.
