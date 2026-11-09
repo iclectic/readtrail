@@ -3,7 +3,7 @@
 Evidence of checks completed during autonomous implementation. Do not treat unverified device or store steps as done.
 
 **Report date:** 9 November 2026 (Europe/London)  
-**Branches verified:** foundation (#1 merged), hardening (#2), production polish (this stage)
+**Branches verified:** foundation (#1 merged), hardening (#2), production polish (#3), release prep (this stage)
 
 ---
 
@@ -12,7 +12,7 @@ Evidence of checks completed during autonomous implementation. Do not treat unve
 | Check | Command | Result |
 |-------|---------|--------|
 | TypeScript | `npm run typecheck` | Passed |
-| Unit tests | `npm test` | Passed (30 tests) |
+| Unit tests | `npm test` | Passed (32 tests) |
 | Lint | `npm run lint` | Passed (`--max-warnings 0`) |
 
 ---
@@ -24,6 +24,16 @@ Evidence of checks completed during autonomous implementation. Do not treat unve
 - CSV parse/serialise round-trip
 - Tag name parsing
 - Backup JSON parse guards
+- Release config URL helpers (unset until authorised)
+
+---
+
+## Release prep artefacts added
+
+- Hostable privacy HTML (`docs/site/privacy/`)
+- Store listing, data safety, age rating, screenshot guide, EAS notes
+- Feature graphic SVG draft
+- Settings/Privacy wired to `src/config/release.ts`
 
 ---
 
@@ -35,7 +45,7 @@ Evidence of checks completed during autonomous implementation. Do not treat unve
 | Maestro smoke on device | Config present (`.maestro/`); needs installed app + simulator |
 | EAS production builds | Requires owner Expo account credentials and spend authorisation |
 | Store submission | Explicitly blocked without authorisation |
-| Hosted privacy policy URL | Needs external hosting decision |
+| Hosted privacy policy URL | Static page prepared; external hosting still required |
 | Physical device performance profiling | Needs target devices and methodology run |
 
 ---
@@ -43,7 +53,7 @@ Evidence of checks completed during autonomous implementation. Do not treat unve
 ## Remaining release blockers (owner)
 
 1. Confirm `support@readtrail.app` mailbox.
-2. Host public privacy policy URL (content drafted in-app + `docs/PRIVACY.md`).
+2. Host `docs/site/privacy/` and set `PRIVACY_POLICY_URL`.
 3. Capture store screenshots (phone; tablet if keeping `supportsTablet`).
 4. Authorise EAS production builds and store listing submission.
 5. Re-run `npm audit` triage using `docs/SECURITY.md`.

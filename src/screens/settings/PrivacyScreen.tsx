@@ -1,6 +1,8 @@
 import React from "react";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { Alert, Linking, ScrollView, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Button } from "../../components";
+import { privacyPolicyUrl, SUPPORT_EMAIL } from "../../config/release";
 import { useTheme } from "../../theme";
 
 const SECTIONS: { title: string; body: string }[] = [
@@ -29,14 +31,19 @@ const SECTIONS: { title: string; body: string }[] = [
     body: "ReadTrail does not send your private notes to third-party AI services. Any future AI feature will be optional and will require informed consent before private text leaves the device.",
   },
   {
+    title: "Accounts",
+    body: "ReadTrail does not create user accounts for core use. There is no cloud account deletion flow because there is no cloud account. Clearing local data is available in Settings.",
+  },
+  {
     title: "Contact",
-    body: "support@readtrail.app",
+    body: SUPPORT_EMAIL,
   },
 ];
 
 export function PrivacyScreen() {
   const insets = useSafeAreaInsets();
   const { colors, typography, spacing, radii } = useTheme();
+  const publicUrl = privacyPolicyUrl();
 
   return (
     <ScrollView
@@ -51,9 +58,20 @@ export function PrivacyScreen() {
     >
       <Text style={[typography.title, { color: colors.ink }]}>Privacy notice</Text>
       <Text style={[typography.body, { color: colors.inkMuted }]}>
-        This in-app notice mirrors the project privacy draft. A public URL should be hosted
-        before store submission.
+        This in-app notice mirrors the hostable draft in docs/site/privacy. Host that page
+        publicly before store submission, then set PRIVACY_POLICY_URL in the release config.
       </Text>
+      {publicUrl ? (
+        <Button
+          label="Open hosted privacy policy"
+          variant="secondary"
+          onPress={() => {
+            Linking.openURL(publicUrl).catch(() => {
+              Alert.alert("Error", "Could not open the privacy policy URL.");
+            });
+          }}
+        />
+      ) : null}
       {SECTIONS.map((section) => (
         <View
           key={section.title}

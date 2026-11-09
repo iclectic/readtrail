@@ -1,10 +1,10 @@
 # ReadTrail privacy notice (draft)
 
-This draft supports store preparation. Host a final version at a public URL before submission.
+This draft supports store preparation. A hostable HTML copy lives at [`docs/site/privacy/index.html`](./site/privacy/index.html). Publish that folder to a public URL, then set `PRIVACY_POLICY_URL` in `src/config/release.ts`.
 
 ## Summary
 
-ReadTrail is designed as an offline-first personal reading companion. Core library, progress, notes, goals and statistics are stored locally on your device in SQLite.
+ReadTrail is an offline-first personal reading companion. Core library, progress, notes, goals and statistics are stored locally on your device in SQLite.
 
 ## Data we store on device
 
@@ -12,22 +12,32 @@ ReadTrail is designed as an offline-first personal reading companion. Core libra
 - Reading progress, sessions and notes
 - Goals, achievements and preferences
 - Optional backup files you create
+- Optional local product event counts that never leave the device unless you export files yourself
 
 ## Network use
 
 - No account is required for offline reading tracking.
-- If you choose **Search catalogues** or **Look up ISBN**, ReadTrail requests metadata from Open Library.
+- If you choose **Search catalogues**, **Look up ISBN**, or **Scan barcode** with online lookup, ReadTrail requests metadata from Open Library.
 - Feedback email opens your mail client; that is handled by the operating system.
 
 ## Sharing and export
 
-- Export creates a JSON file you control via the system share sheet.
-- Import replaces local data only after explicit confirmation.
+- Export creates JSON, CSV or Markdown files you control via the system share sheet.
+- Import replaces or merges local data only after explicit confirmation.
 
 ## Permissions
 
-- Document picker access is used only when you import a backup.
-- Future reminder notifications and camera ISBN scanning will request permission only when you enable those features, with an on-screen explanation.
+- Camera is used only to scan ISBN barcodes.
+- Notifications are used only for an optional daily reading reminder you can disable at any time.
+- Document picker access is used only when you import a backup or CSV.
+
+## Artificial intelligence
+
+ReadTrail does not send your private notes to third-party AI services. Any future AI feature will be optional and will require informed consent before private text leaves the device.
+
+## Accounts
+
+ReadTrail does not create user accounts for core use. There is no cloud account deletion flow because there is no cloud account. Clearing local data is available in Settings.
 
 ## Children’s privacy
 
@@ -39,4 +49,4 @@ support@readtrail.app
 
 ## Changes
 
-We will update this notice when synchronisation, analytics or AI features are introduced. Optional cloud or AI features will require informed consent before private notes leave the device.
+We will update this notice when synchronisation, remote analytics or AI features are introduced. Optional cloud or AI features will require informed consent before private notes leave the device.

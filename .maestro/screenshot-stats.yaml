@@ -1,0 +1,6 @@
+appId: com.iclectic.readtrail
+---
+- launchApp
+- tapOn: "Stats"
+- assertVisible: "Stats"
+- takeScreenshot: store-stats

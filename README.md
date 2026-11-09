@@ -72,7 +72,7 @@ All core reading data is stored locally in SQLite.
 
 ## Builds (EAS)
 
-`eas.json` includes `development`, `preview` and `production` profiles.
+`eas.json` includes `development`, `preview` and `production` profiles. See `docs/EAS_RELEASE.md`.
 
 ```bash
 eas build --profile production --platform ios
@@ -80,6 +80,10 @@ eas build --profile production --platform android
 ```
 
 Do not submit to stores or change production credentials without explicit authorisation.
+
+## Privacy policy (hosting)
+
+A static privacy page ready for GitHub Pages (or any static host) lives at `docs/site/privacy/`. After it is public, set `PRIVACY_POLICY_URL` in `src/config/release.ts`.
 
 ## Licence
 

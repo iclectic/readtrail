@@ -1,0 +1,6 @@
+appId: com.iclectic.readtrail
+---
+- launchApp
+- assertVisible: "Library"
+- tapOn: "Library"
+- takeScreenshot: store-library

@@ -2,6 +2,7 @@ import React, { useMemo, useState } from "react";
 import {
   Alert,
   Linking,
+  Platform,
   ScrollView,
   StyleSheet,
   Switch,
@@ -31,6 +32,12 @@ import { lightHaptic, warningHaptic, successHaptic } from "../../utils/haptics";
 import { logger } from "../../utils/logger";
 import type { AppSettings } from "../../domain/types";
 import type { SettingsStackParamList } from "../../navigation/SettingsStack";
+import {
+  appStoreUrl,
+  playStoreUrl,
+  privacyPolicyUrl,
+  supportMailto,
+} from "../../config/release";
 
 export function SettingsScreen() {
   const insets = useSafeAreaInsets();
@@ -212,19 +219,37 @@ export function SettingsScreen() {
 
   function handleRateApp() {
     lightHaptic();
-    Alert.alert(
-      "Rate ReadTrail",
-      "The app is not published yet. Once it is live, this will open the App Store or Play Store.",
-      [{ text: "OK" }]
-    );
+    const url =
+      Platform.OS === "ios" ? appStoreUrl() : Platform.OS === "android" ? playStoreUrl() : null;
+    if (!url) {
+      Alert.alert(
+        "Rate ReadTrail",
+        "The app is not published yet. Once the store listing is live, set the IDs in the release config and this button will open the store page.",
+        [{ text: "OK" }]
+      );
+      return;
+    }
+    Linking.openURL(url).catch(() => {
+      Alert.alert("Error", "Could not open the store page.");
+    });
   }
 
   function handleContact() {
     lightHaptic();
-    Linking.openURL(
-      "mailto:support@readtrail.app?subject=ReadTrail%20Feedback"
-    ).catch(() => {
+    Linking.openURL(supportMailto()).catch(() => {
       Alert.alert("Error", "Could not open the email app.");
+    });
+  }
+
+  function handleOpenPrivacyUrl() {
+    lightHaptic();
+    const url = privacyPolicyUrl();
+    if (!url) {
+      navigation.navigate("Privacy");
+      return;
+    }
+    Linking.openURL(url).catch(() => {
+      navigation.navigate("Privacy");
     });
   }
 
@@ -394,6 +419,13 @@ export function SettingsScreen() {
           variant="secondary"
           onPress={() => navigation.navigate("Privacy")}
         />
+        {privacyPolicyUrl() ? (
+          <Button
+            label="Open privacy policy online"
+            variant="ghost"
+            onPress={handleOpenPrivacyUrl}
+          />
+        ) : null}
       </Card>
     </ScrollView>
   );
