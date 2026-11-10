@@ -13,8 +13,8 @@ function read(rel: string): string {
 }
 
 describe("release readiness artefacts", () => {
-  it("keeps store/privacy URLs unset until the owner hosts and authorises them", () => {
-    expect(PRIVACY_POLICY_URL).toBe("");
+  it("points privacy at a public HTTPS page; keeps store IDs unset until live", () => {
+    expect(PRIVACY_POLICY_URL).toMatch(/^https:\/\/.+/);
     expect(APP_STORE_ID).toBe("");
     expect(PLAY_STORE_LISTING_LIVE).toBe(false);
   });

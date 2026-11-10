@@ -1,18 +1,20 @@
 /**
  * Public release endpoints and store identifiers.
  *
- * Leave URL / ID fields empty until they are live. Settings and privacy
- * screens fall back to in-app copy and mailto when values are unset.
- * Do not submit builds or invent live store URLs without authorisation.
+ * Privacy is hosted from the repo via jsDelivr until GitHub Pages is enabled.
+ * Keep App Store / Play listing flags empty until those listings are live.
+ * Do not submit builds without explicit authorisation.
  */
 
 export const SUPPORT_EMAIL = "support@readtrail.app";
 
 /**
- * Public privacy policy URL once hosted (e.g. GitHub Pages).
- * After enabling Pages, typically: https://iclectic.github.io/readtrail/privacy/
+ * Public privacy policy URL.
+ * Serves `docs/site/privacy/` from main via jsDelivr (verified HTTPS).
+ * Prefer a GitHub Pages or custom domain URL once Pages is enabled.
  */
-export const PRIVACY_POLICY_URL = "";
+export const PRIVACY_POLICY_URL =
+  "https://cdn.jsdelivr.net/gh/iclectic/readtrail@main/docs/site/privacy/";
 
 /**
  * Apple App Store numeric app ID (from App Store Connect).
