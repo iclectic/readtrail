@@ -30,16 +30,24 @@ Capture on simulators or devices after a production or preview build. Do not inv
 | 5 | Discover | Search results from Open Library (online) |
 | 6 | Settings / Privacy | Privacy card or in-app privacy notice |
 
+## Drop zone
+
+Final PNGs + captions: [`store/screenshots/en-GB/`](../store/screenshots/en-GB/).  
+Validate: `npm run check:screenshots`.
+
 ## Automation stubs
 
-Maestro flows under `.maestro/` can navigate happy paths once the app is installed:
+Maestro flows under `.maestro/` navigate to each store shot once the app is installed with the demo seed:
 
-- `smoke-library.yaml`
-- `smoke-settings-export.yaml`
-- `screenshot-library.yaml` (navigate to Library)
-- `screenshot-stats.yaml` (navigate to Stats)
+- `screenshot-library.yaml`
+- `screenshot-book-details.yaml`
+- `screenshot-session.yaml`
+- `screenshot-stats.yaml`
+- `screenshot-discover.yaml`
+- `screenshot-settings.yaml`
+- `screenshot-privacy.yaml`
 
-Maestro does not replace store-quality framed screenshots; use these for regression smoke, then capture manually or with a dedicated screenshot pipeline.
+Maestro does not replace store-quality framed screenshots at the required pixel sizes; re-capture or scale with the platform screenshot tool into `store/screenshots/en-GB/`.
 
 ## Framing
 

@@ -38,10 +38,11 @@ Optional upgrades:
 ## 3. Screenshots
 
 1. Dev/preview build with empty library (auto seed) **or** Settings → Developer → Load screenshot demo library.  
-2. Follow [SCREENSHOT_GUIDE.md](./SCREENSHOT_GUIDE.md).  
-3. Listing copy: [STORE_LISTING.md](./STORE_LISTING.md).  
-4. Feature graphic: upload `docs/site/feature-graphic.png` (or regenerate with `npm run export:feature-graphic`).
-5. Paste listing fields from `store/metadata/en-GB/`.
+2. Follow [SCREENSHOT_GUIDE.md](./SCREENSHOT_GUIDE.md) and drop PNGs into [`store/screenshots/en-GB/`](../store/screenshots/en-GB/).  
+3. Optional: run `.maestro/screenshot-*.yaml` flows, then re-export at store pixel sizes.  
+4. `npm run check:screenshots`  
+5. Listing copy: [STORE_LISTING.md](./STORE_LISTING.md) / `store/metadata/en-GB/`.  
+6. Feature graphic: upload `docs/site/feature-graphic.png`.
 
 ---
 

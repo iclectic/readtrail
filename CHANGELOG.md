@@ -29,6 +29,7 @@ First public offline-first release candidate.
 
 ### Known owner follow-ups
 
-- Host privacy URL and set `PRIVACY_POLICY_URL`
-- Capture store screenshots; authorise EAS/store submission
+- Capture store screenshots into `store/screenshots/en-GB/` (Maestro flows + `npm run check:screenshots` ready)
+- Authorise EAS/store submission
 - Repository licence decision
+- Optional: cleaner privacy host than jsDelivr

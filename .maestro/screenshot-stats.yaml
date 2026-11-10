@@ -2,5 +2,7 @@ appId: com.iclectic.readtrail
 ---
 - launchApp
 - tapOn: "Stats"
-- assertVisible: "Stats"
+- extendedWaitUntil:
+    visible: "Stats"
+    timeout: 15000
 - takeScreenshot: store-stats
