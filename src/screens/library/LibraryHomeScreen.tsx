@@ -1,6 +1,7 @@
 import React, { useCallback, useMemo, useState } from "react";
 import {
   ActivityIndicator,
+  Alert,
   FlatList,
   LayoutAnimation,
   Platform,
@@ -17,12 +18,20 @@ import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { LibraryStackParamList } from "../../types/navigation";
 import type { Book, BookStatus } from "../../domain/types";
 import { BOOK_STATUSES } from "../../domain/types";
-import { getAllBooks } from "../../db";
-import { BookListItem, Chip, EmptyState } from "../../components";
+import type { Tag } from "../../domain/types";
+import { getAllBooks, getAllCollections, getAllTags, getBookIdsByTagId } from "../../db";
+import { findDuplicateGroups } from "../../domain/duplicates";
+import {
+  bulkAddToCollection,
+  bulkDeleteBooks,
+  bulkUpdateStatus,
+} from "../../services/libraryBulkService";
+import { BookListItem, Button, Chip, EmptyState } from "../../components";
 import { useTheme } from "../../theme";
 import { t } from "../../i18n";
 import { logger } from "../../utils/logger";
 import { statusLabel } from "../../domain/progress";
+import { successHaptic, warningHaptic } from "../../utils/haptics";
 
 if (Platform.OS === "android" && UIManager.setLayoutAnimationEnabledExperimental) {
   UIManager.setLayoutAnimationEnabledExperimental(true);
@@ -33,7 +42,7 @@ type StatusFilter = "all" | BookStatus;
 type SortOption = "recent" | "title" | "author" | "progress";
 
 export function LibraryHomeScreen({ navigation }: Props) {
-  const { colors, typography, spacing } = useTheme();
+  const { colors, typography, spacing, reduceMotion } = useTheme();
   const copy = t();
   const [books, setBooks] = useState<Book[]>([]);
   const [loading, setLoading] = useState(true);
@@ -42,11 +51,20 @@ export function LibraryHomeScreen({ navigation }: Props) {
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState<SortOption>("recent");
+  const [selectionMode, setSelectionMode] = useState(false);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [duplicateCount, setDuplicateCount] = useState(0);
+  const [tags, setTags] = useState<Tag[]>([]);
+  const [tagFilter, setTagFilter] = useState<string | null>(null);
+  const [tagBookIds, setTagBookIds] = useState<Set<string> | null>(null);
 
   const filteredBooks = useMemo(() => {
     let result = [...books];
     if (statusFilter !== "all") {
       result = result.filter((b) => b.status === statusFilter);
+    }
+    if (tagFilter && tagBookIds) {
+      result = result.filter((b) => tagBookIds.has(b.id));
     }
     const query = searchQuery.trim().toLowerCase();
     if (query) {
@@ -78,7 +96,7 @@ export function LibraryHomeScreen({ navigation }: Props) {
         );
     }
     return result;
-  }, [books, statusFilter, searchQuery, sortBy]);
+  }, [books, statusFilter, searchQuery, sortBy, tagFilter, tagBookIds]);
 
   const loadBooks = useCallback(async (isRefresh = false) => {
     try {
@@ -86,8 +104,12 @@ export function LibraryHomeScreen({ navigation }: Props) {
       else setLoading(true);
       setError(null);
       const rows = await getAllBooks();
-      LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+      if (!reduceMotion) {
+        LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+      }
       setBooks(rows);
+      setDuplicateCount(findDuplicateGroups(rows).length);
+      setTags(await getAllTags());
     } catch (e) {
       setError("Could not load your library.");
       logger.error("[library] failed to load books", e);
@@ -95,6 +117,16 @@ export function LibraryHomeScreen({ navigation }: Props) {
       setLoading(false);
       setRefreshing(false);
     }
+  }, [reduceMotion]);
+
+  const onSelectTag = useCallback(async (tagId: string | null) => {
+    setTagFilter(tagId);
+    if (!tagId) {
+      setTagBookIds(null);
+      return;
+    }
+    const ids = await getBookIdsByTagId(tagId);
+    setTagBookIds(new Set(ids));
   }, []);
 
   useFocusEffect(
@@ -102,6 +134,81 @@ export function LibraryHomeScreen({ navigation }: Props) {
       loadBooks();
     }, [loadBooks])
   );
+
+  function toggleSelect(id: string) {
+    setSelectionMode(true);
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }
+
+  function clearSelection() {
+    setSelectedIds(new Set());
+    setSelectionMode(false);
+  }
+
+  async function onBulkStatus(status: BookStatus) {
+    const ids = [...selectedIds];
+    if (!ids.length) return;
+    await bulkUpdateStatus(ids, status);
+    successHaptic();
+    clearSelection();
+    await loadBooks();
+  }
+
+  function onBulkDelete() {
+    const ids = [...selectedIds];
+    if (!ids.length) return;
+    warningHaptic();
+    Alert.alert(
+      "Delete selected books",
+      `Delete ${ids.length} book${ids.length === 1 ? "" : "s"} and their progress?`,
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: async () => {
+            await bulkDeleteBooks(ids);
+            successHaptic();
+            clearSelection();
+            await loadBooks();
+          },
+        },
+      ]
+    );
+  }
+
+  async function onBulkCollection() {
+    const ids = [...selectedIds];
+    if (!ids.length) return;
+    const collections = await getAllCollections();
+    if (!collections.length) {
+      Alert.alert("No collections", "Create a collection first, then try again.", [
+        { text: "OK" },
+        { text: "Create", onPress: () => navigation.navigate("Collections") },
+      ]);
+      return;
+    }
+    Alert.alert(
+      "Add to collection",
+      "Choose a collection for the selected books.",
+      [
+        ...collections.slice(0, 5).map((c) => ({
+          text: c.name,
+          onPress: async () => {
+            await bulkAddToCollection(ids, c.id);
+            successHaptic();
+            clearSelection();
+          },
+        })),
+        { text: "Cancel", style: "cancel" as const },
+      ]
+    );
+  }
 
   return (
     <View style={[styles.container, { backgroundColor: colors.paper, padding: spacing.md }]}>
@@ -156,16 +263,67 @@ export function LibraryHomeScreen({ navigation }: Props) {
         ))}
       </View>
 
-      <Pressable
-        onPress={() => navigation.navigate("Collections")}
-        accessibilityRole="button"
-        accessibilityLabel="Manage collections"
-        style={{ marginBottom: spacing.sm }}
-      >
-        <Text style={[typography.caption, { color: colors.accent, fontWeight: "700" }]}>
-          Manage collections
-        </Text>
-      </Pressable>
+      {tags.length > 0 ? (
+        <View style={styles.filterRow}>
+          <Text style={[typography.caption, { color: colors.inkMuted }]}>Tags</Text>
+          <Chip
+            label="Any tag"
+            selected={tagFilter == null}
+            onPress={() => void onSelectTag(null)}
+          />
+          {tags.slice(0, 12).map((tag) => (
+            <Chip
+              key={tag.id}
+              label={tag.name}
+              selected={tagFilter === tag.id}
+              onPress={() => void onSelectTag(tag.id)}
+            />
+          ))}
+        </View>
+      ) : null}
+
+      <View style={styles.links}>
+        <Pressable onPress={() => navigation.navigate("Collections")} accessibilityRole="button">
+          <Text style={[typography.caption, { color: colors.accent, fontWeight: "700" }]}>
+            Collections
+          </Text>
+        </Pressable>
+        <Pressable
+          onPress={() => navigation.navigate("Duplicates")}
+          accessibilityRole="button"
+          accessibilityLabel={`Possible duplicates, ${duplicateCount} groups`}
+        >
+          <Text style={[typography.caption, { color: colors.accent, fontWeight: "700" }]}>
+            Duplicates{duplicateCount > 0 ? ` (${duplicateCount})` : ""}
+          </Text>
+        </Pressable>
+        <Pressable
+          onPress={() =>
+            selectionMode ? clearSelection() : setSelectionMode(true)
+          }
+          accessibilityRole="button"
+        >
+          <Text style={[typography.caption, { color: colors.accent, fontWeight: "700" }]}>
+            {selectionMode ? "Cancel select" : "Select"}
+          </Text>
+        </Pressable>
+      </View>
+
+      {selectionMode && selectedIds.size > 0 ? (
+        <View style={{ gap: spacing.xs, marginBottom: spacing.sm }}>
+          <Text style={[typography.caption, { color: colors.inkMuted }]}>
+            {selectedIds.size} selected
+          </Text>
+          <View style={styles.bulkRow}>
+            <Button label="Reading" variant="secondary" onPress={() => void onBulkStatus("reading")} />
+            <Button label="Finished" variant="secondary" onPress={() => void onBulkStatus("finished")} />
+          </View>
+          <View style={styles.bulkRow}>
+            <Button label="Add to collection" variant="secondary" onPress={() => void onBulkCollection()} />
+            <Button label="Delete" variant="danger" onPress={onBulkDelete} />
+          </View>
+        </View>
+      ) : null}
 
       {loading ? (
         <View style={styles.center}>
@@ -178,6 +336,10 @@ export function LibraryHomeScreen({ navigation }: Props) {
         <FlatList
           data={filteredBooks}
           keyExtractor={(item) => item.id}
+          initialNumToRender={12}
+          maxToRenderPerBatch={16}
+          windowSize={11}
+          removeClippedSubviews={Platform.OS === "android"}
           contentContainerStyle={filteredBooks.length === 0 ? styles.emptyContainer : undefined}
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={() => loadBooks(true)} />
@@ -198,7 +360,9 @@ export function LibraryHomeScreen({ navigation }: Props) {
                     ? copy.library.emptyBody
                     : "Try selecting a different filter."
               }
-              actionLabel={statusFilter === "all" && !searchQuery.trim() ? copy.library.addBook : undefined}
+              actionLabel={
+                statusFilter === "all" && !searchQuery.trim() ? copy.library.addBook : undefined
+              }
               onAction={
                 statusFilter === "all" && !searchQuery.trim()
                   ? () => navigation.navigate("AddEditBook")
@@ -209,10 +373,11 @@ export function LibraryHomeScreen({ navigation }: Props) {
           renderItem={({ item }) => (
             <BookListItem
               book={item}
+              selectionMode={selectionMode}
+              selected={selectedIds.has(item.id)}
+              onToggleSelect={() => toggleSelect(item.id)}
               onPress={() => navigation.navigate("BookDetails", { bookId: item.id })}
-              onQuickUpdate={() =>
-                navigation.navigate("UpdateProgress", { bookId: item.id })
-              }
+              onQuickUpdate={() => navigation.navigate("UpdateProgress", { bookId: item.id })}
             />
           )}
         />
@@ -239,6 +404,13 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     flexWrap: "wrap",
   },
+  links: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 16,
+    marginBottom: 12,
+  },
+  bulkRow: { flexDirection: "row", gap: 8 },
   center: { flex: 1, justifyContent: "center", alignItems: "center", gap: 8 },
   emptyContainer: { flexGrow: 1 },
 });

@@ -3,8 +3,8 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
 import type { RootTabParamList } from "../types/navigation";
 import { LibraryStack } from "./LibraryStack";
+import { SettingsStack } from "./SettingsStack";
 import { StatsScreen } from "../screens/library/StatsScreen";
-import { SettingsScreen } from "../screens/settings/SettingsScreen";
 import { GoalsScreen } from "../screens/goals/GoalsScreen";
 import { DiscoverScreen } from "../screens/discover/DiscoverScreen";
 import { useTheme } from "../theme";
@@ -26,6 +26,7 @@ export function RootTabs() {
           backgroundColor: colors.paperElevated,
           borderTopColor: colors.line,
         },
+        tabBarAccessibilityLabel: undefined,
         tabBarIcon: ({ color, size }) => {
           let iconName: keyof typeof Ionicons.glyphMap = "library-outline";
           if (route.name === "LibraryTab") iconName = "library-outline";
@@ -40,27 +41,42 @@ export function RootTabs() {
       <Tab.Screen
         name="LibraryTab"
         component={LibraryStack}
-        options={{ title: copy.tabs.library }}
+        options={{ title: copy.tabs.library, tabBarAccessibilityLabel: copy.tabs.library }}
       />
       <Tab.Screen
         name="DiscoverTab"
         component={DiscoverScreen}
-        options={{ title: copy.tabs.discover, headerShown: true }}
+        options={{
+          title: copy.tabs.discover,
+          headerShown: true,
+          tabBarAccessibilityLabel: copy.tabs.discover,
+        }}
       />
       <Tab.Screen
         name="GoalsTab"
         component={GoalsScreen}
-        options={{ title: copy.tabs.goals, headerShown: true }}
+        options={{
+          title: copy.tabs.goals,
+          headerShown: true,
+          tabBarAccessibilityLabel: copy.tabs.goals,
+        }}
       />
       <Tab.Screen
         name="StatsTab"
         component={StatsScreen}
-        options={{ title: copy.tabs.stats, headerShown: true }}
+        options={{
+          title: copy.tabs.stats,
+          headerShown: true,
+          tabBarAccessibilityLabel: copy.tabs.stats,
+        }}
       />
       <Tab.Screen
         name="SettingsTab"
-        component={SettingsScreen}
-        options={{ title: copy.tabs.settings, headerShown: true }}
+        component={SettingsStack}
+        options={{
+          title: copy.tabs.settings,
+          tabBarAccessibilityLabel: copy.tabs.settings,
+        }}
       />
     </Tab.Navigator>
   );

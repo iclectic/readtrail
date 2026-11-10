@@ -88,6 +88,9 @@ export function CollectionsScreen() {
       <FlatList
         data={collections}
         keyExtractor={(item) => item.id}
+        initialNumToRender={8}
+        windowSize={7}
+        removeClippedSubviews
         ListEmptyComponent={
           <EmptyState title="No collections yet" body="Create one to organise your library." />
         }

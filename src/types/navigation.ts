@@ -22,6 +22,16 @@ export type LibraryStackParamList = {
   NoteEditor: { bookId: string; noteId?: string };
   Collections: undefined;
   CollectionDetails: { collectionId: string };
+  BarcodeScan: undefined;
+  ReadingMemory: undefined;
+  Duplicates: undefined;
+  AnnualReport: undefined;
+  ReadingCalendar: undefined;
+};
+
+export type SettingsStackParamList = {
+  SettingsHome: undefined;
+  Privacy: undefined;
 };
 
 export type RootTabParamList = {
@@ -29,5 +39,5 @@ export type RootTabParamList = {
   DiscoverTab: undefined;
   GoalsTab: undefined;
   StatsTab: undefined;
-  SettingsTab: undefined;
+  SettingsTab: NavigatorScreenParams<SettingsStackParamList>;
 };

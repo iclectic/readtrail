@@ -1,0 +1,19 @@
+# Cold start → add book → appears in library.
+# npx maestro test .maestro/smoke-add-book.yaml
+appId: com.iclectic.readtrail
+---
+- launchApp
+- extendedWaitUntil:
+    visible: "Library"
+    timeout: 15000
+- tapOn: "Library"
+- tapOn: "Add book"
+- extendedWaitUntil:
+    visible: "Title"
+    timeout: 10000
+- tapOn: "Title *"
+- inputText: "Quality Gate Book"
+- tapOn: "Author"
+- inputText: "Gate Author"
+- tapOn: "Save"
+- assertVisible: "Quality Gate Book"

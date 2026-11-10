@@ -1,8 +1,8 @@
 # ReadTrail release checklist
 
-Play Store and App Store readiness. **Do not tick items as done unless verified.** As of the Phase 0 audit, almost every release item below is **not done**.
+Play Store and App Store readiness. **Do not tick items as done unless verified.** Owner-gated steps stay open until authorised.
 
-Legend: ☐ not done · ☑ done (none claimed here without evidence)
+Legend: ☐ not done · ☑ done with evidence in repo or CI · ◐ prepared / draft only
 
 ---
 
@@ -10,18 +10,18 @@ Legend: ☐ not done · ☑ done (none claimed here without evidence)
 
 | Item | Status | Notes |
 |------|--------|-------|
-| Core library CRUD stable | ☐ | Works on happy path; integrity defects remain |
-| Progress tracking trustworthy | ☐ | Non-atomic writes; delete does not recompute page; no page≤totalPages check |
-| Stats accurate enough for users | ☐ | Basic counts/streak exist; edge cases untested |
-| Export works on iOS and Android | ☐ | Implemented; needs device verification |
-| Import available | ☐ | Missing |
-| Empty states and error alerts reviewed | ☐ | Present but unpolished |
-| No startup crash / DB race | ☐ | `initDb` not awaited before render |
-| Safe areas correct on notched devices | ☐ | No `SafeAreaProvider` |
-| British English copy pass | ☐ | Required going forward; full pass not done |
-| Critical audit defects closed | ☐ | See FEATURE_AUDIT / IMPLEMENTATION_PROGRESS |
+| Core library CRUD stable | ☑ | Library, edit, delete, tags, collections |
+| Progress tracking trustworthy | ☑ | Domain validation + transactional services + tests |
+| Stats accurate enough for users | ☑ | Streaks/goals/charts covered by unit tests |
+| Export works on iOS and Android | ◐ | JSON/CSV/Markdown implemented; needs device verification |
+| Import available | ☑ | JSON + CSV import paths |
+| Empty states and error alerts reviewed | ☑ | Present across primary screens |
+| No startup crash / DB race | ☑ | DB init awaited before navigation |
+| Safe areas correct on notched devices | ☑ | `SafeAreaProvider` in app shell |
+| British English copy pass | ☑ | en-GB source strings for product UI |
+| Critical audit defects closed | ☑ | See FEATURE_AUDIT / IMPLEMENTATION_PROGRESS |
 
-**Minimum for a public 1.0:** Phase 1–2 complete; export verified; no P0 data defects.
+**Minimum for a public 1.0:** Phases 1–2 complete; export verified on device; no open P0 data defects.
 
 ---
 
@@ -29,14 +29,14 @@ Legend: ☐ not done · ☑ done (none claimed here without evidence)
 
 | Item | Status | Notes |
 |------|--------|-------|
-| TypeScript strict CI gate | ☐ | Strict locally; no CI script/`tsc` npm script |
-| Unit tests for domain invariants | ☐ | No tests |
-| Integration tests for DB/migrations | ☐ | No migrations; no tests |
-| Lint script + CI | ☐ | Missing |
-| E2E smoke (add book, progress, clear) | ☐ | Missing |
-| Manual test charter executed on device | ☐ | See TEST_STRATEGY |
+| TypeScript strict CI gate | ☑ | `npm run typecheck` in CI |
+| Unit tests for domain invariants | ☑ | Jest suite (progress, goals, CSV, tags, …) |
+| Integration tests for DB/migrations | ☑ | Node SQLite adapter; migrations + cascade/clear tests |
+| Lint script + CI | ☑ | ESLint `--max-warnings 0` |
+| E2E smoke (add book, progress, clear) | ◐ | Maestro stubs in `.maestro/`; not run on device here |
+| Manual test charter executed on device | ☐ | See TEST_STRATEGY / SCREENSHOT_GUIDE |
 | Crash reporting (optional for 1.0) | ☐ | Not configured |
-| Performance check on low-end Android | ☐ | Not done |
+| Performance check on low-end Android | ☐ | Needs physical device |
 
 ---
 
@@ -44,12 +44,12 @@ Legend: ☐ not done · ☑ done (none claimed here without evidence)
 
 | Item | Status | Notes |
 |------|--------|-------|
-| Privacy policy URL live | ☐ | App is local-only; store still needs a policy page |
-| Support URL / contact email live | ☐ | Settings uses `support@readtrail.app` — unverified |
-| Data safety / nutrition labels filed | ☐ | Play Data safety; Apple privacy nutrition |
-| Licence chosen for repository | ☐ | README: no licence yet |
-| Permissions justified | ☐ | Currently minimal; revisit when adding covers/files/photos |
-| Account deletion story N/A documented | ☐ | No accounts — state explicitly in store listings |
+| Privacy policy URL live | ◐ | Hostable page + Pages workflow ready; enable Pages then set URL |
+| Support URL / contact email live | ◐ | `support@readtrail.app` — confirm mailbox |
+| Data safety / nutrition labels filed | ◐ | Draft answers in DATA_SAFETY.md |
+| Licence chosen for repository | ☐ | Owner decision (README still unlicensed) |
+| Permissions justified | ☑ | Camera + notifications copy in `app.json` |
+| Account deletion story N/A documented | ☑ | Privacy notice + DATA_SAFETY.md |
 
 ---
 
@@ -57,20 +57,20 @@ Legend: ☐ not done · ☑ done (none claimed here without evidence)
 
 | Item | Status | Notes |
 |------|--------|-------|
-| Final display name | ☐ | Expo `name` is `readtrail` (confirm capitalisation: ReadTrail) |
-| Bundle ID / application ID final | ☐ | `com.iclectic.readtrail` set in `app.json` |
-| Versioning scheme agreed | ☐ | `1.0.0` / iOS build `1` / Android `versionCode` `1` |
-| App icon (all required sizes) | ☐ | Placeholder assets present; store quality not verified |
-| Adaptive icon Android | ☐ | Asset referenced; visual QA pending |
-| Splash screen | ☐ | Present; brand polish pending |
-| Screenshots (phone) en-GB | ☐ | Missing |
-| Screenshots (tablet) if claiming tablet support | ☐ | `ios.supportsTablet: true` — need tablet shots or drop claim |
-| Short / long description (en-GB) | ☐ | Missing |
-| Keywords / subtitle | ☐ | Missing |
-| Feature graphic (Play) | ☐ | Missing |
-| Category chosen | ☐ | e.g. Books / Productivity |
-| Content rating questionnaires | ☐ | Not filed |
-| Rate-app deep links live | ☐ | Settings shows placeholder alert |
+| Final display name | ☑ | ReadTrail in `app.json` |
+| Bundle ID / application ID final | ☑ | `com.iclectic.readtrail` |
+| Versioning scheme agreed | ☑ | `1.0.0` / iOS build `1` / Android `versionCode` `1`; EAS `autoIncrement` on production |
+| App icon (all required sizes) | ◐ | Assets present; store visual QA pending |
+| Adaptive icon Android | ◐ | Asset referenced; visual QA pending |
+| Splash screen | ◐ | Present; brand polish pending |
+| Screenshots (phone) en-GB | ☐ | See SCREENSHOT_GUIDE.md |
+| Screenshots (tablet) if claiming tablet support | ☐ | `ios.supportsTablet: true` |
+| Short / long description (en-GB) | ☑ | STORE_LISTING.md |
+| Keywords / subtitle | ☑ | STORE_LISTING.md |
+| Feature graphic (Play) | ◐ | SVG draft in `docs/site/feature-graphic.svg` |
+| Category chosen | ☑ | Books / Productivity (draft) |
+| Content rating questionnaires | ◐ | AGE_RATING.md answers ready to file |
+| Rate-app deep links live | ◐ | Wired via `src/config/release.ts`; IDs empty until publish |
 
 ---
 
@@ -78,14 +78,14 @@ Legend: ☐ not done · ☑ done (none claimed here without evidence)
 
 | Item | Status | Notes |
 |------|--------|-------|
-| EAS project linked | ☐ | `eas.json` profiles exist; linkage not verified here |
-| Production credentials (iOS) | ☐ | Not verified |
-| Production keystore (Android) | ☐ | Not verified |
-| `eas build --profile production` iOS | ☐ | Not verified |
-| `eas build --profile production` Android | ☐ | Not verified |
-| Internal / TestFlight distribution | ☐ | Not verified |
-| Play closed testing track | ☐ | Not verified |
-| Production submit config | ☐ | `eas.json` has empty `submit.production` |
+| EAS project linked | ☐ | Requires owner Expo account |
+| Production credentials (iOS) | ☐ | Not authorised here |
+| Production keystore (Android) | ☐ | Not authorised here |
+| `eas build --profile production` iOS | ☐ | Blocked without credentials |
+| `eas build --profile production` Android | ☐ | Blocked without credentials |
+| Internal / TestFlight distribution | ☐ | |
+| Play closed testing track | ☐ | |
+| Production submit config | ◐ | `eas.json` has empty `submit.production` placeholder |
 
 ---
 
@@ -93,11 +93,11 @@ Legend: ☐ not done · ☑ done (none claimed here without evidence)
 
 | Item | Status | Notes |
 |------|--------|-------|
-| VoiceOver / TalkBack labels on primary flows | ☐ | Missing systematic a11y |
-| Contrast checked | ☐ | Light-only UI; not audited |
-| Dynamic type / large text | ☐ | Not verified |
-| Dark mode | ☐ | Missing (`userInterfaceStyle: "light"`) |
-| Orientation locked as intended | ☐ | Portrait in `app.json` |
+| VoiceOver / TalkBack labels on primary flows | ◐ | Helpers + labels added; full device audit pending |
+| Contrast checked | ◐ | Light/dark palettes defined; formal audit pending |
+| Dynamic type / large text | ◐ | `maxFontSizeMultiplier` 1.6 on design-system text; device QA pending |
+| Dark mode | ☑ | System / light / dark in Settings |
+| Orientation locked as intended | ☑ | Portrait in `app.json` |
 
 ---
 
@@ -105,11 +105,11 @@ Legend: ☐ not done · ☑ done (none claimed here without evidence)
 
 | Item | Status | Notes |
 |------|--------|-------|
-| No secrets in repo | ☐ | Review before each release |
-| Backup/export documented for users | ☐ | Export exists; import missing |
-| Clear-data confirmation | ☑-ish | Confirm dialog exists in Settings — still retest on release build |
-| Schema migrations safe for upgrades | ☐ | No migration system yet — **blocker** for any schema change post-install |
-| Dev seed disabled in production | ☐ | `seedDevData` guarded by `__DEV__` — verify release build |
+| No secrets in repo | ☑ | Review again before each release |
+| Backup/export documented for users | ☑ | Settings + README + soft 14-day reminder |
+| Clear-data confirmation | ☑ | Confirm dialog in Settings |
+| Schema migrations safe for upgrades | ☑ | `user_version` migrations |
+| Dev seed disabled in production | ☑ | Guarded by `__DEV__` — re-verify release binary |
 
 ---
 
@@ -119,19 +119,19 @@ Legend: ☐ not done · ☑ done (none claimed here without evidence)
 
 | Item | Status |
 |------|--------|
-| Target API level meets Play requirement | ☐ |
-| Edge-to-edge / system bars checked (`edgeToEdgeEnabled: true`) | ☐ |
-| Predictive back behaviour acceptable | ☐ |
-| Data safety form | ☐ |
+| Target API level meets Play requirement | ☐ (confirm on EAS production build) |
+| Edge-to-edge / system bars checked (`edgeToEdgeEnabled: true`) | ◐ |
+| Predictive back behaviour acceptable | ◐ (`predictiveBackGestureEnabled: false`) |
+| Data safety form | ◐ draft in DATA_SAFETY.md |
 | App signing by Google Play enrolled | ☐ |
 
 ### iOS (App Store)
 
 | Item | Status |
 |------|--------|
-| Privacy nutrition labels | ☐ |
-| Encryption export compliance answered | ☐ |
-| Account “Sign in with Apple” N/A explained if no auth | ☐ |
+| Privacy nutrition labels | ◐ draft in DATA_SAFETY.md |
+| Encryption export compliance answered | ☑ | `ITSAppUsesNonExemptEncryption: false` + EXPORT_COMPLIANCE.md |
+| Account “Sign in with Apple” N/A explained if no auth | ☑ documented |
 | TestFlight external notes | ☐ |
 | iPad layout acceptable if tablet supported | ☐ |
 
@@ -146,26 +146,28 @@ Legend: ☐ not done · ☑ done (none claimed here without evidence)
 | Support mailbox monitored | ☐ |
 | Store listing published / scheduled | ☐ |
 | Post-launch crash check (24–48h) | ☐ |
-| Hotfix plan understood (EAS Update vs store binary) | ☐ |
+| Hotfix plan understood (EAS Update vs store binary) | ◐ documented in README / this checklist |
 
 ---
 
 ## 10. Explicit non-claims
 
-The following are **not** ready and must not be advertised as shipping features until implemented:
+The following must not be advertised as shipping features until implemented:
 
 - Cloud sync, accounts, social  
-- ISBN lookup / discovery / AI  
-- Collections, tags, covers, sessions, goals, journal  
-- Import  
-- Dark mode, i18n, full a11y compliance  
-- Automated CI/CD release pipeline  
+- AI assist  
+- DRM / ebook reader engine  
 
 ---
 
 ## Related documents
 
-- [FEATURE_AUDIT.md](./FEATURE_AUDIT.md)  
-- [PRODUCT_ROADMAP.md](./PRODUCT_ROADMAP.md) Phase 9  
-- [TEST_STRATEGY.md](./TEST_STRATEGY.md)  
+- [LAUNCH_RUNBOOK.md](./LAUNCH_RUNBOOK.md) — preferred owner checklist  
+- [STORE_LISTING.md](./STORE_LISTING.md)  
+- [STORE_ASSETS.md](./STORE_ASSETS.md)  
+- [DATA_SAFETY.md](./DATA_SAFETY.md)  
+- [AGE_RATING.md](./AGE_RATING.md)  
+- [SCREENSHOT_GUIDE.md](./SCREENSHOT_GUIDE.md)  
+- [PRIVACY.md](./PRIVACY.md)  
+- [CHANGELOG.md](../CHANGELOG.md)  
 - [IMPLEMENTATION_PROGRESS.md](./IMPLEMENTATION_PROGRESS.md)  

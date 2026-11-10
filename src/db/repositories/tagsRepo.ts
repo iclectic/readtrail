@@ -64,3 +64,11 @@ export async function getTagsForBook(bookId: string): Promise<Tag[]> {
   );
   return rows.map(mapTag);
 }
+
+export async function getBookIdsByTagId(tagId: string): Promise<string[]> {
+  const rows = await runQuery<{ bookId: string }>(
+    `SELECT bookId FROM book_tags WHERE tagId = ?;`,
+    [tagId]
+  );
+  return rows.map((r) => r.bookId);
+}

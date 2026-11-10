@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ReadTrail privacy notice</title>
+    <meta
+      name="description"
+      content="Privacy notice for ReadTrail, an offline-first personal reading companion."
+    />
+    <style>
+      :root {
+        color-scheme: light dark;
+        --ink: #1c1915;
+        --muted: #5c564c;
+        --paper: #f7f3ec;
+        --elevated: #fffdf8;
+        --line: #e4ddd1;
+        --accent: #2f5d50;
+        --max: 42rem;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --ink: #f3eee4;
+          --muted: #b7aea0;
+          --paper: #161310;
+          --elevated: #221e19;
+          --line: #3a342c;
+          --accent: #8fbfb0;
+        }
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+        background:
+          radial-gradient(1200px 500px at 10% -10%, rgba(47, 93, 80, 0.12), transparent),
+          radial-gradient(900px 400px at 100% 0%, rgba(180, 120, 60, 0.1), transparent),
+          var(--paper);
+        color: var(--ink);
+        line-height: 1.55;
+      }
+      main {
+        max-width: var(--max);
+        margin: 0 auto;
+        padding: 2.5rem 1.25rem 4rem;
+      }
+      .brand {
+        font-size: clamp(2rem, 5vw, 2.75rem);
+        letter-spacing: -0.02em;
+        margin: 0 0 0.35rem;
+        color: var(--accent);
+      }
+      h1 {
+        font-size: 1.35rem;
+        font-weight: 600;
+        margin: 0 0 1rem;
+      }
+      .lede {
+        color: var(--muted);
+        margin: 0 0 1.75rem;
+      }
+      section {
+        background: var(--elevated);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 1rem 1.1rem;
+        margin: 0 0 0.85rem;
+      }
+      h2 {
+        font-size: 1.05rem;
+        margin: 0 0 0.45rem;
+      }
+      p {
+        margin: 0;
+        color: var(--muted);
+      }
+      footer {
+        margin-top: 1.75rem;
+        color: var(--muted);
+        font-size: 0.95rem;
+      }
+      a {
+        color: var(--accent);
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <p class="brand">ReadTrail</p>
+      <h1>Privacy notice</h1>
+      <p class="lede">
+        This page is the public privacy notice for store listings. It mirrors the in-app
+        notice and the project draft in <code>docs/PRIVACY.md</code>.
+      </p>
+
+      <section>
+        <h2>Summary</h2>
+        <p>
+          ReadTrail is an offline-first personal reading companion. Core library, progress,
+          notes, goals and statistics are stored locally on your device in SQLite.
+        </p>
+      </section>
+
+      <section>
+        <h2>Data stored on this device</h2>
+        <p>
+          Book metadata you enter or import; reading progress, sessions and notes; goals,
+          achievements and preferences; optional backup files you create; optional local
+          product event counts that never leave the device unless you export files yourself.
+        </p>
+      </section>
+
+      <section>
+        <h2>Network use</h2>
+        <p>
+          No account is required for offline reading tracking. If you choose Search
+          catalogues, Look up ISBN, or Scan barcode with online lookup, ReadTrail requests
+          metadata from Open Library. Feedback email opens your mail client and is handled
+          by the operating system.
+        </p>
+      </section>
+
+      <section>
+        <h2>Sharing and export</h2>
+        <p>
+          Export creates JSON, CSV or Markdown files you control via the system share sheet.
+          Import replaces or merges local data only after explicit confirmation.
+        </p>
+      </section>
+
+      <section>
+        <h2>Permissions</h2>
+        <p>
+          Camera is used only to scan ISBN barcodes. Notifications are used only for an
+          optional daily reading reminder you can disable at any time. Document picker
+          access is used only when you import a backup or CSV.
+        </p>
+      </section>
+
+      <section>
+        <h2>Artificial intelligence</h2>
+        <p>
+          ReadTrail does not send your private notes to third-party AI services. Any future
+          AI feature will be optional and will require informed consent before private text
+          leaves the device.
+        </p>
+      </section>
+
+      <section>
+        <h2>Children’s privacy</h2>
+        <p>
+          ReadTrail does not knowingly collect personal information from children. Age
+          ratings should follow store guidance for general productivity and lifestyle apps.
+        </p>
+      </section>
+
+      <section>
+        <h2>Accounts</h2>
+        <p>
+          ReadTrail does not create user accounts for core use. There is no cloud account
+          deletion flow because there is no cloud account. Clearing local data is available
+          in Settings.
+        </p>
+      </section>
+
+      <section>
+        <h2>Contact</h2>
+        <p>
+          Questions:
+          <a href="mailto:support@readtrail.app">support@readtrail.app</a>
+        </p>
+      </section>
+
+      <footer>
+        Last updated: 9 November 2026 (Europe/London). Host this folder with GitHub Pages or
+        any static host, then set <code>PRIVACY_POLICY_URL</code> in
+        <code>src/config/release.ts</code>.
+      </footer>
+    </main>
+  </body>
+</html>

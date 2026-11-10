@@ -176,6 +176,9 @@ export function GoalsScreen() {
       <FlatList
         data={goals}
         keyExtractor={(item) => item.id}
+        initialNumToRender={8}
+        windowSize={7}
+        removeClippedSubviews
         ListEmptyComponent={
           <EmptyState
             title="No active goals"

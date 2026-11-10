@@ -1,0 +1,7 @@
+ReadTrail is a private reading companion for the books on your shelf and the pages you are working through.
+
+Track your library, update progress, log reading sessions, keep a journal of notes and quotations, set gentle goals, and revisit streaks and yearly summaries — all stored on your device.
+
+Optional helpers stay optional: search Open Library catalogues, look up an ISBN, or scan a barcode. Turn on a local daily reminder if you want a quiet nudge. Export JSON, CSV or Markdown whenever you like.
+
+No account is required for offline use. Your notes stay on your phone unless you choose to share an export.

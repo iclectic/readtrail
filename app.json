@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "readtrail",
+    "name": "ReadTrail",
     "slug": "readtrail",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -10,28 +10,51 @@
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#F7F3EC"
     },
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.iclectic.readtrail",
-      "buildNumber": "1"
+      "buildNumber": "1",
+      "infoPlist": {
+        "NSCameraUsageDescription": "ReadTrail uses the camera to scan ISBN barcodes so you can add books more quickly.",
+        "NSUserNotificationsUsageDescription": "ReadTrail can send an optional daily reminder to help you keep a gentle reading habit. You can turn this off at any time.",
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "package": "com.iclectic.readtrail",
       "versionCode": 1,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#F7F3EC"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "permissions": [
+        "CAMERA",
+        "android.permission.CAMERA",
+        "android.permission.POST_NOTIFICATIONS"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
-      "expo-sqlite"
+      "expo-sqlite",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow ReadTrail to use the camera to scan ISBN barcodes on physical books."
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "sounds": [],
+          "enableBackgroundRemoteNotifications": false
+        }
+      ]
     ]
   }
 }

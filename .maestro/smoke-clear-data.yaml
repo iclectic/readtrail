@@ -1,0 +1,11 @@
+appId: com.iclectic.readtrail
+---
+- launchApp
+- tapOn: "Settings"
+- assertVisible: "Settings"
+- scrollUntilVisible:
+    element:
+      text: "Clear all data"
+    direction: DOWN
+- assertVisible: "Clear all data"
+- assertVisible: "Export JSON"

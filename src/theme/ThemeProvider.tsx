@@ -12,6 +12,9 @@ import {
   type ThemeColors,
 } from "./tokens";
 
+/** Soft upper bound for system Dynamic Type scaling on product UI. */
+export const MAX_FONT_SIZE_MULTIPLIER = 1.6;
+
 type ThemeContextValue = {
   scheme: "light" | "dark";
   colors: ThemeColors;
@@ -20,6 +23,7 @@ type ThemeContextValue = {
   typography: typeof typography;
   touchTarget: number;
   reduceMotion: boolean;
+  maxFontSizeMultiplier: number;
 };
 
 const ThemeContext = createContext<ThemeContextValue>({
@@ -30,6 +34,7 @@ const ThemeContext = createContext<ThemeContextValue>({
   typography,
   touchTarget,
   reduceMotion: false,
+  maxFontSizeMultiplier: MAX_FONT_SIZE_MULTIPLIER,
 });
 
 export function ThemeProvider({
@@ -54,6 +59,7 @@ export function ThemeProvider({
       typography,
       touchTarget,
       reduceMotion,
+      maxFontSizeMultiplier: MAX_FONT_SIZE_MULTIPLIER,
     }),
     [scheme, reduceMotion]
   );

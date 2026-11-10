@@ -9,7 +9,7 @@ type Props = {
 };
 
 export function Chip({ label, selected = false, onPress }: Props) {
-  const { colors, radii, typography, touchTarget } = useTheme();
+  const { colors, radii, typography, touchTarget, maxFontSizeMultiplier } = useTheme();
 
   return (
     <Pressable
@@ -29,6 +29,7 @@ export function Chip({ label, selected = false, onPress }: Props) {
       ]}
     >
       <Text
+        maxFontSizeMultiplier={maxFontSizeMultiplier}
         style={[
           typography.caption,
           { color: selected ? colors.accent : colors.ink, fontWeight: "700" },

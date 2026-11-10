@@ -1,0 +1,5 @@
+- Personal library with tags, collections and covers
+- Progress, sessions and journal notes
+- Goals, streaks, calendar and annual report
+- Optional catalogue search and ISBN barcode scan
+- Local reminders, dark mode and full backup/export

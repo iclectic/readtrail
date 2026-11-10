@@ -8,14 +8,20 @@ type Props = TextInputProps & {
 };
 
 export function TextField({ label, error, style, ...rest }: Props) {
-  const { colors, radii, typography, spacing } = useTheme();
+  const { colors, radii, typography, spacing, maxFontSizeMultiplier } = useTheme();
 
   return (
     <View style={{ gap: spacing.xxs }}>
-      <Text style={[typography.label, { color: colors.ink }]}>{label}</Text>
+      <Text
+        maxFontSizeMultiplier={maxFontSizeMultiplier}
+        style={[typography.label, { color: colors.ink }]}
+      >
+        {label}
+      </Text>
       <TextInput
         placeholderTextColor={colors.inkSubtle}
         accessibilityLabel={label}
+        maxFontSizeMultiplier={maxFontSizeMultiplier}
         style={[
           styles.input,
           typography.body,
@@ -30,7 +36,12 @@ export function TextField({ label, error, style, ...rest }: Props) {
         {...rest}
       />
       {error ? (
-        <Text style={[typography.caption, { color: colors.danger }]}>{error}</Text>
+        <Text
+          maxFontSizeMultiplier={maxFontSizeMultiplier}
+          style={[typography.caption, { color: colors.danger }]}
+        >
+          {error}
+        </Text>
       ) : null}
     </View>
   );

@@ -20,10 +20,13 @@ import {
 } from "../../domain/types";
 import { createId } from "../../domain";
 import { statusLabel } from "../../domain/progress";
-import { createBook, getBookById, updateBook } from "../../db";
+import { createBook, getAllTags, getBookById, getTagsForBook, updateBook } from "../../db";
 import { Button, Chip, TextField } from "../../components";
+import { TagEditor } from "../../components/library/TagEditor";
 import { useTheme } from "../../theme";
 import { searchBookMetadata, lookupBookByIsbn } from "../../services/metadata";
+import { setBookTagsFromNames } from "../../services/tagsService";
+import { trackEvent } from "../../services/analyticsEvents";
 import { successHaptic } from "../../utils/haptics";
 import { logger } from "../../utils/logger";
 
@@ -56,6 +59,8 @@ export function AddEditBookScreen({ navigation, route }: Props) {
   const [format, setFormat] = useState<BookFormat>("physical");
   const [ownership, setOwnership] = useState<OwnershipType>("owned");
   const [rating, setRating] = useState("");
+  const [tagNames, setTagNames] = useState<string[]>([]);
+  const [tagSuggestions, setTagSuggestions] = useState<string[]>([]);
 
   const titleError = useMemo(() => {
     if (title.trim().length === 0) return "Title is required.";
@@ -107,6 +112,8 @@ export function AddEditBookScreen({ navigation, route }: Props) {
         setDescription(book.description ?? "");
         setCoverUri(book.coverUri ?? "");
         setRating(book.rating != null ? String(book.rating) : "");
+        const tags = await getTagsForBook(book.id);
+        if (mounted) setTagNames(tags.map((t) => t.name));
       } catch (e) {
         logger.error("[book] failed to load for edit", e);
         if (mounted) Alert.alert("Error", "Could not load this book.");
@@ -118,6 +125,12 @@ export function AddEditBookScreen({ navigation, route }: Props) {
       mounted = false;
     };
   }, [bookId, isEdit, navigation]);
+
+  useEffect(() => {
+    void getAllTags()
+      .then((tags) => setTagSuggestions(tags.map((t) => t.name)))
+      .catch(() => undefined);
+  }, []);
 
   async function onLookupIsbn() {
     const value = isbn.trim();
@@ -238,6 +251,7 @@ export function AddEditBookScreen({ navigation, route }: Props) {
         rating: ratingValue,
       };
 
+      let savedId = bookId;
       if (isEdit) {
         const result = await updateBook(bookId!, payload);
         if (!result) {
@@ -245,12 +259,15 @@ export function AddEditBookScreen({ navigation, route }: Props) {
           return;
         }
       } else {
+        savedId = createId("book");
         await createBook({
-          id: createId("book"),
+          id: savedId,
           currentPage: 0,
           ...payload,
         });
+        await trackEvent("book_added");
       }
+      if (savedId) await setBookTagsFromNames(savedId, tagNames);
       successHaptic();
       navigation.goBack();
     } catch (e) {
@@ -287,7 +304,20 @@ export function AddEditBookScreen({ navigation, route }: Props) {
           keyboardType={Platform.select({ ios: "number-pad", android: "numeric" })}
         />
         <TextField label="ISBN" value={isbn} onChangeText={setIsbn} autoCapitalize="characters" />
-        <Button label="Look up ISBN" variant="secondary" loading={lookingUp} onPress={onLookupIsbn} />
+        <View style={styles.row}>
+          <View style={{ flex: 1 }}>
+            <Button label="Look up ISBN" variant="secondary" loading={lookingUp} onPress={onLookupIsbn} />
+          </View>
+          {!isEdit ? (
+            <View style={{ flex: 1 }}>
+              <Button
+                label="Scan barcode"
+                variant="secondary"
+                onPress={() => navigation.navigate("BarcodeScan")}
+              />
+            </View>
+          ) : null}
+        </View>
 
         <Text style={[typography.label, { color: colors.ink }]}>Status</Text>
         <View style={styles.row}>
@@ -340,6 +370,12 @@ export function AddEditBookScreen({ navigation, route }: Props) {
           onChangeText={setDescription}
           multiline
           style={{ minHeight: 90, textAlignVertical: "top" }}
+        />
+
+        <TagEditor
+          value={tagNames}
+          suggestions={tagSuggestions}
+          onChange={setTagNames}
         />
 
         <Button label={saving ? "Saving…" : "Save"} loading={saving} onPress={onSave} />
