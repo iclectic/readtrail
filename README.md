@@ -47,9 +47,10 @@ npm run start
 
 ```bash
 npm run verify
+npm run preflight
 ```
 
-(`verify` runs typecheck, tests and lint.)
+(`verify` runs typecheck, tests and lint. `preflight` adds screenshot/security checks and an owner launch go/no-go report.)
 
 ## Project map
 

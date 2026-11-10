@@ -37,6 +37,10 @@ First public offline-first release candidate.
 - Chip targets meet 44pt; WCAG AA contrast checks for light/dark body text tokens
 - Phone-first 1.0 (`ios.supportsTablet: false`)
 
+### Release tooling
+
+- `npm run preflight` — verify + screenshot check + security audit + owner go/no-go report
+
 ### Known owner follow-ups
 
 - Capture store screenshots into `store/screenshots/en-GB/` (Maestro flows + `npm run check:screenshots` ready)

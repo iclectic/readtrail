@@ -4,7 +4,13 @@ Single checklist for shipping 1.0 after the engineering stack merges. **Do not s
 
 ## 0. Merge status
 
-The offline 1.0 engineering stack is on `main` (through privacy URL #12, screenshot pack #13, security audit #14). Confirm CI with `npm run verify`. Dependency triage: [SECURITY.md](./SECURITY.md) / `npm run audit:security`. Phone-first: `ios.supportsTablet` is false — capture phone screenshots only unless you re-enable tablet.
+The offline 1.0 engineering stack is on `main` (through a11y/phone-first #15).  
+
+```bash
+npm run preflight
+```
+
+Runs verify, screenshot pack check, security audit, and prints engineering OK vs owner-gated blockers. Dependency notes: [SECURITY.md](./SECURITY.md). Phone-first: `ios.supportsTablet` is false — capture phone screenshots only unless you re-enable tablet.
 
 ---
 
