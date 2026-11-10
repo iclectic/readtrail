@@ -324,13 +324,19 @@ export function SettingsScreen() {
         gap: spacing.sm,
       }}
     >
-      <Text style={[typography.title, { color: colors.ink }]}>Settings</Text>
+      <Text style={[typography.title, { color: colors.ink }]} accessibilityRole="header">
+        Settings
+      </Text>
 
       <Card title="Appearance">
         <Text style={[typography.body, { color: colors.inkMuted }]}>
           Choose light, dark, or follow the system setting.
         </Text>
-        <View style={styles.row}>
+        <View
+          style={styles.row}
+          accessibilityRole="radiogroup"
+          accessibilityLabel={`Theme, ${settings?.theme ?? "system"} selected`}
+        >
           {(["system", "light", "dark"] as const).map((theme) => (
             <Chip
               key={theme}
@@ -514,6 +520,7 @@ function Card({ title, children }: { title: string; children: React.ReactNode })
   const { colors, typography, radii, spacing } = useTheme();
   return (
     <View
+      accessibilityLabel={title}
       style={[
         styles.card,
         {
@@ -525,7 +532,9 @@ function Card({ title, children }: { title: string; children: React.ReactNode })
         },
       ]}
     >
-      <Text style={[typography.subtitle, { color: colors.ink }]}>{title}</Text>
+      <Text style={[typography.subtitle, { color: colors.ink }]} accessibilityRole="header">
+        {title}
+      </Text>
       {children}
     </View>
   );
@@ -542,12 +551,16 @@ function RowSwitch({
 }) {
   const { colors, typography } = useTheme();
   return (
-    <View style={styles.switchRow}>
-      <Text style={[typography.body, { color: colors.ink, flex: 1 }]}>{label}</Text>
+    <View style={styles.switchRow} accessible={false}>
+      <Text style={[typography.body, { color: colors.ink, flex: 1 }]} accessible={false}>
+        {label}
+      </Text>
       <Switch
         value={value}
         onValueChange={onValueChange}
+        accessibilityRole="switch"
         accessibilityLabel={label}
+        accessibilityState={{ checked: value }}
         trackColor={{ true: colors.accent, false: colors.line }}
       />
     </View>
