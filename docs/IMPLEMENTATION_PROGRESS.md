@@ -6,18 +6,16 @@ Living tracker. Update when phases complete. **Do not mark work done without evi
 
 ## Completed
 
-### Phase 0–9 through launch enablement
+### Phase 0–9 through pre-launch polish
 
-- Foundation → polish → release prep → quality gate → launch enablement (Pages workflow, screenshot seed, Dynamic Type, export compliance)
+- Foundation → polish → release prep → quality gate → launch enablement → pre-launch polish
 
-### Pre-launch polish (this stage)
+### Resilience (this stage)
 
-- [x] Migration `004` — `app_settings.lastBackupAt`
-- [x] Soft backup reminder in Settings (14-day cadence)
-- [x] Record `lastBackupAt` on JSON / CSV / Markdown export
-- [x] `AppText` design-system primitive
-- [x] FlatList performance props on major lists
-- [x] ARCHITECTURE.md refreshed to match the shipped app
+- [x] `AppErrorBoundary` with Try again recovery
+- [x] Bootstrap error screen retry (`useAppBootstrap(attempt)`)
+- [x] Discover offline hint when catalogue/ISBN lookup fails closed
+- [x] `DATABASE_DESIGN.md` rewritten for migrations 001–004
 
 ---
 
@@ -45,7 +43,7 @@ Owner-gated store launch: enable GitHub Pages, set `PRIVACY_POLICY_URL`, capture
 | Check | Result |
 |-------|--------|
 | `npm run typecheck` | Passed |
-| `npm test` | Passed (45 tests) |
+| `npm test` | Passed (46 tests) |
 | `npm run lint` | Passed |
 | Native builds / device E2E | Not executed here |
 
@@ -53,7 +51,7 @@ Owner-gated store launch: enable GitHub Pages, set `PRIVACY_POLICY_URL`, capture
 
 ## Next recommended action
 
-1. Merge the stacked PRs through pre-launch polish.
+1. Merge the stacked PRs through resilience.
 2. Enable GitHub Pages and set `PRIVACY_POLICY_URL`.
 3. Capture screenshots with the demo seed.
 4. Authorise EAS production builds when ready.

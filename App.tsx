@@ -7,6 +7,7 @@ import { ThemeProvider, palette } from "./src/theme";
 import { useAppBootstrap } from "./src/hooks/useAppBootstrap";
 import { OnboardingScreen } from "./src/screens/onboarding/OnboardingScreen";
 import { AppSettingsProvider, useAppSettings } from "./src/context/AppSettingsContext";
+import { AppErrorBoundary } from "./src/components/AppErrorBoundary";
 
 function RootExperience({
   onboardingDismissed,
@@ -45,7 +46,9 @@ function RootExperience({
 }
 
 export default function App() {
-  const bootstrap = useAppBootstrap();
+  const [bootAttempt, setBootAttempt] = useState(0);
+  const [boundaryKey, setBoundaryKey] = useState(0);
+  const bootstrap = useAppBootstrap(bootAttempt);
   const [onboardingDismissed, setOnboardingDismissed] = useState(false);
 
   if (bootstrap.status === "loading") {
@@ -61,22 +64,35 @@ export default function App() {
 
   if (bootstrap.status === "error") {
     return (
-      <View style={styles.boot}>
+      <View style={styles.boot} accessibilityRole="alert">
         <StatusBar style="dark" />
         <Text style={styles.brand}>ReadTrail</Text>
         <Text style={styles.error}>{bootstrap.message}</Text>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Try again"
+          onPress={() => setBootAttempt((n) => n + 1)}
+          style={({ pressed }) => [styles.retry, { opacity: pressed ? 0.88 : 1 }]}
+        >
+          <Text style={styles.retryLabel}>Try again</Text>
+        </Pressable>
       </View>
     );
   }
 
   return (
     <SafeAreaProvider>
-      <AppSettingsProvider initial={bootstrap.settings}>
-        <RootExperience
-          onboardingDismissed={onboardingDismissed}
-          setOnboardingDismissed={setOnboardingDismissed}
-        />
-      </AppSettingsProvider>
+      <AppErrorBoundary
+        key={boundaryKey}
+        onReset={() => setBoundaryKey((n) => n + 1)}
+      >
+        <AppSettingsProvider initial={bootstrap.settings}>
+          <RootExperience
+            onboardingDismissed={onboardingDismissed}
+            setOnboardingDismissed={setOnboardingDismissed}
+          />
+        </AppSettingsProvider>
+      </AppErrorBoundary>
     </SafeAreaProvider>
   );
 }
@@ -98,6 +114,20 @@ const styles = StyleSheet.create({
   },
   helper: { color: palette.inkMuted },
   error: { color: palette.danger, textAlign: "center", lineHeight: 22 },
+  retry: {
+    marginTop: 8,
+    minHeight: 44,
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    borderRadius: 12,
+    backgroundColor: palette.accent,
+    justifyContent: "center",
+  },
+  retryLabel: {
+    color: palette.accentInk,
+    fontWeight: "700",
+    fontSize: 16,
+  },
   devSkip: { position: "absolute", bottom: 24, right: 16, padding: 8 },
   devSkipText: { color: palette.inkSubtle, fontSize: 12 },
 });

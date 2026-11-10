@@ -6,6 +6,8 @@
 
 Phases are **dependency-aware**. Later phases assume earlier foundation work lands first. Nothing in Phases 1–9 is claimed complete unless listed under Phase 0 / current progress in [IMPLEMENTATION_PROGRESS.md](./IMPLEMENTATION_PROGRESS.md).
 
+**Status note (10 November 2026):** Phases 0–9 engineering for the offline MVP are implemented in the stacked PRs through resilience. Remaining work is primarily owner-gated store launch (Pages URL, screenshots, EAS/submit) plus deferred AI/cloud/social.
+
 ---
 
 ## Phase 0 — Audit and planning

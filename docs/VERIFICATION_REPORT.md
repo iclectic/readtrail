@@ -3,7 +3,7 @@
 Evidence of checks completed during autonomous implementation. Do not treat unverified device or store steps as done.
 
 **Report date:** 9 November 2026 (Europe/London)  
-**Branches verified:** foundation (#1), hardening (#2), polish (#3), release prep (#4), quality gate (#5), launch enablement (#6), pre-launch polish (this stage)
+**Branches verified:** foundation (#1) … pre-launch polish (#7), resilience (this stage)
 
 ---
 
@@ -12,7 +12,7 @@ Evidence of checks completed during autonomous implementation. Do not treat unve
 | Check | Command | Result |
 |-------|---------|--------|
 | TypeScript | `npm run typecheck` | Passed |
-| Unit tests | `npm test` | Passed (45 tests) |
+| Unit tests | `npm test` | Passed (46 tests) |
 | Lint | `npm run lint` | Passed (`--max-warnings 0`) |
 
 ---

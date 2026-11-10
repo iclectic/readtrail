@@ -19,13 +19,15 @@ import {
   searchBookMetadata,
   type BookMetadataResult,
 } from "../../services/metadata";
-import { Button, EmptyState, TextField } from "../../components";
+import { AppText, Button, EmptyState, TextField } from "../../components";
 import { useTheme } from "../../theme";
+import { t } from "../../i18n";
 import { logger } from "../../utils/logger";
 
 export function DiscoverScreen() {
   const insets = useSafeAreaInsets();
   const { colors, typography, spacing, radii } = useTheme();
+  const copy = t();
   const navigation = useNavigation<BottomTabNavigationProp<RootTabParamList>>();
   const [recommendations, setRecommendations] = useState<
     { book: Book; reason: string }[]
@@ -35,6 +37,7 @@ export function DiscoverScreen() {
   const [results, setResults] = useState<BookMetadataResult[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [offlineHint, setOfflineHint] = useState(false);
 
   useFocusEffect(
     useCallback(() => {
@@ -52,17 +55,22 @@ export function DiscoverScreen() {
   async function onSearch() {
     setLoading(true);
     setError(null);
+    setOfflineHint(false);
     try {
       const { results: found, errors } = await searchBookMetadata(query);
       setResults(found);
       if (found.length === 0) {
-        setError(
+        const message =
           errors[0] ??
-            "No catalogue matches. Try another title or add the book manually."
-        );
+          "No catalogue matches. Try another title or add the book manually.";
+        setError(message);
+        if (/offline|network|fetch|internet/i.test(message)) {
+          setOfflineHint(true);
+        }
       }
     } catch {
-      setError("Catalogue search is unavailable offline.");
+      setOfflineHint(true);
+      setError("Catalogue search is unavailable offline. Your library still works.");
     } finally {
       setLoading(false);
     }
@@ -71,14 +79,20 @@ export function DiscoverScreen() {
   async function onIsbn() {
     setLoading(true);
     setError(null);
+    setOfflineHint(false);
     try {
       const { result, errors } = await lookupBookByIsbn(isbn);
       setResults(result ? [result] : []);
       if (!result) {
-        setError(errors[0] ?? "No book found for that ISBN.");
+        const message = errors[0] ?? "No book found for that ISBN.";
+        setError(message);
+        if (/offline|network|fetch|internet/i.test(message)) {
+          setOfflineHint(true);
+        }
       }
     } catch {
-      setError("ISBN lookup is unavailable offline.");
+      setOfflineHint(true);
+      setError("ISBN lookup is unavailable offline. Add the book manually instead.");
     } finally {
       setLoading(false);
     }
@@ -121,6 +135,24 @@ export function DiscoverScreen() {
         Search catalogues when online, or follow personal recommendations from your own
         library.
       </Text>
+      {offlineHint ? (
+        <AppText
+          style={[
+            typography.caption,
+            {
+              color: colors.inkMuted,
+              backgroundColor: colors.accentSoft,
+              padding: spacing.sm,
+              borderRadius: radii.md,
+              overflow: "hidden",
+            },
+          ]}
+          accessibilityRole="summary"
+        >
+          {copy.common.offline} Catalogue search needs a connection; recommendations below are
+          local.
+        </AppText>
+      ) : null}
 
       <TextField
         label="Search titles"

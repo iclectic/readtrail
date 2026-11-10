@@ -26,6 +26,8 @@ Legend: **Implemented** · **Partial** · **Deferred** · **Owner-gated**
 | Dark mode | **Implemented** | System / light / dark |
 | i18n framework | **Partial** | en-GB source module; not multi-locale |
 | Accessibility | **Partial** | Labels/targets/reduce-motion/Dynamic Type cap; device audit pending |
+| Error recovery | **Implemented** | Bootstrap retry + `AppErrorBoundary` |
+| Offline catalogue | **Implemented** | Fails closed with Discover offline hint |
 | Import / export | **Implemented** | JSON, CSV, Markdown notes |
 | Reminders | **Implemented** | Local notifications |
 | Reading Memory | **Implemented** | Spaced review fields + UI |

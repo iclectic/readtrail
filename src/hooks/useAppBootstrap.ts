@@ -10,11 +10,15 @@ type BootstrapState =
   | { status: "ready"; settings: AppSettings }
   | { status: "error"; message: string };
 
-export function useAppBootstrap(): BootstrapState {
+/**
+ * @param attempt Increment to retry bootstrap after a failure (e.g. from the error screen).
+ */
+export function useAppBootstrap(attempt = 0): BootstrapState {
   const [state, setState] = useState<BootstrapState>({ status: "loading" });
 
   useEffect(() => {
     let mounted = true;
+    setState({ status: "loading" });
 
     (async () => {
       try {
@@ -34,7 +38,7 @@ export function useAppBootstrap(): BootstrapState {
           setState({
             status: "error",
             message:
-              "ReadTrail could not prepare your local library. Please restart the app. Your existing data has not been modified.",
+              "ReadTrail could not prepare your local library. Your existing data has not been modified. You can try again.",
           });
         }
       }
@@ -43,7 +47,7 @@ export function useAppBootstrap(): BootstrapState {
     return () => {
       mounted = false;
     };
-  }, []);
+  }, [attempt]);
 
   return state;
 }
