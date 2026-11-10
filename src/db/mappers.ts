@@ -229,6 +229,7 @@ export function mapSettings(row: {
   streakTrackingEnabled: number;
   onboardingCompleted: number;
   reduceMotion: number;
+  lastBackupAt?: string | null;
   updatedAt: string;
 }): AppSettings {
   const theme =
@@ -244,6 +245,7 @@ export function mapSettings(row: {
     streakTrackingEnabled: Boolean(row.streakTrackingEnabled),
     onboardingCompleted: Boolean(row.onboardingCompleted),
     reduceMotion: Boolean(row.reduceMotion),
+    lastBackupAt: row.lastBackupAt ?? null,
     updatedAt: row.updatedAt,
   };
 }

@@ -69,6 +69,9 @@ export function DuplicatesScreen({ navigation }: Props) {
       <FlatList
         data={groups}
         keyExtractor={(item) => item.key}
+        initialNumToRender={8}
+        windowSize={7}
+        removeClippedSubviews
         ListEmptyComponent={
           <EmptyState
             title="No duplicates found"

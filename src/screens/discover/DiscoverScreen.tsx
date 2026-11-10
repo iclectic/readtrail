@@ -154,6 +154,9 @@ export function DiscoverScreen() {
         <FlatList
           data={results}
           keyExtractor={(item, index) => `${item.source}-${item.isbn ?? item.title}-${index}`}
+          initialNumToRender={10}
+          windowSize={9}
+          removeClippedSubviews
           ListHeaderComponent={
             <Text style={[typography.subtitle, { color: colors.ink, marginBottom: 8 }]}>
               Catalogue results
@@ -186,6 +189,9 @@ export function DiscoverScreen() {
         <FlatList
           data={recommendations}
           keyExtractor={(item) => item.book.id}
+          initialNumToRender={8}
+          windowSize={7}
+          removeClippedSubviews
           ListHeaderComponent={
             <Text style={[typography.subtitle, { color: colors.ink, marginVertical: 8 }]}>
               From your library

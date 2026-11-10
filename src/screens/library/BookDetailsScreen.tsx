@@ -224,6 +224,9 @@ export function BookDetailsScreen({ navigation, route }: Props) {
       <FlatList
         data={entries}
         keyExtractor={(item) => item.id}
+        initialNumToRender={12}
+        windowSize={9}
+        removeClippedSubviews
         ListEmptyComponent={
           <Text style={{ color: colors.inkMuted }}>
             Add your first progress update to start tracking.

@@ -9,3 +9,4 @@ export * from "./duplicates";
 export * from "./charts";
 export * from "./csv";
 export * from "./tags";
+export * from "./backupReminder";

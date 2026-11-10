@@ -106,7 +106,7 @@ Legend: ☐ not done · ☑ done with evidence in repo or CI · ◐ prepared / d
 | Item | Status | Notes |
 |------|--------|-------|
 | No secrets in repo | ☑ | Review again before each release |
-| Backup/export documented for users | ☑ | Settings + README |
+| Backup/export documented for users | ☑ | Settings + README + soft 14-day reminder |
 | Clear-data confirmation | ☑ | Confirm dialog in Settings |
 | Schema migrations safe for upgrades | ☑ | `user_version` migrations |
 | Dev seed disabled in production | ☑ | Guarded by `__DEV__` — re-verify release binary |

@@ -35,7 +35,7 @@ describe("runMigrations", () => {
     const applied = await db.getAllAsync<{ version: number }>(
       `SELECT version FROM schema_migrations ORDER BY version;`
     );
-    expect(applied.map((row) => row.version)).toEqual([1, 2, 3]);
+    expect(applied.map((row) => row.version)).toEqual([1, 2, 3, 4]);
 
     db.close();
   });
@@ -53,7 +53,7 @@ describe("runMigrations", () => {
     const count = await db.getFirstAsync<{ c: number }>(
       `SELECT COUNT(*) AS c FROM schema_migrations;`
     );
-    expect(count?.c).toBe(3);
+    expect(count?.c).toBe(4);
     db.close();
   });
 
@@ -94,6 +94,13 @@ describe("runMigrations", () => {
     const noteCols = await db.getAllAsync<{ name: string }>(`PRAGMA table_info(notes);`);
     expect(noteCols.map((c) => c.name)).toEqual(
       expect.arrayContaining(["intervalDays", "easeFactor", "nextReviewAt"])
+    );
+
+    const settingsCols = await db.getAllAsync<{ name: string }>(
+      `PRAGMA table_info(app_settings);`
+    );
+    expect(settingsCols.map((c) => c.name)).toEqual(
+      expect.arrayContaining(["lastBackupAt"])
     );
 
     db.close();

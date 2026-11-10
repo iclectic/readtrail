@@ -133,6 +133,8 @@ export interface AppSettings {
   streakTrackingEnabled: boolean;
   onboardingCompleted: boolean;
   reduceMotion: boolean;
+  /** ISO timestamp of the last successful JSON/CSV/Markdown export, if any. */
+  lastBackupAt: string | null;
   updatedAt: string;
 }
 

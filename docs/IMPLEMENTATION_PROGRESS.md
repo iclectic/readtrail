@@ -6,19 +6,18 @@ Living tracker. Update when phases complete. **Do not mark work done without evi
 
 ## Completed
 
-### Phase 0–9 engineering (through quality gate)
+### Phase 0–9 through launch enablement
 
-- Foundation → polish → release prep → SQLite quality gate
+- Foundation → polish → release prep → quality gate → launch enablement (Pages workflow, screenshot seed, Dynamic Type, export compliance)
 
-### Launch enablement (this stage)
+### Pre-launch polish (this stage)
 
-- [x] GitHub Pages workflow for `docs/site` privacy hosting
-- [x] Rich screenshot/demo seed (books, sessions, notes, tags, goals)
-- [x] Dev Settings action to load demo library
-- [x] Dynamic Type cap (`maxFontSizeMultiplier`) on design-system text
-- [x] `scaleTypography` helper + unit tests
-- [x] iOS `ITSAppUsesNonExemptEncryption: false` + export compliance doc
-- [x] Accessibility checklist doc
+- [x] Migration `004` — `app_settings.lastBackupAt`
+- [x] Soft backup reminder in Settings (14-day cadence)
+- [x] Record `lastBackupAt` on JSON / CSV / Markdown export
+- [x] `AppText` design-system primitive
+- [x] FlatList performance props on major lists
+- [x] ARCHITECTURE.md refreshed to match the shipped app
 
 ---
 
@@ -46,7 +45,7 @@ Owner-gated store launch: enable GitHub Pages, set `PRIVACY_POLICY_URL`, capture
 | Check | Result |
 |-------|--------|
 | `npm run typecheck` | Passed |
-| `npm test` | Passed (40 tests) |
+| `npm test` | Passed (45 tests) |
 | `npm run lint` | Passed |
 | Native builds / device E2E | Not executed here |
 
@@ -54,7 +53,7 @@ Owner-gated store launch: enable GitHub Pages, set `PRIVACY_POLICY_URL`, capture
 
 ## Next recommended action
 
-1. Merge stacked PRs through launch-enablement.
-2. Enable GitHub Pages (Actions source) and set `PRIVACY_POLICY_URL`.
-3. Capture screenshots using the demo seed.
+1. Merge the stacked PRs through pre-launch polish.
+2. Enable GitHub Pages and set `PRIVACY_POLICY_URL`.
+3. Capture screenshots with the demo seed.
 4. Authorise EAS production builds when ready.

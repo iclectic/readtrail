@@ -132,7 +132,7 @@ describe("sqlite data integrity", () => {
     expect(
       (await db.getFirstAsync<{ user_version: number }>(`PRAGMA user_version;`))
         ?.user_version
-    ).toBe(3);
+    ).toBe(4);
 
     db.close();
   });

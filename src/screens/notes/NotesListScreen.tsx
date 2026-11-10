@@ -41,6 +41,9 @@ export function NotesListScreen({ navigation, route }: Props) {
         style={{ marginTop: spacing.md }}
         data={notes}
         keyExtractor={(item) => item.id}
+        initialNumToRender={12}
+        windowSize={9}
+        removeClippedSubviews
         ListEmptyComponent={
           <EmptyState
             title="No notes yet"

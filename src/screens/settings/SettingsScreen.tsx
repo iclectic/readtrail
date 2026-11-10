@@ -24,13 +24,17 @@ import {
 import { exportLibraryCsv, importLibraryCsv } from "../../services/csvService";
 import { exportNotesMarkdown } from "../../services/notesExportService";
 import { trackEvent } from "../../services/analyticsEvents";
-import { Button, Chip, TextField } from "../../components";
+import { AppText, Button, Chip, TextField } from "../../components";
 import { useTheme } from "../../theme";
 import { useAppSettings } from "../../context/AppSettingsContext";
 import { syncReminderSchedule } from "../../services/reminderService";
 import { lightHaptic, warningHaptic, successHaptic } from "../../utils/haptics";
 import { logger } from "../../utils/logger";
 import type { AppSettings } from "../../domain/types";
+import {
+  backupReminderCopy,
+  shouldPromptBackup,
+} from "../../domain/backupReminder";
 import type { SettingsStackParamList } from "../../navigation/SettingsStack";
 import {
   appStoreUrl,
@@ -58,10 +62,17 @@ export function SettingsScreen() {
     return b ? `${v} (${b})` : v;
   }, []);
 
+  const showBackupReminder = shouldPromptBackup(settings?.lastBackupAt);
+
+  async function markBackupCompleted() {
+    await save({ lastBackupAt: new Date().toISOString() });
+  }
+
   async function onExport() {
     try {
       setExporting(true);
       await exportBackupToShareSheet(appVersionText);
+      await markBackupCompleted();
       await trackEvent("export_completed", { format: "json" });
       successHaptic();
     } catch (e) {
@@ -79,6 +90,7 @@ export function SettingsScreen() {
     try {
       setCsvBusy(true);
       await exportLibraryCsv();
+      await markBackupCompleted();
       await trackEvent("export_completed", { format: "csv" });
       successHaptic();
     } catch (e) {
@@ -123,6 +135,7 @@ export function SettingsScreen() {
     try {
       setNotesBusy(true);
       await exportNotesMarkdown();
+      await markBackupCompleted();
       successHaptic();
     } catch (e) {
       Alert.alert(
@@ -356,11 +369,30 @@ export function SettingsScreen() {
         />
       </Card>
 
+      {showBackupReminder ? (
+        <Card title="Backup reminder">
+          <AppText style={[typography.body, { color: colors.inkMuted }]}>
+            {backupReminderCopy(settings?.lastBackupAt)}
+          </AppText>
+          <Button
+            label="Export JSON now"
+            variant="secondary"
+            loading={exporting}
+            onPress={onExport}
+          />
+        </Card>
+      ) : null}
+
       <Card title="Backup and restore">
         <Text style={[typography.body, { color: colors.inkMuted }]}>
           Export a full JSON backup, CSV library sheet, or Markdown notes. Import restores
           data you previously exported.
         </Text>
+        {settings?.lastBackupAt ? (
+          <Text style={[typography.caption, { color: colors.inkSubtle }]}>
+            Last backup: {new Date(settings.lastBackupAt).toLocaleString("en-GB")}
+          </Text>
+        ) : null}
         <Button
           label={exporting ? "Exporting…" : "Export JSON"}
           loading={exporting}

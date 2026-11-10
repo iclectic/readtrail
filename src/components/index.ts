@@ -1,3 +1,4 @@
+export * from "./ui/AppText";
 export * from "./ui/Button";
 export * from "./ui/TextField";
 export * from "./ui/Chip";
