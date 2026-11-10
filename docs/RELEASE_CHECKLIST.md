@@ -162,10 +162,12 @@ The following must not be advertised as shipping features until implemented:
 
 ## Related documents
 
+- [LAUNCH_RUNBOOK.md](./LAUNCH_RUNBOOK.md) — preferred owner checklist  
 - [STORE_LISTING.md](./STORE_LISTING.md)  
 - [STORE_ASSETS.md](./STORE_ASSETS.md)  
 - [DATA_SAFETY.md](./DATA_SAFETY.md)  
 - [AGE_RATING.md](./AGE_RATING.md)  
 - [SCREENSHOT_GUIDE.md](./SCREENSHOT_GUIDE.md)  
 - [PRIVACY.md](./PRIVACY.md)  
+- [CHANGELOG.md](../CHANGELOG.md)  
 - [IMPLEMENTATION_PROGRESS.md](./IMPLEMENTATION_PROGRESS.md)  

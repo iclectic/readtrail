@@ -6,22 +6,24 @@ Living tracker. Update when phases complete. **Do not mark work done without evi
 
 ## Completed
 
-### Phase 0–9 through pre-launch polish
+### Phase 0–9 engineering through resilience
 
-- Foundation → polish → release prep → quality gate → launch enablement → pre-launch polish
+- Foundation → polish → release prep → quality gate → launch enablement → pre-launch polish → resilience
 
-### Resilience (this stage)
+### Launch packaging (this stage)
 
-- [x] `AppErrorBoundary` with Try again recovery
-- [x] Bootstrap error screen retry (`useAppBootstrap(attempt)`)
-- [x] Discover offline hint when catalogue/ISBN lookup fails closed
-- [x] `DATABASE_DESIGN.md` rewritten for migrations 001–004
+- [x] Owner [LAUNCH_RUNBOOK.md](./LAUNCH_RUNBOOK.md) consolidating merge + store steps
+- [x] `CHANGELOG.md` for the 1.0.0 candidate
+- [x] `npm run verify` (typecheck + test + lint)
+- [x] ENGINEERING_DECISIONS refreshed
+- [x] BookCover respects reduce motion (no image fade)
 
 ---
 
 ## Current
 
-Owner-gated store launch: enable GitHub Pages, set `PRIVACY_POLICY_URL`, capture screenshots, confirm support mailbox, choose licence, authorise EAS/store submission.
+**Engineering for the offline 1.0 candidate is complete in the stacked PRs.**  
+Remaining work is owner-gated store launch (see the launch runbook).
 
 ---
 
@@ -42,16 +44,14 @@ Owner-gated store launch: enable GitHub Pages, set `PRIVACY_POLICY_URL`, capture
 
 | Check | Result |
 |-------|--------|
-| `npm run typecheck` | Passed |
-| `npm test` | Passed (46 tests) |
-| `npm run lint` | Passed |
+| `npm run typecheck` | Re-run on this stage |
+| `npm test` | Re-run on this stage |
+| `npm run lint` | Re-run on this stage |
+| `npm run verify` | Re-run on this stage |
 | Native builds / device E2E | Not executed here |
 
 ---
 
 ## Next recommended action
 
-1. Merge the stacked PRs through resilience.
-2. Enable GitHub Pages and set `PRIVACY_POLICY_URL`.
-3. Capture screenshots with the demo seed.
-4. Authorise EAS production builds when ready.
+Follow [LAUNCH_RUNBOOK.md](./LAUNCH_RUNBOOK.md): merge the stack, enable Pages, capture screenshots, then authorise EAS/store submission.

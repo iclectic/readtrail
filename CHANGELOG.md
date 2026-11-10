@@ -1,0 +1,34 @@
+# Changelog
+
+All notable changes to ReadTrail are documented in this file.  
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
+
+## [1.0.0] — Unreleased (candidate)
+
+First public offline-first release candidate.
+
+### Added
+
+- Personal library with tags, collections, covers, ISBN entry and barcode scan
+- Progress tracking with validation, history and transactional updates
+- Reading sessions, journal notes, Reading Memory, goals and achievements
+- Stats, reading calendar, charts and annual report share image
+- Discover: Open Library catalogue search and local recommendations
+- Backup: JSON, CSV and Markdown notes export/import
+- Dark mode, reduce motion, Dynamic Type cap, local daily reminders
+- In-app privacy notice and hostable public privacy page
+- Soft backup reminder (`lastBackupAt`)
+- Error boundary and bootstrap retry
+- CI (typecheck, tests, lint), Maestro smoke stubs, SQLite migration tests
+
+### Security / privacy
+
+- Offline-first; no account required for core use
+- Optional network limited to user-initiated Open Library lookups
+- iOS encryption export compliance declared (`ITSAppUsesNonExemptEncryption: false`)
+
+### Known owner follow-ups
+
+- Host privacy URL and set `PRIVACY_POLICY_URL`
+- Capture store screenshots; authorise EAS/store submission
+- Repository licence decision

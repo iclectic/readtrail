@@ -16,7 +16,7 @@ const SIZES = {
 };
 
 export function BookCover({ uri, title, size = "md" }: Props) {
-  const { colors, radii, typography } = useTheme();
+  const { colors, radii, typography, reduceMotion } = useTheme();
   const dim = SIZES[size];
   const initial = title.trim().charAt(0).toUpperCase() || "R";
 
@@ -29,7 +29,7 @@ export function BookCover({ uri, title, size = "md" }: Props) {
           { borderRadius: radii.sm, backgroundColor: colors.line },
         ]}
         contentFit="cover"
-        transition={200}
+        transition={reduceMotion ? 0 : 200}
         accessibilityLabel={`Cover of ${title}`}
         cachePolicy="memory-disk"
       />

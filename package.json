@@ -10,7 +10,8 @@
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",
-    "lint": "eslint . --ext .ts,.tsx --max-warnings 0"
+    "lint": "eslint . --ext .ts,.tsx --max-warnings 0",
+    "verify": "npm run typecheck && npm test && npm run lint"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",
