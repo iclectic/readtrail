@@ -80,6 +80,9 @@ export function CollectionsScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor: colors.paper, padding: spacing.md, gap: spacing.sm }]}>
+      <Text style={[typography.title, { color: colors.ink }]} accessibilityRole="header">
+        Collections
+      </Text>
       <Text style={[typography.body, { color: colors.inkMuted }]}>
         Group books into unlimited custom collections.
       </Text>
@@ -94,26 +97,36 @@ export function CollectionsScreen() {
         ListEmptyComponent={
           <EmptyState title="No collections yet" body="Create one to organise your library." />
         }
-        renderItem={({ item }) => (
-          <View
-            style={[
-              styles.card,
-              {
-                borderColor: colors.line,
-                backgroundColor: colors.paperElevated,
-                borderRadius: radii.md,
-              },
-            ]}
-          >
-            <View style={{ flex: 1 }}>
-              <Text style={[typography.bodyStrong, { color: colors.ink }]}>{item.name}</Text>
-              <Text style={[typography.caption, { color: colors.inkMuted }]}>
-                {counts[item.id] ?? 0} book{(counts[item.id] ?? 0) === 1 ? "" : "s"}
-              </Text>
+        renderItem={({ item }) => {
+          const count = counts[item.id] ?? 0;
+          return (
+            <View
+              accessible
+              accessibilityRole="summary"
+              accessibilityLabel={`${item.name}, ${count} book${count === 1 ? "" : "s"}`}
+              style={[
+                styles.card,
+                {
+                  borderColor: colors.line,
+                  backgroundColor: colors.paperElevated,
+                  borderRadius: radii.md,
+                },
+              ]}
+            >
+              <View style={{ flex: 1 }} accessible={false}>
+                <Text style={[typography.bodyStrong, { color: colors.ink }]}>{item.name}</Text>
+                <Text style={[typography.caption, { color: colors.inkMuted }]}>
+                  {count} book{count === 1 ? "" : "s"}
+                </Text>
+              </View>
+              <Button
+                label={`Delete ${item.name} collection`}
+                variant="ghost"
+                onPress={() => confirmDelete(item)}
+              />
             </View>
-            <Button label="Delete" variant="ghost" onPress={() => confirmDelete(item)} />
-          </View>
-        )}
+          );
+        }}
       />
     </View>
   );

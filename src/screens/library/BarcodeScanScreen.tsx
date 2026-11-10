@@ -89,7 +89,11 @@ export function BarcodeScanScreen({ navigation }: Props) {
 
   if (!permission) {
     return (
-      <View style={[styles.center, { backgroundColor: colors.paper }]}>
+      <View
+        style={[styles.center, { backgroundColor: colors.paper }]}
+        accessibilityRole="progressbar"
+        accessibilityLabel="Checking camera permission"
+      >
         <Text style={{ color: colors.inkMuted }}>Checking camera permission…</Text>
       </View>
     );
@@ -103,7 +107,10 @@ export function BarcodeScanScreen({ navigation }: Props) {
           { backgroundColor: colors.paper, padding: spacing.lg, gap: spacing.md },
         ]}
       >
-        <Text style={[typography.title, { color: colors.ink, textAlign: "center" }]}>
+        <Text
+          style={[typography.title, { color: colors.ink, textAlign: "center" }]}
+          accessibilityRole="header"
+        >
           Camera access
         </Text>
         <Text style={[typography.body, { color: colors.inkMuted, textAlign: "center" }]}>
@@ -121,7 +128,10 @@ export function BarcodeScanScreen({ navigation }: Props) {
   }
 
   return (
-    <View style={{ flex: 1, backgroundColor: "#000" }}>
+    <View
+      style={{ flex: 1, backgroundColor: "#000" }}
+      accessibilityLabel="ISBN barcode scanner"
+    >
       <CameraView
         style={StyleSheet.absoluteFill}
         facing="back"
@@ -130,12 +140,21 @@ export function BarcodeScanScreen({ navigation }: Props) {
           barcodeTypes: ["ean13", "ean8", "upc_a", "upc_e"],
         }}
         onBarcodeScanned={busy ? undefined : onBarcode}
+        accessible
+        accessibilityLabel="Camera viewfinder for ISBN barcodes"
       />
       <View style={[styles.overlay, { padding: spacing.md, gap: spacing.sm }]}>
-        <Text style={[typography.bodyStrong, { color: "#fff", textAlign: "center" }]}>
+        <Text
+          style={[typography.bodyStrong, { color: "#fff", textAlign: "center" }]}
+          accessibilityRole="header"
+        >
           Align the ISBN barcode inside the frame
         </Text>
-        <View style={styles.frame} />
+        <View
+          style={styles.frame}
+          accessible
+          accessibilityLabel="Barcode alignment frame"
+        />
         <Button
           label={torch ? "Torch off" : "Torch on"}
           variant="secondary"
@@ -147,7 +166,13 @@ export function BarcodeScanScreen({ navigation }: Props) {
           onPress={() => navigation.replace("AddEditBook")}
         />
         {busy ? (
-          <Text style={{ color: "#fff", textAlign: "center" }}>Looking up ISBN…</Text>
+          <Text
+            style={{ color: "#fff", textAlign: "center" }}
+            accessibilityLiveRegion="polite"
+            accessibilityLabel="Looking up ISBN"
+          >
+            Looking up ISBN…
+          </Text>
         ) : null}
       </View>
     </View>

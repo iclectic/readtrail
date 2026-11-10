@@ -37,14 +37,17 @@ export function TagEditor({ value, suggestions = [], onChange }: Props) {
 
   return (
     <View style={{ gap: spacing.sm }} accessibilityLabel="Book tags">
-      <Text style={[typography.label, { color: colors.ink }]}>Tags</Text>
-      <View style={styles.row}>
+      <Text style={[typography.label, { color: colors.ink }]} accessibilityRole="header">
+        Tags
+      </Text>
+      <View style={styles.row} accessibilityLabel={`${value.length} tags selected`}>
         {value.map((tag) => (
           <Chip
             key={tag}
             label={tag}
             selected
             onPress={() => onChange(value.filter((t) => t !== tag))}
+            accessibilityHint="Double tap to remove tag"
           />
         ))}
       </View>

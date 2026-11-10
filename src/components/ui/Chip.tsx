@@ -7,9 +7,10 @@ type Props = {
   label: string;
   selected?: boolean;
   onPress?: () => void;
+  accessibilityHint?: string;
 };
 
-export function Chip({ label, selected = false, onPress }: Props) {
+export function Chip({ label, selected = false, onPress, accessibilityHint }: Props) {
   const { colors, radii, typography, touchTarget, maxFontSizeMultiplier } = useTheme();
 
   return (
@@ -17,6 +18,7 @@ export function Chip({ label, selected = false, onPress }: Props) {
       accessibilityRole="button"
       accessibilityState={{ selected }}
       accessibilityLabel={label}
+      accessibilityHint={accessibilityHint}
       onPress={onPress}
       style={({ pressed }) => [
         styles.chip,

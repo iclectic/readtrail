@@ -280,7 +280,11 @@ export function AddEditBookScreen({ navigation, route }: Props) {
 
   if (loading) {
     return (
-      <View style={styles.loading}>
+      <View
+        style={styles.loading}
+        accessibilityRole="progressbar"
+        accessibilityLabel="Loading book form"
+      >
         <Text style={{ color: colors.inkMuted }}>Loading…</Text>
       </View>
     );
@@ -292,6 +296,12 @@ export function AddEditBookScreen({ navigation, route }: Props) {
       behavior={Platform.select({ ios: "padding", android: undefined })}
     >
       <ScrollView contentContainerStyle={{ padding: spacing.md, gap: spacing.sm }} keyboardShouldPersistTaps="handled">
+        <Text
+          style={[typography.title, { color: colors.ink }]}
+          accessibilityRole="header"
+        >
+          {isEdit ? "Edit book" : "Add book"}
+        </Text>
         <TextField label="Title *" value={title} onChangeText={setTitle} error={titleError} autoCapitalize="sentences" />
         <Button label="Search catalogues" variant="secondary" loading={lookingUp} onPress={onSearchTitle} />
 
@@ -319,15 +329,27 @@ export function AddEditBookScreen({ navigation, route }: Props) {
           ) : null}
         </View>
 
-        <Text style={[typography.label, { color: colors.ink }]}>Status</Text>
-        <View style={styles.row}>
+        <Text style={[typography.label, { color: colors.ink }]} accessibilityRole="header">
+          Status
+        </Text>
+        <View
+          style={styles.row}
+          accessibilityRole="radiogroup"
+          accessibilityLabel={`Status, ${statusLabel(status)} selected`}
+        >
           {BOOK_STATUSES.map((s) => (
             <Chip key={s} label={statusLabel(s)} selected={status === s} onPress={() => setStatus(s)} />
           ))}
         </View>
 
-        <Text style={[typography.label, { color: colors.ink }]}>Format</Text>
-        <View style={styles.row}>
+        <Text style={[typography.label, { color: colors.ink }]} accessibilityRole="header">
+          Format
+        </Text>
+        <View
+          style={styles.row}
+          accessibilityRole="radiogroup"
+          accessibilityLabel={`Format, ${format} selected`}
+        >
           {BOOK_FORMATS.map((f) => (
             <Chip
               key={f}
@@ -338,8 +360,14 @@ export function AddEditBookScreen({ navigation, route }: Props) {
           ))}
         </View>
 
-        <Text style={[typography.label, { color: colors.ink }]}>Ownership</Text>
-        <View style={styles.row}>
+        <Text style={[typography.label, { color: colors.ink }]} accessibilityRole="header">
+          Ownership
+        </Text>
+        <View
+          style={styles.row}
+          accessibilityRole="radiogroup"
+          accessibilityLabel={`Ownership, ${ownership} selected`}
+        >
           {OWNERSHIP_TYPES.map((o) => (
             <Chip
               key={o}
