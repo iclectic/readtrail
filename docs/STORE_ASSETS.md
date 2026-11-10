@@ -77,7 +77,7 @@ Until then, Settings shows a not-yet-published message.
 ## Remaining blockers for submission
 
 - [x] Public privacy policy URL (jsDelivr CDN; optional cleaner host later)
-- [ ] Screenshot PNGs in `store/screenshots/en-GB/` (pack + Maestro ready)
+- [x] Screenshot PNGs in `store/screenshots/en-GB/` (1080×2400 phone set)
 - [ ] Production signing credentials / EAS project linkage
 - [ ] Age rating questionnaire filed from [AGE_RATING.md](./AGE_RATING.md)
 - [x] Licence file present (proprietary / all rights reserved)

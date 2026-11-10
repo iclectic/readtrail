@@ -55,7 +55,6 @@
   },
   "private": true,
   "overrides": {
-    "image-size": "^2.1.0",
     "postcss": "^8.5.23"
   },
   "jest": {

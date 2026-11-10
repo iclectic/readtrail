@@ -63,7 +63,7 @@ Legend: ☐ not done · ☑ done with evidence in repo or CI · ◐ prepared / d
 | App icon (all required sizes) | ◐ | Assets present; store visual QA pending |
 | Adaptive icon Android | ◐ | Asset referenced; visual QA pending |
 | Splash screen | ◐ | Present; brand polish pending |
-| Screenshots (phone) en-GB | ☐ | Drop zone ready: `store/screenshots/en-GB/` |
+| Screenshots (phone) en-GB | ☑ | Six PNGs in `store/screenshots/en-GB/` (1080×2400) |
 | Screenshots (tablet) if claiming tablet support | ☑ N/A | `ios.supportsTablet: false` (phone-first 1.0) |
 | Short / long description (en-GB) | ☑ | STORE_LISTING.md |
 | Keywords / subtitle | ☑ | STORE_LISTING.md |

@@ -46,8 +46,11 @@ First public offline-first release candidate.
 
 - Proprietary repository `LICENSE` (all rights reserved; not licensed for reuse)
 
+### Store assets
+
+- Phone screenshot set (`store/screenshots/en-GB/`, 1080×2400) captured from shipping UI
+
 ### Known owner follow-ups
 
-- Capture store screenshots into `store/screenshots/en-GB/` (Maestro flows + `npm run check:screenshots` ready)
-- Confirm support mailbox; authorise EAS/store submission
-- Optional: cleaner privacy host than jsDelivr; optional open-source licence later
+- Confirm support mailbox; authorise EAS/store submission (`EXPO_TOKEN` + store credentials)
+- Optional: cleaner privacy host than jsDelivr; optional open-source licence later; physical-device screenshot polish

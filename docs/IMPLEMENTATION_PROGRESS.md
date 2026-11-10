@@ -8,33 +8,26 @@ Living tracker. Update when phases complete. **Do not mark work done without evi
 
 ### Offline 1.0 engineering on `main`
 
-Privacy URL, screenshot pack, security audit, accessibility/phone-first, and owner preflight merged or in flight.
+Privacy URL, screenshot pack tooling, security audit, accessibility/phone-first, owner preflight, proprietary licence.
 
-### Owner preflight
+### Store screenshots (this stage)
 
-- [x] `npm run preflight` — verify + screenshots check + security audit + go/no-go report
-
-### Form / secondary-screen a11y
-
-- [x] Add/edit book radiogroups + form header
-- [x] Collections, duplicates, barcode scanner, tag editor labels
-- [x] Note editor type radiogroup + favourite / memory hints
-- [x] Settings section headers, theme radiogroup, switch checked state
-
-### Proprietary licence (this stage)
-
-- [x] Root `LICENSE` (all rights reserved; matches prior README posture)
+- [x] Captured six phone PNGs on Android emulator (1080×2400) from the shipping UI + demo seed
+- [x] `npm run check:screenshots` passes
+- [x] Metro-compatible dependency fix: drop `image-size@2` override (breaks asset transform); keep `postcss` override
 
 ---
 
 ## Current
 
-**Engineering track ready.** Remaining work is owner-gated (see `npm run preflight` / [LAUNCH_RUNBOOK.md](./LAUNCH_RUNBOOK.md)):
+Remaining work is **owner-only** (see `npm run preflight` / [LAUNCH_RUNBOOK.md](./LAUNCH_RUNBOOK.md)):
 
-1. Capture phone screenshots into `store/screenshots/en-GB/`
-2. Confirm `support@readtrail.app` mailbox
-3. Link EAS + authorise production builds/submit
-4. Device VoiceOver / TalkBack smoke
+1. Confirm `support@readtrail.app` mailbox is monitored
+2. Add `EXPO_TOKEN` / link EAS + production signing credentials
+3. Explicitly authorise production build + store submit
+4. Device VoiceOver / TalkBack smoke on a physical phone
+
+Optional: enable GitHub Pages for a cleaner privacy URL (API enablement is 403 for this agent).
 
 ---
 
@@ -52,10 +45,12 @@ Privacy URL, screenshot pack, security audit, accessibility/phone-first, and own
 
 | Check | Result |
 |-------|--------|
-| `npm run preflight` | Passed (engineering OK; licence OK; 5 owner items open) |
+| `npm run verify` | Passed (typecheck, 60 tests, lint) |
+| `npm run check:screenshots` | Passed (6/6 PNGs ≥ 1080×1920) |
+| `npm run preflight` | Engineering OK; 4 owner items open |
 
 ---
 
 ## Next recommended action
 
-Owner: run `npm run preflight`, capture screenshots, confirm support mailbox, then authorise EAS.
+Owner: confirm support mailbox, provide Expo token / store credentials, then authorise EAS build and submit.
