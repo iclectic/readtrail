@@ -4,7 +4,7 @@ Single checklist for shipping 1.0 after the engineering stack merges. **Do not s
 
 ## 0. Merge status
 
-The offline 1.0 engineering stack is on `main` (merged via PR #10). Confirm CI with `npm run verify`.
+The offline 1.0 engineering stack is on `main` (through privacy URL #12 and screenshot pack #13). Confirm CI with `npm run verify`. Dependency triage: [SECURITY.md](./SECURITY.md) / `npm run audit:security`.
 
 ---
 
