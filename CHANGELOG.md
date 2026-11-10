@@ -36,7 +36,7 @@ First public offline-first release candidate.
 - Stronger labels on goals, sessions, notes, onboarding and memory; form error live regions
 - Chip targets meet 44pt; WCAG AA contrast checks for light/dark body text tokens
 - Phone-first 1.0 (`ios.supportsTablet: false`)
-- Add/edit book, collections, duplicates, barcode scan, tag editor and note editor labels
+- Add/edit book, collections, duplicates, barcode scan, tag editor, note editor and Settings labels
 
 ### Release tooling
 

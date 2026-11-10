@@ -19,6 +19,7 @@ Privacy URL, screenshot pack, security audit, accessibility/phone-first, and own
 - [x] Add/edit book radiogroups + form header
 - [x] Collections, duplicates, barcode scanner, tag editor labels
 - [x] Note editor type radiogroup + favourite / memory hints
+- [x] Settings section headers, theme radiogroup, switch checked state
 
 ---
 

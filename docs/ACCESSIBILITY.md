@@ -17,6 +17,7 @@ Partial store-readiness pass. Device VoiceOver/TalkBack audits remain owner-side
 | Barcode scan | Permission + viewfinder labels; torch and lookup live region |
 | Tags | Header + remove hint on selected chips |
 | Note editor | Header, type radiogroup, favourite / Reading Memory hints |
+| Settings | Screen/section headers; theme radiogroup; switches with checked state |
 | Reduce motion | Settings toggle; library/details skip `LayoutAnimation` when on |
 | Dynamic Type | System scaling allowed with `maxFontSizeMultiplier={1.6}` on design-system text |
 | Contrast (tokens) | Unit-tested WCAG AA for body/muted ink on paper (light + dark) via `contrastRatio` |
