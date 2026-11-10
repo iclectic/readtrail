@@ -5,11 +5,20 @@
 | `privacy/` | Public privacy notice (host this folder) |
 | `feature-graphic.svg` | Play feature graphic draft (export PNG 1024×500) |
 
-## GitHub Pages (example)
+## GitHub Pages
 
-1. Enable Pages for the repository (deploy from `/docs` or copy `docs/site` to a `gh-pages` branch).
-2. Confirm the live URL, e.g. `https://<user>.github.io/readtrail/privacy/`.
-3. Set that URL as `PRIVACY_POLICY_URL` in `src/config/release.ts`.
-4. Paste the same URL into App Store Connect and Play Console.
+A workflow (`.github/workflows/pages.yml`) deploys `docs/site` on pushes to `main` that touch this folder, and via **workflow_dispatch**.
+
+### One-time owner setup
+
+1. Merge the launch-enablement / release-prep changes to `main`.
+2. Repo **Settings → Pages → Build and deployment → Source: GitHub Actions**.
+3. Run the **Deploy privacy site** workflow (or push a docs/site change).
+4. Confirm the live URL, typically:
+
+   `https://iclectic.github.io/readtrail/privacy/`
+
+5. Set that URL as `PRIVACY_POLICY_URL` in `src/config/release.ts`.
+6. Paste the same URL into App Store Connect and Play Console.
 
 Do not mark the privacy URL as live in checklists until the hosted page responds publicly.

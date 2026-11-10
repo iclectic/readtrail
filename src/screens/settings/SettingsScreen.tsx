@@ -38,6 +38,7 @@ import {
   privacyPolicyUrl,
   supportMailto,
 } from "../../config/release";
+import { seedScreenshotLibrary } from "../../db/seedScreenshot";
 
 export function SettingsScreen() {
   const insets = useSafeAreaInsets();
@@ -407,6 +408,52 @@ export function SettingsScreen() {
         <Button label="Send feedback" variant="secondary" onPress={handleContact} />
         <Button label="Rate ReadTrail" variant="ghost" onPress={handleRateApp} />
       </Card>
+
+      {__DEV__ ? (
+        <Card title="Developer">
+          <Text style={[typography.caption, { color: colors.inkSubtle }]}>
+            Loads a rich sample library for store screenshots. Only available in development
+            builds. Clear data first if the library is not empty and you want a clean demo set.
+          </Text>
+          <Button
+            label="Load screenshot demo library"
+            variant="secondary"
+            onPress={() => {
+              Alert.alert(
+                "Load demo library?",
+                "Inserts sample books, sessions, notes and goals if the library is empty.",
+                [
+                  { text: "Cancel", style: "cancel" },
+                  {
+                    text: "Load",
+                    onPress: () => {
+                      void (async () => {
+                        try {
+                          const result = await seedScreenshotLibrary({ onlyIfEmpty: true });
+                          if (!result.inserted) {
+                            Alert.alert(
+                              "Library not empty",
+                              `There are already ${result.bookCount} books. Clear all data first, then try again.`
+                            );
+                            return;
+                          }
+                          successHaptic();
+                          Alert.alert("Demo library ready", "Capture screenshots from Library, Stats and Notes.");
+                        } catch (e) {
+                          Alert.alert(
+                            "Seed failed",
+                            e instanceof Error ? e.message : "Could not insert demo data."
+                          );
+                        }
+                      })();
+                    },
+                  },
+                ]
+              );
+            }}
+          />
+        </Card>
+      ) : null}
 
       <Card title="Privacy">
         <Text style={[typography.body, { color: colors.inkMuted }]}>

@@ -18,7 +18,8 @@
       "buildNumber": "1",
       "infoPlist": {
         "NSCameraUsageDescription": "ReadTrail uses the camera to scan ISBN barcodes so you can add books more quickly.",
-        "NSUserNotificationsUsageDescription": "ReadTrail can send an optional daily reminder to help you keep a gentle reading habit. You can turn this off at any time."
+        "NSUserNotificationsUsageDescription": "ReadTrail can send an optional daily reminder to help you keep a gentle reading habit. You can turn this off at any time.",
+        "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {

@@ -45,6 +45,7 @@ SVG draft: [`docs/site/feature-graphic.svg`](./site/feature-graphic.svg) (export
 
 - Draft notice: `docs/PRIVACY.md`
 - Hostable page: `docs/site/privacy/`
+- Deploy via `.github/workflows/pages.yml` (enable Pages → GitHub Actions)
 - After hosting, set `PRIVACY_POLICY_URL` in `src/config/release.ts`
 - Camera permission: ISBN barcode scanning only
 - Notifications permission: optional daily reading reminder

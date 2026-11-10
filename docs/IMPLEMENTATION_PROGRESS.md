@@ -6,26 +6,25 @@ Living tracker. Update when phases complete. **Do not mark work done without evi
 
 ## Completed
 
-### Phase 0–4 + hardening + polish + release prep
+### Phase 0–9 engineering (through quality gate)
 
-- Foundation through production polish (tags, CSV, privacy, calendar, share)
-- Release prep artefacts (hostable privacy, store copy, release config)
+- Foundation → polish → release prep → SQLite quality gate
 
-### Quality gate (this stage)
+### Launch enablement (this stage)
 
-- [x] `MigrationDatabase` interface (expo-sqlite production / Node test adapter)
-- [x] Migration integration tests (empty, idempotent, legacy upgrade)
-- [x] Integrity tests (FK cascade, clear-all SQL, page recompute)
-- [x] Shared `CLEAR_ALL_USER_DATA_SQL`
-- [x] Reduce-motion respected for library/details layout animations
-- [x] Expanded Maestro smoke stubs (add book, progress, clear data)
-- [x] FEATURE_AUDIT + TEST_STRATEGY refreshed to match the repo
+- [x] GitHub Pages workflow for `docs/site` privacy hosting
+- [x] Rich screenshot/demo seed (books, sessions, notes, tags, goals)
+- [x] Dev Settings action to load demo library
+- [x] Dynamic Type cap (`maxFontSizeMultiplier`) on design-system text
+- [x] `scaleTypography` helper + unit tests
+- [x] iOS `ITSAppUsesNonExemptEncryption: false` + export compliance doc
+- [x] Accessibility checklist doc
 
 ---
 
 ## Current
 
-Owner-gated store launch steps: host privacy URL, capture screenshots, confirm support mailbox, choose repository licence, authorise EAS production builds and store submission.
+Owner-gated store launch: enable GitHub Pages, set `PRIVACY_POLICY_URL`, capture screenshots, confirm support mailbox, choose licence, authorise EAS/store submission.
 
 ---
 
@@ -34,10 +33,10 @@ Owner-gated store launch steps: host privacy URL, capture screenshots, confirm s
 - [ ] Optional AI features (deferred)
 - [ ] Cloud sync / social (deferred)
 - [ ] Execute Maestro on simulator/device
-- [ ] Publish privacy page and set `PRIVACY_POLICY_URL`
-- [ ] Store screenshot capture
+- [ ] Enable Pages + set `PRIVACY_POLICY_URL`
+- [ ] Store screenshot capture (demo seed ready)
 - [ ] Production signing / store submission (**needs explicit authorisation**)
-- [ ] Real-device performance benchmarks
+- [ ] Real-device performance / a11y device audit
 - [ ] Repository licence decision
 
 ---
@@ -47,7 +46,7 @@ Owner-gated store launch steps: host privacy URL, capture screenshots, confirm s
 | Check | Result |
 |-------|--------|
 | `npm run typecheck` | Passed |
-| `npm test` | Passed (38 tests) |
+| `npm test` | Passed (40 tests) |
 | `npm run lint` | Passed |
 | Native builds / device E2E | Not executed here |
 
@@ -55,7 +54,7 @@ Owner-gated store launch steps: host privacy URL, capture screenshots, confirm s
 
 ## Next recommended action
 
-1. Merge stacked PRs (#2/#3/#4) then this quality-gate PR.
-2. Host `docs/site/privacy/` and set `PRIVACY_POLICY_URL`.
-3. Run Maestro on a simulator; capture screenshots.
+1. Merge stacked PRs through launch-enablement.
+2. Enable GitHub Pages (Actions source) and set `PRIVACY_POLICY_URL`.
+3. Capture screenshots using the demo seed.
 4. Authorise EAS production builds when ready.

@@ -25,7 +25,7 @@ Legend: **Implemented** · **Partial** · **Deferred** · **Owner-gated**
 | Discover / catalogue | **Implemented** | Open Library search; fails closed offline |
 | Dark mode | **Implemented** | System / light / dark |
 | i18n framework | **Partial** | en-GB source module; not multi-locale |
-| Accessibility | **Partial** | Labels/targets/reduce-motion; full device audit pending |
+| Accessibility | **Partial** | Labels/targets/reduce-motion/Dynamic Type cap; device audit pending |
 | Import / export | **Implemented** | JSON, CSV, Markdown notes |
 | Reminders | **Implemented** | Local notifications |
 | Reading Memory | **Implemented** | Spaced review fields + UI |
@@ -46,7 +46,7 @@ Legend: **Implemented** · **Partial** · **Deferred** · **Owner-gated**
 | DB integration tests | **Implemented** | Node SQLite adapter; migrations + cascade/clear |
 | Maestro e2e stubs | **Partial** | Flows present; not executed in cloud agent |
 | EAS profiles | **Partial** | Profiles exist; builds owner-gated |
-| Privacy hosting | **Partial** | Static page ready; public URL owner-gated |
+| Privacy hosting | **Partial** | Static page + Pages workflow ready; enable Pages then set URL |
 
 ---
 

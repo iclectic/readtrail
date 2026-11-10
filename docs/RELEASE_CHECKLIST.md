@@ -44,7 +44,7 @@ Legend: ☐ not done · ☑ done with evidence in repo or CI · ◐ prepared / d
 
 | Item | Status | Notes |
 |------|--------|-------|
-| Privacy policy URL live | ◐ | Hostable page at `docs/site/privacy/`; URL not live yet |
+| Privacy policy URL live | ◐ | Hostable page + Pages workflow ready; enable Pages then set URL |
 | Support URL / contact email live | ◐ | `support@readtrail.app` — confirm mailbox |
 | Data safety / nutrition labels filed | ◐ | Draft answers in DATA_SAFETY.md |
 | Licence chosen for repository | ☐ | Owner decision (README still unlicensed) |
@@ -95,7 +95,7 @@ Legend: ☐ not done · ☑ done with evidence in repo or CI · ◐ prepared / d
 |------|--------|-------|
 | VoiceOver / TalkBack labels on primary flows | ◐ | Helpers + labels added; full device audit pending |
 | Contrast checked | ◐ | Light/dark palettes defined; formal audit pending |
-| Dynamic type / large text | ◐ | System fonts; not fully verified |
+| Dynamic type / large text | ◐ | `maxFontSizeMultiplier` 1.6 on design-system text; device QA pending |
 | Dark mode | ☑ | System / light / dark in Settings |
 | Orientation locked as intended | ☑ | Portrait in `app.json` |
 
@@ -130,7 +130,7 @@ Legend: ☐ not done · ☑ done with evidence in repo or CI · ◐ prepared / d
 | Item | Status |
 |------|--------|
 | Privacy nutrition labels | ◐ draft in DATA_SAFETY.md |
-| Encryption export compliance answered | ☐ (standard HTTPS exemption typically) |
+| Encryption export compliance answered | ☑ | `ITSAppUsesNonExemptEncryption: false` + EXPORT_COMPLIANCE.md |
 | Account “Sign in with Apple” N/A explained if no auth | ☑ documented |
 | TestFlight external notes | ☐ |
 | iPad layout acceptable if tablet supported | ☐ |

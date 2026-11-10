@@ -24,7 +24,7 @@ export function BookListItem({
   selected = false,
   onToggleSelect,
 }: Props) {
-  const { colors, radii, typography, spacing } = useTheme();
+  const { colors, radii, typography, spacing, maxFontSizeMultiplier } = useTheme();
   const percent = progressPercent(book.currentPage, book.totalPages);
 
   return (
@@ -56,13 +56,24 @@ export function BookListItem({
         ) : null}
         <BookCover uri={book.coverUri} title={book.title} size="sm" />
         <View style={{ flex: 1, gap: 4 }}>
-          <Text style={[typography.bodyStrong, { color: colors.ink }]} numberOfLines={2}>
+          <Text
+            maxFontSizeMultiplier={maxFontSizeMultiplier}
+            style={[typography.bodyStrong, { color: colors.ink }]}
+            numberOfLines={2}
+          >
             {book.title}
           </Text>
-          <Text style={[typography.caption, { color: colors.inkMuted }]} numberOfLines={1}>
+          <Text
+            maxFontSizeMultiplier={maxFontSizeMultiplier}
+            style={[typography.caption, { color: colors.inkMuted }]}
+            numberOfLines={1}
+          >
             {book.author || "Unknown author"}
           </Text>
-          <Text style={[typography.caption, { color: colors.inkSubtle }]}>
+          <Text
+            maxFontSizeMultiplier={maxFontSizeMultiplier}
+            style={[typography.caption, { color: colors.inkSubtle }]}
+          >
             {statusLabel(book.status)}
             {book.totalPages > 0
               ? ` · ${book.currentPage}/${book.totalPages}`
@@ -77,7 +88,10 @@ export function BookListItem({
             hitSlop={8}
             style={styles.quick}
           >
-            <Text style={[typography.caption, { color: colors.accent, fontWeight: "700" }]}>
+            <Text
+              maxFontSizeMultiplier={maxFontSizeMultiplier}
+              style={[typography.caption, { color: colors.accent, fontWeight: "700" }]}
+            >
               Update
             </Text>
           </Pressable>

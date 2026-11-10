@@ -11,15 +11,21 @@ type Props = {
 };
 
 export function EmptyState({ title, body, actionLabel, onAction }: Props) {
-  const { colors, typography, spacing } = useTheme();
+  const { colors, typography, spacing, maxFontSizeMultiplier } = useTheme();
 
   return (
     <View style={[styles.wrap, { gap: spacing.sm }]} accessibilityRole="summary">
-      <Text style={[typography.subtitle, { color: colors.ink, textAlign: "center" }]}>
+      <Text
+        maxFontSizeMultiplier={maxFontSizeMultiplier}
+        style={[typography.subtitle, { color: colors.ink, textAlign: "center" }]}
+      >
         {title}
       </Text>
       {body ? (
-        <Text style={[typography.body, { color: colors.inkMuted, textAlign: "center" }]}>
+        <Text
+          maxFontSizeMultiplier={maxFontSizeMultiplier}
+          style={[typography.body, { color: colors.inkMuted, textAlign: "center" }]}
+        >
           {body}
         </Text>
       ) : null}

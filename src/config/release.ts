@@ -8,7 +8,10 @@
 
 export const SUPPORT_EMAIL = "support@readtrail.app";
 
-/** Public privacy policy URL once hosted (e.g. GitHub Pages). */
+/**
+ * Public privacy policy URL once hosted (e.g. GitHub Pages).
+ * After enabling Pages, typically: https://iclectic.github.io/readtrail/privacy/
+ */
 export const PRIVACY_POLICY_URL = "";
 
 /**

@@ -11,8 +11,11 @@ Capture on simulators or devices after a production or preview build. Do not inv
 
 ## Prep
 
-1. Install a clean build (`eas build --profile preview` recommended).
-2. Import a demo library or seed in a development build only — never ship seed data in production.
+1. Install a clean **development** or preview build (`eas build --profile preview` or Expo Go).
+2. Load demo data (development builds only — never ship seed data in production):
+   - Fresh install auto-seeds a rich library when empty (`seedDevData` → `seedScreenshotLibrary`).
+   - Or Settings → Developer → **Load screenshot demo library** (appears only in `__DEV__`).
+   - If the library already has books, Clear all data first, then load the demo set.
 3. Use light theme for the primary set; optional dark-mode alternate set.
 4. British English UI strings should already be present.
 

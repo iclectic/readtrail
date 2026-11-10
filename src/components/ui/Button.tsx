@@ -25,7 +25,7 @@ export function Button({
   style,
   ...rest
 }: Props) {
-  const { colors, radii, typography, touchTarget } = useTheme();
+  const { colors, radii, typography, touchTarget, maxFontSizeMultiplier } = useTheme();
   const isDisabled = disabled || loading;
   const minHeight = ensureMinTouchSize(touchTarget);
 
@@ -69,7 +69,12 @@ export function Button({
       {loading ? (
         <ActivityIndicator color={textColor} />
       ) : (
-        <Text style={[typography.bodyStrong, { color: textColor }]}>{label}</Text>
+        <Text
+          maxFontSizeMultiplier={maxFontSizeMultiplier}
+          style={[typography.bodyStrong, { color: textColor }]}
+        >
+          {label}
+        </Text>
       )}
     </Pressable>
   );
