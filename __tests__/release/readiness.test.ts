@@ -29,13 +29,14 @@ describe("release readiness artefacts", () => {
     expect(existsSync(join(root, "docs/SECURITY.md"))).toBe(true);
   });
 
-  it("declares npm overrides for patched Metro tooling packages", () => {
+  it("declares npm overrides and security audit script", () => {
     const pkg = JSON.parse(read("package.json")) as {
       overrides?: Record<string, string>;
       scripts?: Record<string, string>;
     };
-    expect(pkg.overrides?.["image-size"]).toMatch(/^\^2\./);
+    // postcss override clears a Metro high; image-size 2.x breaks Metro asset transform
     expect(pkg.overrides?.postcss).toMatch(/^\^8\.5\./);
+    expect(pkg.overrides?.["image-size"]).toBeUndefined();
     expect(pkg.scripts?.["audit:security"]).toContain("npm audit");
   });
 

@@ -22,16 +22,18 @@ Re-run on `main` after screenshot pack merge. **Do not run `npm audit fix --forc
 |--------|--------|
 | `npx expo install` align `expo` → `~54.0.37` / `expo-file-system` → `~19.0.24` | Expo-aligned patch bump |
 | `npm audit fix` (no `--force`) | Cleared critical/high tooling CVEs where non-breaking |
-| `package.json` `overrides` for `image-size` `^2.1.0` and `postcss` `^8.5.23` | Cleared remaining **high** advisories in Metro/Expo CLI tree |
+| `package.json` `overrides` for `postcss` `^8.5.23` | Clears PostCSS high in Metro/CLI tree |
+| `image-size` left on Metro’s `1.2.1` | `image-size@^2` breaks Metro asset transform; accepted residual **high** until Expo upgrades Metro |
 
 ### Current residual (accepted for 1.0)
 
-`npm audit` after triage: **24** findings (**7** low, **17** moderate, **0** high, **0** critical).
+`npm audit` after triage: **25** findings (**7** low, **17** moderate, **1** high from Metro `image-size`, **0** critical).
 
 Remaining items are transitive Expo / TypeScript-ESLint / Jest tooling packages. Fixes require either:
 
-- a breaking Expo SDK downgrade (rejected), or
-- waiting for upstream Expo 54 / typescript-eslint releases
+- a breaking Expo SDK downgrade (rejected),
+- waiting for upstream Expo 54 / Metro / typescript-eslint releases, or
+- an `image-size` 2.x that Metro can consume (not yet)
 
 None of the residual advisories are treated as production mobile-runtime blockers for the offline-first app binary. Re-triage when moving to the next Expo SDK.
 

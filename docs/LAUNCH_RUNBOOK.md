@@ -43,12 +43,12 @@ Optional upgrades:
 
 ## 3. Screenshots
 
-1. Dev/preview build with empty library (auto seed) **or** Settings → Developer → Load screenshot demo library.  
-2. Follow [SCREENSHOT_GUIDE.md](./SCREENSHOT_GUIDE.md) and drop PNGs into [`store/screenshots/en-GB/`](../store/screenshots/en-GB/).  
-3. Optional: run `.maestro/screenshot-*.yaml` flows, then re-export at store pixel sizes.  
-4. `npm run check:screenshots`  
-5. Listing copy: [STORE_LISTING.md](./STORE_LISTING.md) / `store/metadata/en-GB/`.  
-6. Feature graphic: upload `docs/site/feature-graphic.png`.
+Phone set is in [`store/screenshots/en-GB/`](../store/screenshots/en-GB/) (captured on Android emulator 1080×2400 from the shipping UI + demo seed). Re-capture on a physical device if you want store polish beyond emulator chrome.
+
+1. Optional refresh: follow [SCREENSHOT_GUIDE.md](./SCREENSHOT_GUIDE.md).  
+2. `npm run check:screenshots`  
+3. Listing copy: [STORE_LISTING.md](./STORE_LISTING.md) / `store/metadata/en-GB/`.  
+4. Feature graphic: upload `docs/site/feature-graphic.png`.
 
 ---
 

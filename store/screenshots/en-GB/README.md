@@ -1,7 +1,7 @@
 # Store screenshots (en-GB)
 
-Drop final PNGs here after capturing on a real device or simulator.  
-Do not invent mock marketing art — shots must match the shipping UI.
+Phone set captured on an Android emulator (1080×2400) from the shipping UI with the demo seed.  
+Re-capture on a physical device if you want store polish beyond emulator chrome. Do not invent mock marketing art.
 
 ## Required files (phone set)
 
