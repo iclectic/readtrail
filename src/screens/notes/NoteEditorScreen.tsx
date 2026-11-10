@@ -124,8 +124,17 @@ export function NoteEditorScreen({ navigation, route }: Props) {
       contentContainerStyle={{ padding: spacing.md, gap: spacing.sm }}
       keyboardShouldPersistTaps="handled"
     >
-      <Text style={[typography.label, { color: colors.ink }]}>Type</Text>
-      <View style={styles.row}>
+      <Text style={[typography.title, { color: colors.ink }]} accessibilityRole="header">
+        {isEdit ? "Edit note" : "Add note"}
+      </Text>
+      <Text style={[typography.label, { color: colors.ink }]} accessibilityRole="header">
+        Type
+      </Text>
+      <View
+        style={styles.row}
+        accessibilityRole="radiogroup"
+        accessibilityLabel={`Note type, ${kind} selected`}
+      >
         {NOTE_KINDS.map((k) => (
           <Chip
             key={k}
@@ -153,13 +162,24 @@ export function NoteEditorScreen({ navigation, route }: Props) {
         label={isFavourite ? "Favourite" : "Mark as favourite"}
         selected={isFavourite}
         onPress={() => setIsFavourite((v) => !v)}
+        accessibilityHint={
+          isFavourite ? "Double tap to remove favourite" : "Double tap to mark as favourite"
+        }
       />
       <Chip
         label={includedInMemory ? "In Reading Memory" : "Add to Reading Memory"}
         selected={includedInMemory}
         onPress={() => setIncludedInMemory((v) => !v)}
+        accessibilityHint={
+          includedInMemory
+            ? "Double tap to remove from Reading Memory"
+            : "Double tap to include in Reading Memory"
+        }
       />
-      <Text style={[typography.caption, { color: colors.inkSubtle }]}>
+      <Text
+        style={[typography.caption, { color: colors.inkSubtle }]}
+        accessibilityRole="summary"
+      >
         Reading Memory only revisits notes you saved. It never invents quotations from books.
       </Text>
       <Button label={saving ? "Saving…" : "Save note"} loading={saving} onPress={onSave} />
