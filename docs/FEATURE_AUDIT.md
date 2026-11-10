@@ -1,7 +1,6 @@
 # ReadTrail feature audit
 
-**Last refreshed:** 9 November 2026 (Europe/London) — post quality-gate stage.  
-Earlier Phase 0 rows that said “Missing” for sessions/tags/etc. are obsolete; this document reflects the current repository.
+**Last refreshed:** 10 November 2026 (Europe/London) — owner preflight handoff.  
 
 Legend: **Implemented** · **Partial** · **Deferred** · **Owner-gated**
 
@@ -25,7 +24,7 @@ Legend: **Implemented** · **Partial** · **Deferred** · **Owner-gated**
 | Discover / catalogue | **Implemented** | Open Library search; fails closed offline |
 | Dark mode | **Implemented** | System / light / dark |
 | i18n framework | **Partial** | en-GB source module; not multi-locale |
-| Accessibility | **Partial** | Labels/targets/reduce-motion/Dynamic Type cap; device audit pending |
+| Accessibility | **Partial** | Labels/targets/contrast tests/reduce-motion; device audit **Owner-gated** |
 | Error recovery | **Implemented** | Bootstrap retry + `AppErrorBoundary` |
 | Offline catalogue | **Implemented** | Fails closed with Discover offline hint |
 | Import / export | **Implemented** | JSON, CSV, Markdown notes |
@@ -41,19 +40,23 @@ Legend: **Implemented** · **Partial** · **Deferred** · **Owner-gated**
 
 | Area | Status | Notes |
 |------|--------|-------|
-| Schema migrations | **Implemented** | `user_version` + migrations 001–003 |
+| Schema migrations | **Implemented** | `user_version` + migrations 001–004 |
 | Design system | **Implemented** | Theme tokens, Screen/Button/TextField/etc. |
 | Lint / typecheck / CI | **Implemented** | GitHub Actions quality job |
-| Unit tests | **Implemented** | Domain + services + release config |
+| Unit tests | **Implemented** | Domain + services + release + a11y contrast |
 | DB integration tests | **Implemented** | Node SQLite adapter; migrations + cascade/clear |
-| Maestro e2e stubs | **Partial** | Flows present; not executed in cloud agent |
-| EAS profiles | **Partial** | Profiles exist; builds owner-gated |
-| Privacy hosting | **Partial** | Static page + Pages workflow ready; enable Pages then set URL |
+| Maestro e2e stubs | **Partial** | Flows present; device run **Owner-gated** |
+| EAS profiles | **Partial** | Profiles exist; builds **Owner-gated** |
+| Privacy hosting | **Implemented** | jsDelivr URL live; optional Pages upgrade |
+| Store screenshot pack | **Partial** | Drop zone + Maestro ready; PNG capture **Owner-gated** |
+| Dependency triage | **Implemented** | See SECURITY.md; `npm run audit:security` |
+| Owner preflight | **Implemented** | `npm run preflight` |
 
 ---
 
 ## Related documents
 
 - [IMPLEMENTATION_PROGRESS.md](./IMPLEMENTATION_PROGRESS.md)  
+- [LAUNCH_RUNBOOK.md](./LAUNCH_RUNBOOK.md)  
 - [RELEASE_CHECKLIST.md](./RELEASE_CHECKLIST.md)  
 - [TEST_STRATEGY.md](./TEST_STRATEGY.md)  

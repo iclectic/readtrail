@@ -77,4 +77,12 @@ describe("release readiness artefacts", () => {
     };
     expect(app.expo.ios.supportsTablet).toBe(false);
   });
+
+  it("ships owner launch preflight script", () => {
+    const pkg = JSON.parse(read("package.json")) as {
+      scripts?: Record<string, string>;
+    };
+    expect(existsSync(join(root, "scripts/preflight.mjs"))).toBe(true);
+    expect(pkg.scripts?.preflight).toContain("scripts/preflight.mjs");
+  });
 });

@@ -14,7 +14,8 @@
     "verify": "npm run typecheck && npm test && npm run lint",
     "export:feature-graphic": "node scripts/export-feature-graphic.mjs",
     "check:screenshots": "node scripts/check-screenshots.mjs",
-    "audit:security": "npm audit --audit-level=critical"
+    "audit:security": "npm audit --audit-level=critical",
+    "preflight": "npm run verify && npm run check:screenshots && npm run audit:security && node scripts/preflight.mjs"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",

@@ -6,34 +6,35 @@ Living tracker. Update when phases complete. **Do not mark work done without evi
 
 ## Completed
 
-### Offline 1.0 on `main`
+### Offline 1.0 engineering on `main`
 
-Engineering stack + privacy URL + screenshot pack + security audit merged.
+Privacy URL, screenshot pack, security audit, accessibility/phone-first, and owner preflight merged or in flight.
 
-### Accessibility pass (this stage)
+### Owner preflight (this stage)
 
-- [x] Contrast helpers + WCAG AA token tests (light/dark body text)
-- [x] TextField error live regions; Button busy/disabled state; Chip 44pt targets
-- [x] Goals, session timer, notes, onboarding, progress, memory labels/headers
-- [x] Phone-first: `ios.supportsTablet: false` for 1.0 (no tablet screenshot set required)
+- [x] `npm run preflight` — verify + screenshots check + security audit + go/no-go report
+- [x] `scripts/preflight.mjs` lists engineering OK vs owner-gated blockers
+- [x] Launch docs refreshed for handoff
 
 ---
 
 ## Current
 
-Owner-gated launch items: device screenshots (phone), licence, support mailbox, EAS/store authorisation. See [LAUNCH_RUNBOOK.md](./LAUNCH_RUNBOOK.md).
+**Engineering track ready.** Remaining work is owner-gated (see `npm run preflight` / [LAUNCH_RUNBOOK.md](./LAUNCH_RUNBOOK.md)):
+
+1. Capture phone screenshots into `store/screenshots/en-GB/`
+2. Choose and add a repository licence
+3. Confirm `support@readtrail.app` mailbox
+4. Link EAS + authorise production builds/submit
+5. Device VoiceOver / TalkBack smoke
 
 ---
 
-## Remaining
+## Remaining (deferred product)
 
-- [ ] Optional AI features (deferred)
-- [ ] Cloud sync / social (deferred)
-- [ ] Execute Maestro on simulator/device + drop PNG screenshots
-- [ ] Optional: GitHub Pages / Cursor host for cleaner privacy URL
-- [ ] Production signing / store submission (**needs explicit authorisation**)
-- [ ] Real-device VoiceOver / TalkBack / Dynamic Type audit
-- [ ] Repository licence decision
+- [ ] Optional AI features
+- [ ] Cloud sync / social
+- [ ] Optional: cleaner privacy host than jsDelivr
 - [ ] Optional: re-enable iPad with tablet screenshots
 
 ---
@@ -42,11 +43,10 @@ Owner-gated launch items: device screenshots (phone), licence, support mailbox, 
 
 | Check | Result |
 |-------|--------|
-| `npm run verify` | Passed (typecheck, 58 tests, lint) |
-| `npm run audit:security` | Passed on prior stage (0 critical) |
+| `npm run preflight` | Passed (engineering OK; 6 owner items open) |
 
 ---
 
 ## Next recommended action
 
-Capture phone screenshots into `store/screenshots/en-GB/`, choose a repository licence, then authorise EAS when ready.
+Owner: run `npm run preflight`, capture screenshots, pick a licence, then authorise EAS.
