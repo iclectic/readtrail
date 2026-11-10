@@ -186,7 +186,7 @@ Depends on: Phases 1–2 mandatory; 3–7 as scoped for the chosen MVP cut; chec
 | P0 | Production EAS builds; versioning discipline | `eas.json` already drafted |
 | P0 | Replace rate-app placeholders with real store IDs | Settings |
 | P1 | Crash-free smoke on physical iOS + Android | Manual + e2e sample |
-| P1 | Licence decision for the repository | README currently unlicensed |
+| P1 | Licence decision for the repository | Proprietary `LICENSE` added; open-source optional later |
 | P2 | Soft launch / closed test tracks | Play internal/closed; TestFlight |
 
 **Exit criteria:** [RELEASE_CHECKLIST.md](./RELEASE_CHECKLIST.md) critical items complete; no open P0 defects from Phases 1–2.

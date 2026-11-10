@@ -47,7 +47,7 @@ Legend: ☐ not done · ☑ done with evidence in repo or CI · ◐ prepared / d
 | Privacy policy URL live | ☑ | jsDelivr HTTPS URL wired; optional Pages/custom domain later |
 | Support URL / contact email live | ◐ | `support@readtrail.app` — confirm mailbox |
 | Data safety / nutrition labels filed | ◐ | Draft answers in DATA_SAFETY.md |
-| Licence chosen for repository | ☐ | Owner decision (README still unlicensed) |
+| Licence chosen for repository | ☑ | Proprietary `LICENSE` (all rights reserved) |
 | Permissions justified | ☑ | Camera + notifications copy in `app.json` |
 | Account deletion story N/A documented | ☑ | Privacy notice + DATA_SAFETY.md |
 

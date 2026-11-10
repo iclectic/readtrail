@@ -92,4 +92,4 @@ Source: `docs/site/privacy/`. Optional cleaner host via GitHub Pages or a custom
 
 ## Licence
 
-No licence has been added yet. Until one is added, assume the project is not licensed for reuse.
+Proprietary — see [`LICENSE`](./LICENSE). All rights reserved; not licensed for reuse unless an open-source licence is expressly published later.

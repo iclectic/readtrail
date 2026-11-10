@@ -34,7 +34,7 @@ Optional upgrades:
 | Item | Action |
 |------|--------|
 | Support email | Confirm `support@readtrail.app` mailbox is monitored |
-| Licence | Choose and add a repository licence (README still unlicensed) |
+| Licence | ☑ Proprietary `LICENSE` on main (change only if you want open source) |
 | Data safety | File from [DATA_SAFETY.md](./DATA_SAFETY.md) |
 | Age rating | File from [AGE_RATING.md](./AGE_RATING.md) |
 | Encryption | Already declared via `ITSAppUsesNonExemptEncryption: false` — see [EXPORT_COMPLIANCE.md](./EXPORT_COMPLIANCE.md) |
