@@ -82,9 +82,12 @@ eas build --profile production --platform android
 
 Do not submit to stores or change production credentials without explicit authorisation.
 
-## Privacy policy (hosting)
+## Privacy policy
 
-A static privacy page ready for GitHub Pages lives at `docs/site/privacy/`. After it is public, set `PRIVACY_POLICY_URL` in `src/config/release.ts`.
+Public page (wired in `src/config/release.ts`):  
+`https://cdn.jsdelivr.net/gh/iclectic/readtrail@main/docs/site/privacy/`
+
+Source: `docs/site/privacy/`. Optional cleaner host via GitHub Pages or a custom domain — see the [launch runbook](docs/LAUNCH_RUNBOOK.md).
 
 ## Licence
 

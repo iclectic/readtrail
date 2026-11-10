@@ -63,11 +63,11 @@ Legend: ☐ not done · ☑ done with evidence in repo or CI · ◐ prepared / d
 | App icon (all required sizes) | ◐ | Assets present; store visual QA pending |
 | Adaptive icon Android | ◐ | Asset referenced; visual QA pending |
 | Splash screen | ◐ | Present; brand polish pending |
-| Screenshots (phone) en-GB | ☐ | See SCREENSHOT_GUIDE.md |
+| Screenshots (phone) en-GB | ☐ | Drop zone ready: `store/screenshots/en-GB/` |
 | Screenshots (tablet) if claiming tablet support | ☐ | `ios.supportsTablet: true` |
 | Short / long description (en-GB) | ☑ | STORE_LISTING.md |
 | Keywords / subtitle | ☑ | STORE_LISTING.md |
-| Feature graphic (Play) | ◐ | SVG draft in `docs/site/feature-graphic.svg` |
+| Feature graphic (Play) | ☑ | PNG + SVG in `docs/site/`; `npm run export:feature-graphic` |
 | Category chosen | ☑ | Books / Productivity (draft) |
 | Content rating questionnaires | ◐ | AGE_RATING.md answers ready to file |
 | Rate-app deep links live | ◐ | Wired via `src/config/release.ts`; IDs empty until publish |

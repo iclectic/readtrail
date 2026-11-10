@@ -26,6 +26,17 @@ describe("release readiness artefacts", () => {
     expect(existsSync(join(root, "store/screenshots/en-GB/README.md"))).toBe(true);
     expect(existsSync(join(root, "store/screenshots/en-GB/captions.txt"))).toBe(true);
     expect(existsSync(join(root, "scripts/check-screenshots.mjs"))).toBe(true);
+    expect(existsSync(join(root, "docs/SECURITY.md"))).toBe(true);
+  });
+
+  it("declares npm overrides for patched Metro tooling packages", () => {
+    const pkg = JSON.parse(read("package.json")) as {
+      overrides?: Record<string, string>;
+      scripts?: Record<string, string>;
+    };
+    expect(pkg.overrides?.["image-size"]).toMatch(/^\^2\./);
+    expect(pkg.overrides?.postcss).toMatch(/^\^8\.5\./);
+    expect(pkg.scripts?.["audit:security"]).toContain("npm audit");
   });
 
   it("ships a 1024×500 Play feature graphic PNG", () => {

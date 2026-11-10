@@ -12,18 +12,35 @@ ReadTrail stores personal reading data locally. There is no cloud account in the
 - Optional camera / notification permissions requested only when features are enabled, with rationale copy
 - Private notes are not sent to third-party AI services
 
-## npm audit (this environment)
+## npm audit triage (10 November 2026, Europe/London)
 
-A recent `npm audit` reported **46** transitive vulnerabilities in the dependency tree (8 low, 18 moderate, 18 high, 2 critical). Many originate from tooling (Jest/ESLint/Expo transitive packages) rather than app runtime code paths.
+Re-run on `main` after screenshot pack merge. **Do not run `npm audit fix --force`** — npm proposes Expo 52, which would break SDK 54.
 
-**Do not run `npm audit fix --force` blindly** — it may introduce breaking Expo SDK changes.
+### Actions taken
 
-### Recommended triage before store release
+| Change | Result |
+|--------|--------|
+| `npx expo install` align `expo` → `~54.0.37` / `expo-file-system` → `~19.0.24` | Expo-aligned patch bump |
+| `npm audit fix` (no `--force`) | Cleared critical/high tooling CVEs where non-breaking |
+| `package.json` `overrides` for `image-size` `^2.1.0` and `postcss` `^8.5.23` | Cleared remaining **high** advisories in Metro/Expo CLI tree |
 
-1. Re-run `npm audit` on the release candidate branch.
-2. Prefer Expo-aligned upgrades (`npx expo install --fix`).
-3. Review critical/high items that affect production runtime bundles.
-4. Record accepted residual risk for dev-only tooling CVEs.
+### Current residual (accepted for 1.0)
+
+`npm audit` after triage: **24** findings (**7** low, **17** moderate, **0** high, **0** critical).
+
+Remaining items are transitive Expo / TypeScript-ESLint / Jest tooling packages. Fixes require either:
+
+- a breaking Expo SDK downgrade (rejected), or
+- waiting for upstream Expo 54 / typescript-eslint releases
+
+None of the residual advisories are treated as production mobile-runtime blockers for the offline-first app binary. Re-triage when moving to the next Expo SDK.
+
+### Commands
+
+```bash
+npm run audit:security   # fails only on critical (expect exit 0 after this triage)
+npm audit                # full report
+```
 
 ## Data export
 

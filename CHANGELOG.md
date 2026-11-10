@@ -27,6 +27,10 @@ First public offline-first release candidate.
 - Optional network limited to user-initiated Open Library lookups
 - iOS encryption export compliance declared (`ITSAppUsesNonExemptEncryption: false`)
 
+### Security
+
+- Expo 54 patch alignment; npm audit triage with accepted residual tooling advisories (see `docs/SECURITY.md`)
+
 ### Known owner follow-ups
 
 - Capture store screenshots into `store/screenshots/en-GB/` (Maestro flows + `npm run check:screenshots` ready)
