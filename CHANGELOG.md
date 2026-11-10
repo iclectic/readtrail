@@ -42,9 +42,12 @@ First public offline-first release candidate.
 
 - `npm run preflight` — verify + screenshot check + security audit + owner go/no-go report
 
+### Legal
+
+- Proprietary repository `LICENSE` (all rights reserved; not licensed for reuse)
+
 ### Known owner follow-ups
 
 - Capture store screenshots into `store/screenshots/en-GB/` (Maestro flows + `npm run check:screenshots` ready)
-- Authorise EAS/store submission
-- Repository licence decision
-- Optional: cleaner privacy host than jsDelivr
+- Confirm support mailbox; authorise EAS/store submission
+- Optional: cleaner privacy host than jsDelivr; optional open-source licence later

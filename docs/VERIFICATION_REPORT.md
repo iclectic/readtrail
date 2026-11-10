@@ -47,11 +47,10 @@ One-shot owner command: `npm run preflight`.
 ## Remaining release blockers (owner)
 
 1. Phone screenshots → `store/screenshots/en-GB/`
-2. Repository licence decision
-3. Confirm support mailbox monitored
-4. EAS link + production credentials
-5. Explicit authorisation to build and submit
-6. Device a11y smoke ([ACCESSIBILITY.md](./ACCESSIBILITY.md))
+2. Confirm support mailbox monitored
+3. EAS link + production credentials
+4. Explicit authorisation to build and submit
+5. Device a11y smoke ([ACCESSIBILITY.md](./ACCESSIBILITY.md))
 
 ---
 

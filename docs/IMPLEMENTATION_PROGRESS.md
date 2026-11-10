@@ -21,6 +21,10 @@ Privacy URL, screenshot pack, security audit, accessibility/phone-first, and own
 - [x] Note editor type radiogroup + favourite / memory hints
 - [x] Settings section headers, theme radiogroup, switch checked state
 
+### Proprietary licence (this stage)
+
+- [x] Root `LICENSE` (all rights reserved; matches prior README posture)
+
 ---
 
 ## Current
@@ -28,10 +32,9 @@ Privacy URL, screenshot pack, security audit, accessibility/phone-first, and own
 **Engineering track ready.** Remaining work is owner-gated (see `npm run preflight` / [LAUNCH_RUNBOOK.md](./LAUNCH_RUNBOOK.md)):
 
 1. Capture phone screenshots into `store/screenshots/en-GB/`
-2. Choose and add a repository licence
-3. Confirm `support@readtrail.app` mailbox
-4. Link EAS + authorise production builds/submit
-5. Device VoiceOver / TalkBack smoke
+2. Confirm `support@readtrail.app` mailbox
+3. Link EAS + authorise production builds/submit
+4. Device VoiceOver / TalkBack smoke
 
 ---
 
@@ -41,6 +44,7 @@ Privacy URL, screenshot pack, security audit, accessibility/phone-first, and own
 - [ ] Cloud sync / social
 - [ ] Optional: cleaner privacy host than jsDelivr
 - [ ] Optional: re-enable iPad with tablet screenshots
+- [ ] Optional: switch to an open-source licence later
 
 ---
 
@@ -48,10 +52,10 @@ Privacy URL, screenshot pack, security audit, accessibility/phone-first, and own
 
 | Check | Result |
 |-------|--------|
-| `npm run preflight` | Passed (engineering OK; 6 owner items open) |
+| `npm run preflight` | Passed (engineering OK; licence OK; 5 owner items open) |
 
 ---
 
 ## Next recommended action
 
-Owner: run `npm run preflight`, capture screenshots, pick a licence, then authorise EAS.
+Owner: run `npm run preflight`, capture screenshots, confirm support mailbox, then authorise EAS.

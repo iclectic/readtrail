@@ -80,5 +80,5 @@ Until then, Settings shows a not-yet-published message.
 - [ ] Screenshot PNGs in `store/screenshots/en-GB/` (pack + Maestro ready)
 - [ ] Production signing credentials / EAS project linkage
 - [ ] Age rating questionnaire filed from [AGE_RATING.md](./AGE_RATING.md)
-- [ ] Licence decision for the repository
+- [x] Licence file present (proprietary / all rights reserved)
 - [ ] Explicit authorisation to submit and incur store fees

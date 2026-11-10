@@ -85,4 +85,14 @@ describe("release readiness artefacts", () => {
     expect(existsSync(join(root, "scripts/preflight.mjs"))).toBe(true);
     expect(pkg.scripts?.preflight).toContain("scripts/preflight.mjs");
   });
+
+  it("ships a repository licence file", () => {
+    expect(
+      existsSync(join(root, "LICENSE")) || existsSync(join(root, "LICENCE"))
+    ).toBe(true);
+    const text = existsSync(join(root, "LICENSE"))
+      ? read("LICENSE")
+      : read("LICENCE");
+    expect(text).toMatch(/all rights reserved/i);
+  });
 });

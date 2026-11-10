@@ -20,7 +20,7 @@ eas submit --profile production --platform android
 3. Privacy URL is already wired (jsDelivr); optional cleaner host later.
 4. Capture screenshots into `store/screenshots/en-GB/` and use listing copy from `docs/STORE_LISTING.md` / `store/metadata/en-GB/`.
 5. File data safety / age rating answers from the docs drafts.
-6. Decide repository licence (still unlicensed in README).
+6. Repository licence is proprietary (`LICENSE`); change only if you want open source.
 7. Confirm `npm run preflight` shows engineering OK.
 
 ## After store IDs exist
