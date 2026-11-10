@@ -10,11 +10,14 @@ Living tracker. Update when phases complete. **Do not mark work done without evi
 
 Privacy URL, screenshot pack, security audit, accessibility/phone-first, and owner preflight merged or in flight.
 
-### Owner preflight (this stage)
+### Owner preflight
 
 - [x] `npm run preflight` — verify + screenshots check + security audit + go/no-go report
-- [x] `scripts/preflight.mjs` lists engineering OK vs owner-gated blockers
-- [x] Launch docs refreshed for handoff
+
+### Form / secondary-screen a11y (this stage)
+
+- [x] Add/edit book radiogroups + form header
+- [x] Collections, duplicates, barcode scanner, tag editor labels
 
 ---
 

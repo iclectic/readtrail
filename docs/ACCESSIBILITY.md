@@ -12,6 +12,10 @@ Partial store-readiness pass. Device VoiceOver/TalkBack audits remain owner-side
 | Progress | `accessibilityRole="progressbar"` with percent label |
 | Headers | Key screen titles use `accessibilityRole="header"` (Goals, session, onboarding, memory, …) |
 | Goals / notes / session | Goal cards summarised; note rows labelled; session timer live region |
+| Add/edit book | Form header; status/format/ownership radiogroups; loading progress |
+| Collections / duplicates | Row summaries; delete/merge actions named with context |
+| Barcode scan | Permission + viewfinder labels; torch and lookup live region |
+| Tags | Header + remove hint on selected chips |
 | Reduce motion | Settings toggle; library/details skip `LayoutAnimation` when on |
 | Dynamic Type | System scaling allowed with `maxFontSizeMultiplier={1.6}` on design-system text |
 | Contrast (tokens) | Unit-tested WCAG AA for body/muted ink on paper (light + dark) via `contrastRatio` |

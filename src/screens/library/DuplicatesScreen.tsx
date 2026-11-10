@@ -62,6 +62,9 @@ export function DuplicatesScreen({ navigation }: Props) {
 
   return (
     <View style={[styles.container, { backgroundColor: colors.paper, padding: spacing.md }]}>
+      <Text style={[typography.title, { color: colors.ink }]} accessibilityRole="header">
+        Possible duplicates
+      </Text>
       <Text style={[typography.body, { color: colors.inkMuted, marginBottom: spacing.sm }]}>
         Possible duplicates are matched by ISBN or identical title and author. Review before
         deleting.
@@ -80,6 +83,9 @@ export function DuplicatesScreen({ navigation }: Props) {
         }
         renderItem={({ item }) => (
           <View
+            accessible
+            accessibilityRole="summary"
+            accessibilityLabel={`${duplicateReasonLabel(item.reason)}, ${item.books.length} copies`}
             style={[
               styles.card,
               {
@@ -90,7 +96,7 @@ export function DuplicatesScreen({ navigation }: Props) {
               },
             ]}
           >
-            <Text style={[typography.caption, { color: colors.accent }]}>
+            <Text style={[typography.caption, { color: colors.accent }]} accessible={false}>
               {duplicateReasonLabel(item.reason)} · {item.books.length} copies
             </Text>
             {item.books.map((book) => (
@@ -99,11 +105,16 @@ export function DuplicatesScreen({ navigation }: Props) {
                 style={[typography.body, { color: colors.ink }]}
                 onPress={() => navigation.navigate("BookDetails", { bookId: book.id })}
                 accessibilityRole="link"
+                accessibilityLabel={`Open ${book.title} by ${book.author || "Unknown author"}`}
               >
                 {book.title} — {book.author || "Unknown author"}
               </Text>
             ))}
-            <Button label="Keep newest, delete others" variant="danger" onPress={() => confirmMerge(item)} />
+            <Button
+              label={`Keep newest of ${item.books.length} copies, delete others`}
+              variant="danger"
+              onPress={() => confirmMerge(item)}
+            />
           </View>
         )}
       />
