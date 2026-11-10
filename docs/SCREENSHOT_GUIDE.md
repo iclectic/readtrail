@@ -6,8 +6,8 @@ Capture on simulators or devices after a production or preview build. Do not inv
 
 | Store | Minimum set |
 |-------|-------------|
-| Apple | 6.7" iPhone (or current required size) + iPad 13" if keeping `ios.supportsTablet: true` |
-| Google Play | Phone (1080+ wide) + 7"/10" tablet optional |
+| Apple | 6.7" iPhone (or current required size). iPad not required — `ios.supportsTablet: false` |
+| Google Play | Phone (1080+ wide); tablet optional |
 
 ## Prep
 

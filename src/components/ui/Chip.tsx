@@ -1,6 +1,7 @@
 import React from "react";
 import { Pressable, StyleSheet, Text } from "react-native";
 import { useTheme } from "../../theme";
+import { ensureMinTouchSize } from "../../utils/accessibility";
 
 type Props = {
   label: string;
@@ -20,7 +21,7 @@ export function Chip({ label, selected = false, onPress }: Props) {
       style={({ pressed }) => [
         styles.chip,
         {
-          minHeight: Math.min(touchTarget, 40),
+          minHeight: ensureMinTouchSize(touchTarget),
           borderRadius: radii.pill,
           borderColor: selected ? colors.accent : colors.line,
           backgroundColor: selected ? colors.accentSoft : colors.paperElevated,

@@ -13,7 +13,7 @@
       "backgroundColor": "#F7F3EC"
     },
     "ios": {
-      "supportsTablet": true,
+      "supportsTablet": false,
       "bundleIdentifier": "com.iclectic.readtrail",
       "buildNumber": "1",
       "infoPlist": {

@@ -90,7 +90,7 @@ export function ReadingSessionScreen({ navigation, route }: Props) {
 
   return (
     <View style={[styles.container, { backgroundColor: colors.paper, padding: spacing.md, gap: spacing.md }]}>
-      <Text style={[typography.title, { color: colors.ink }]}>
+      <Text style={[typography.title, { color: colors.ink }]} accessibilityRole="header">
         {book?.title ?? "Reading session"}
       </Text>
       <Text style={[typography.body, { color: colors.inkMuted }]}>
@@ -99,7 +99,12 @@ export function ReadingSessionScreen({ navigation, route }: Props) {
 
       {session && !session.endedAt ? (
         <>
-          <Text style={[typography.display, { color: colors.accent }]}>
+          <Text
+            accessibilityRole="timer"
+            accessibilityLiveRegion="polite"
+            accessibilityLabel={`Session timer ${formatDuration(elapsed)}`}
+            style={[typography.display, { color: colors.accent }]}
+          >
             {formatDuration(elapsed)}
           </Text>
           <Text style={[typography.caption, { color: colors.inkSubtle }]}>

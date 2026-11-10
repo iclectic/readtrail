@@ -152,7 +152,9 @@ export function GoalsScreen() {
         },
       ]}
     >
-      <Text style={[typography.title, { color: colors.ink }]}>Reading goals</Text>
+      <Text style={[typography.title, { color: colors.ink }]} accessibilityRole="header">
+        Reading goals
+      </Text>
       <Text style={[typography.body, { color: colors.inkMuted }]}>
         Gentle targets you control. Streaks and reminders can be disabled in Settings.
       </Text>
@@ -203,8 +205,14 @@ export function GoalsScreen() {
             minutesRead: current,
             booksFinished: current,
           });
+          const statusLabel = `${goalTypeLabel(item.type)}: ${progress.current} of ${progress.target}${
+            progress.complete ? ", complete" : ""
+          }`;
           return (
             <View
+              accessible
+              accessibilityRole="summary"
+              accessibilityLabel={statusLabel}
               style={[
                 styles.card,
                 {
@@ -215,15 +223,22 @@ export function GoalsScreen() {
                 },
               ]}
             >
-              <Text style={[typography.bodyStrong, { color: colors.ink }]}>
+              <Text style={[typography.bodyStrong, { color: colors.ink }]} accessible={false}>
                 {goalTypeLabel(item.type)}
               </Text>
-              <Text style={[typography.caption, { color: colors.inkMuted }]}>
+              <Text
+                style={[typography.caption, { color: colors.inkMuted }]}
+                accessible={false}
+              >
                 {progress.current} / {progress.target}
                 {progress.complete ? " · complete" : ""}
               </Text>
               <ProgressBar percent={progress.percent} />
-              <Button label="Remove" variant="ghost" onPress={() => confirmDelete(item)} />
+              <Button
+                label={`Remove ${goalTypeLabel(item.type)} goal`}
+                variant="ghost"
+                onPress={() => confirmDelete(item)}
+              />
             </View>
           );
         }}

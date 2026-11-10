@@ -21,6 +21,8 @@ export function TextField({ label, error, style, ...rest }: Props) {
       <TextInput
         placeholderTextColor={colors.inkSubtle}
         accessibilityLabel={label}
+        accessibilityState={{ disabled: Boolean(rest.editable === false) }}
+        accessibilityHint={error ? error : undefined}
         maxFontSizeMultiplier={maxFontSizeMultiplier}
         style={[
           styles.input,
@@ -37,6 +39,8 @@ export function TextField({ label, error, style, ...rest }: Props) {
       />
       {error ? (
         <Text
+          accessibilityLiveRegion="polite"
+          accessibilityRole="alert"
           maxFontSizeMultiplier={maxFontSizeMultiplier}
           style={[typography.caption, { color: colors.danger }]}
         >

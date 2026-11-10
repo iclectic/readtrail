@@ -29,10 +29,15 @@ export function OnboardingScreen({ onComplete, onSkip }: Props) {
       ]}
     >
       <View style={{ flex: 1, justifyContent: "center", gap: spacing.md }}>
-        <Text style={[typography.caption, { color: colors.accent, fontWeight: "700" }]}>
+        <Text
+          accessibilityRole="header"
+          style={[typography.caption, { color: colors.accent, fontWeight: "700" }]}
+        >
           {copy.appName}
         </Text>
-        <Text style={[typography.display, { color: colors.ink }]}>{copy.onboarding.title}</Text>
+        <Text style={[typography.display, { color: colors.ink }]} accessibilityRole="header">
+          {copy.onboarding.title}
+        </Text>
         <Text style={[typography.body, { color: colors.inkMuted }]}>{copy.onboarding.body}</Text>
         <View style={[styles.points, { gap: spacing.sm }]}>
           <Text style={[typography.body, { color: colors.ink }]}>

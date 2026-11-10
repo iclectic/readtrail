@@ -54,6 +54,10 @@ export function NotesListScreen({ navigation, route }: Props) {
         }
         renderItem={({ item }) => (
           <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={`${item.kind}${item.page != null ? `, page ${item.page}` : ""}${
+              item.isFavourite ? ", favourite" : ""
+            }: ${item.body.slice(0, 80)}`}
             onPress={() =>
               navigation.navigate("NoteEditor", { bookId, noteId: item.id })
             }
