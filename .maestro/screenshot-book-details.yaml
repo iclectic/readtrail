@@ -1,0 +1,13 @@
+# Opens Library then taps the first visible book row label from the demo seed.
+appId: com.iclectic.readtrail
+---
+- launchApp
+- tapOn: "Library"
+- extendedWaitUntil:
+    visible: "Library"
+    timeout: 15000
+- tapOn: "Middlemarch"
+- extendedWaitUntil:
+    visible: "Middlemarch"
+    timeout: 10000
+- takeScreenshot: store-book-details

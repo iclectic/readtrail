@@ -1,0 +1,8 @@
+appId: com.iclectic.readtrail
+---
+- launchApp
+- tapOn: "Settings"
+- extendedWaitUntil:
+    visible: "Settings"
+    timeout: 15000
+- takeScreenshot: store-settings

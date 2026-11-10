@@ -1,0 +1,13 @@
+# Book details with session history (demo seed includes completed sessions).
+appId: com.iclectic.readtrail
+---
+- launchApp
+- tapOn: "Library"
+- extendedWaitUntil:
+    visible: "Library"
+    timeout: 15000
+- tapOn: "Middlemarch"
+- extendedWaitUntil:
+    visible: "Middlemarch"
+    timeout: 10000
+- takeScreenshot: store-session

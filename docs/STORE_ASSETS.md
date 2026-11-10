@@ -24,14 +24,15 @@ Splash / adaptive background colour aligned to paper token `#F7F3EC`.
 
 ## Screenshots still required
 
-Capture on real devices or simulators (phone + tablet where required). Follow [SCREENSHOT_GUIDE.md](./SCREENSHOT_GUIDE.md).
+Capture on real devices or simulators (phone + tablet where required). Follow [SCREENSHOT_GUIDE.md](./SCREENSHOT_GUIDE.md).  
+Drop zone + captions: [`store/screenshots/en-GB/`](../store/screenshots/en-GB/). Validate with `npm run check:screenshots`.
 
-1. Library with covers and status filters
-2. Book details + progress
-3. Reading session timer
-4. Stats / annual report
-5. Discover search
-6. Settings / privacy summary
+1. Library with covers and status filters → `01-library.png`
+2. Book details + progress → `02-book-details.png`
+3. Reading session / history → `03-session.png`
+4. Stats / annual report → `04-stats.png`
+5. Discover search → `05-discover.png`
+6. Settings / privacy summary → `06-privacy.png`
 
 ## Listing copy
 
@@ -75,8 +76,8 @@ Until then, Settings shows a not-yet-published message.
 
 ## Remaining blockers for submission
 
-- [ ] Public privacy policy URL (host `docs/site/privacy/`)
-- [ ] Screenshot set for both stores
+- [x] Public privacy policy URL (jsDelivr CDN; optional cleaner host later)
+- [ ] Screenshot PNGs in `store/screenshots/en-GB/` (pack + Maestro ready)
 - [ ] Production signing credentials / EAS project linkage
 - [ ] Age rating questionnaire filed from [AGE_RATING.md](./AGE_RATING.md)
 - [ ] Licence decision for the repository

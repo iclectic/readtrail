@@ -1,0 +1,16 @@
+appId: com.iclectic.readtrail
+---
+- launchApp
+- tapOn: "Settings"
+- extendedWaitUntil:
+    visible: "Settings"
+    timeout: 15000
+- scrollUntilVisible:
+    element:
+      text: "Read privacy notice"
+    direction: DOWN
+- tapOn: "Read privacy notice"
+- extendedWaitUntil:
+    visible: "Privacy notice"
+    timeout: 10000
+- takeScreenshot: store-privacy

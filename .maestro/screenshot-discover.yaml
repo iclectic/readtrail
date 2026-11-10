@@ -1,0 +1,8 @@
+appId: com.iclectic.readtrail
+---
+- launchApp
+- tapOn: "Discover"
+- extendedWaitUntil:
+    visible: "Discover"
+    timeout: 15000
+- takeScreenshot: store-discover

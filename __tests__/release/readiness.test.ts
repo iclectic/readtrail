@@ -19,10 +19,13 @@ describe("release readiness artefacts", () => {
     expect(PLAY_STORE_LISTING_LIVE).toBe(false);
   });
 
-  it("ships hostable privacy page and launch runbook", () => {
+  it("ships hostable privacy page, launch runbook, and screenshot drop zone", () => {
     expect(existsSync(join(root, "docs/site/privacy/index.html"))).toBe(true);
     expect(existsSync(join(root, "docs/LAUNCH_RUNBOOK.md"))).toBe(true);
     expect(existsSync(join(root, ".github/workflows/pages.yml"))).toBe(true);
+    expect(existsSync(join(root, "store/screenshots/en-GB/README.md"))).toBe(true);
+    expect(existsSync(join(root, "store/screenshots/en-GB/captions.txt"))).toBe(true);
+    expect(existsSync(join(root, "scripts/check-screenshots.mjs"))).toBe(true);
   });
 
   it("ships a 1024×500 Play feature graphic PNG", () => {

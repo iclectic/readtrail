@@ -6,21 +6,21 @@ Living tracker. Update when phases complete. **Do not mark work done without evi
 
 ## Completed
 
-### Offline 1.0 engineering
+### Offline 1.0 on `main`
 
-Merged to `main` via PR #10; Pages enablement fix via PR #11.
+Engineering stack + privacy URL (jsDelivr) merged.
 
-### Privacy URL (this stage)
+### Screenshot pack (this stage)
 
-- [x] Public privacy page reachable over HTTPS (jsDelivr → `docs/site/privacy/`)
-- [x] `PRIVACY_POLICY_URL` set in `src/config/release.ts`
-- [x] Readiness / release config tests updated
+- [x] `store/screenshots/en-GB/` drop zone + captions + size guide
+- [x] Maestro screenshot flows for library, details, session, stats, discover, settings, privacy
+- [x] `npm run check:screenshots` validator (passes when empty; enforces dims when present)
 
 ---
 
 ## Current
 
-Owner-gated store launch: screenshots, support mailbox, licence, EAS/store authorisation. Optional: switch privacy URL to GitHub Pages / Cursor host. See [LAUNCH_RUNBOOK.md](./LAUNCH_RUNBOOK.md).
+Owner-gated: capture device screenshots into the drop zone, then licence + EAS/store authorisation. See [LAUNCH_RUNBOOK.md](./LAUNCH_RUNBOOK.md).
 
 ---
 
@@ -28,9 +28,8 @@ Owner-gated store launch: screenshots, support mailbox, licence, EAS/store autho
 
 - [ ] Optional AI features (deferred)
 - [ ] Cloud sync / social (deferred)
-- [ ] Execute Maestro on simulator/device
-- [ ] Optional: enable GitHub Pages / Cursor public host for a cleaner privacy URL
-- [ ] Store screenshot capture on device
+- [ ] Execute Maestro on simulator/device + drop PNG screenshots
+- [ ] Optional: GitHub Pages / Cursor host for cleaner privacy URL
 - [ ] Production signing / store submission (**needs explicit authorisation**)
 - [ ] Real-device performance / a11y device audit
 - [ ] Repository licence decision
@@ -41,10 +40,11 @@ Owner-gated store launch: screenshots, support mailbox, licence, EAS/store autho
 
 | Check | Result |
 |-------|--------|
-| `npm run verify` | Passed (52 tests) |
+| `npm run verify` | Passed (typecheck, 52 tests, lint) |
+| `npm run check:screenshots` | Passed (no PNGs yet — expected) |
 
 ---
 
 ## Next recommended action
 
-Capture store screenshots (demo seed), then authorise EAS builds when ready.
+Capture the six phone screenshots on a device/simulator into `store/screenshots/en-GB/`, then authorise EAS when ready.
