@@ -10,13 +10,16 @@ The offline 1.0 engineering stack is on `main` (merged via PR #10). Confirm CI w
 
 ## 1. Privacy URL (blocking for stores)
 
-1. Prefer: merge the Pages enablement PR (workflow uses `enablement: true`), **or** manually set repo **Settings → Pages → Source: GitHub Actions**.  
-2. Ensure workflow **Deploy privacy site** succeeds (Actions → Deploy privacy site). Re-run via **workflow_dispatch** if needed.  
-3. Confirm live page, typically:  
-   `https://iclectic.github.io/readtrail/privacy/`  
-4. Set `PRIVACY_POLICY_URL` in `src/config/release.ts` to that URL.  
-5. Paste the same URL into App Store Connect and Play Console.  
-6. Ship a small patch build so Settings can open the hosted policy.
+**Current public URL (wired in `src/config/release.ts`):**  
+`https://cdn.jsdelivr.net/gh/iclectic/readtrail@main/docs/site/privacy/`  
+(serves `docs/site/privacy/` from `main` via jsDelivr)
+
+Optional upgrades:
+
+1. Enable GitHub Pages (**Settings → Pages → Source: GitHub Actions**) and re-run **Deploy privacy site**.  
+2. Or confirm the Cursor **readtrail-privacy** publish as **public**.  
+3. Replace `PRIVACY_POLICY_URL` with the Pages/custom domain once preferred.  
+4. Paste the live URL into App Store Connect and Play Console.
 
 ---
 

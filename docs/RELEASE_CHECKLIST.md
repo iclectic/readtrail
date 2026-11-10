@@ -44,7 +44,7 @@ Legend: ☐ not done · ☑ done with evidence in repo or CI · ◐ prepared / d
 
 | Item | Status | Notes |
 |------|--------|-------|
-| Privacy policy URL live | ◐ | Hostable page + Pages workflow ready; enable Pages then set URL |
+| Privacy policy URL live | ☑ | jsDelivr HTTPS URL wired; optional Pages/custom domain later |
 | Support URL / contact email live | ◐ | `support@readtrail.app` — confirm mailbox |
 | Data safety / nutrition labels filed | ◐ | Draft answers in DATA_SAFETY.md |
 | Licence chosen for repository | ☐ | Owner decision (README still unlicensed) |

@@ -48,8 +48,9 @@ Full en-GB drafts (short/long description, keywords, what’s new): [STORE_LISTI
 
 - Draft notice: `docs/PRIVACY.md`
 - Hostable page: `docs/site/privacy/`
-- Deploy via `.github/workflows/pages.yml` (enable Pages → GitHub Actions)
-- After hosting, set `PRIVACY_POLICY_URL` in `src/config/release.ts`
+- Public URL (current): `https://cdn.jsdelivr.net/gh/iclectic/readtrail@main/docs/site/privacy/`
+- Optional Pages deploy: `.github/workflows/pages.yml` (enable Pages → GitHub Actions)
+- Wired in `src/config/release.ts` as `PRIVACY_POLICY_URL`
 - Camera permission: ISBN barcode scanning only
 - Notifications permission: optional daily reading reminder
 
