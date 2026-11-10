@@ -14,10 +14,11 @@ Privacy URL, screenshot pack, security audit, accessibility/phone-first, and own
 
 - [x] `npm run preflight` — verify + screenshots check + security audit + go/no-go report
 
-### Form / secondary-screen a11y (this stage)
+### Form / secondary-screen a11y
 
 - [x] Add/edit book radiogroups + form header
 - [x] Collections, duplicates, barcode scanner, tag editor labels
+- [x] Note editor type radiogroup + favourite / memory hints
 
 ---
 
