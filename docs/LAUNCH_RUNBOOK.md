@@ -2,29 +2,19 @@
 
 Single checklist for shipping 1.0 after the engineering stack merges. **Do not submit builds or spend on store accounts without explicit authorisation.**
 
-## 0. Merge order
+## 0. Merge status
 
-Open PRs are stacked. Merge bottom-up (or rebase the tip onto `main` once lower layers land):
-
-1. Hardening (#2) and/or Production polish (#3) onto `main` as appropriate  
-2. Release prep (#4)  
-3. Quality gate (#5)  
-4. Launch enablement (#6)  
-5. Pre-launch polish (#7)  
-6. Resilience (#8)  
-7. This launch-packaging PR  
-
-After each merge, confirm CI on `main` is green: `npm run verify`.
+The offline 1.0 engineering stack is on `main` (merged via PR #10). Confirm CI with `npm run verify`.
 
 ---
 
 ## 1. Privacy URL (blocking for stores)
 
-1. Repo **Settings → Pages → Source: GitHub Actions**.  
-2. Run workflow **Deploy privacy site** (`.github/workflows/pages.yml`) or push a `docs/site` change to `main`.  
+1. Prefer: merge the Pages enablement PR (workflow uses `enablement: true`), **or** manually set repo **Settings → Pages → Source: GitHub Actions**.  
+2. Ensure workflow **Deploy privacy site** succeeds (Actions → Deploy privacy site). Re-run via **workflow_dispatch** if needed.  
 3. Confirm live page, typically:  
    `https://iclectic.github.io/readtrail/privacy/`  
-4. Set `PRIVACY_POLICY_URL` in `src/config/release.ts`.  
+4. Set `PRIVACY_POLICY_URL` in `src/config/release.ts` to that URL.  
 5. Paste the same URL into App Store Connect and Play Console.  
 6. Ship a small patch build so Settings can open the hosted policy.
 

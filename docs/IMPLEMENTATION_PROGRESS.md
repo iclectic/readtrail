@@ -6,23 +6,20 @@ Living tracker. Update when phases complete. **Do not mark work done without evi
 
 ## Completed
 
-### Offline 1.0 engineering (stacked PRs through launch packaging)
+### Offline 1.0 engineering
 
-- Foundation → polish → release prep → quality gate → launch enablement → pre-launch polish → resilience → launch packaging
+Merged to `main` via PR #10 (hardening through release assets).
 
-### Release assets (this stage)
+### Pages enablement fix (this stage)
 
-- [x] Play feature graphic PNG (`docs/site/feature-graphic.png`, 1024×500)
-- [x] `npm run export:feature-graphic` renderer script
-- [x] Paste-ready store metadata under `store/metadata/en-GB/`
-- [x] Automated release readiness tests
+- [x] `actions/configure-pages` `enablement: true` so the deploy workflow can create the Pages site
+- [x] Launch runbook updated post-merge
 
 ---
 
 ## Current
 
-**Autonomous engineering for the offline 1.0 candidate is complete.**  
-Remaining steps require owner actions (merge stack, Pages, screenshots on device, licence, EAS/store authorisation). See [LAUNCH_RUNBOOK.md](./LAUNCH_RUNBOOK.md).
+Owner-gated store launch: get privacy Pages live, set `PRIVACY_POLICY_URL`, screenshots, licence, EAS/store authorisation. See [LAUNCH_RUNBOOK.md](./LAUNCH_RUNBOOK.md).
 
 ---
 
@@ -31,7 +28,7 @@ Remaining steps require owner actions (merge stack, Pages, screenshots on device
 - [ ] Optional AI features (deferred)
 - [ ] Cloud sync / social (deferred)
 - [ ] Execute Maestro on simulator/device
-- [ ] Enable Pages + set `PRIVACY_POLICY_URL`
+- [ ] Confirm privacy Pages URL live + set `PRIVACY_POLICY_URL`
 - [ ] Store screenshot capture on device
 - [ ] Production signing / store submission (**needs explicit authorisation**)
 - [ ] Real-device performance / a11y device audit
@@ -43,11 +40,13 @@ Remaining steps require owner actions (merge stack, Pages, screenshots on device
 
 | Check | Result |
 |-------|--------|
-| `npm run verify` | Passed (51 tests) |
-| Native builds / device E2E | Not executed here |
+| Workflow / docs-only change | No app code change this stage |
+| Prior `npm run verify` on main tip | Passed at release-assets merge |
 
 ---
 
 ## Next recommended action
 
-Owner: follow [LAUNCH_RUNBOOK.md](./LAUNCH_RUNBOOK.md). No further deferred product features should be started without an explicit request.
+1. Merge this Pages enablement PR (or enable Pages manually).  
+2. Confirm `https://iclectic.github.io/readtrail/privacy/` loads.  
+3. Set `PRIVACY_POLICY_URL` and continue the launch runbook.  
