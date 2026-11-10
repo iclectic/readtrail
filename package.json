@@ -11,7 +11,8 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "lint": "eslint . --ext .ts,.tsx --max-warnings 0",
-    "verify": "npm run typecheck && npm test && npm run lint"
+    "verify": "npm run typecheck && npm test && npm run lint",
+    "export:feature-graphic": "node scripts/export-feature-graphic.mjs"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",
@@ -36,6 +37,7 @@
     "react-native-view-shot": "4.0.3"
   },
   "devDependencies": {
+    "@resvg/resvg-js": "^2.6.2",
     "@types/better-sqlite3": "^9.6.0",
     "@types/jest": "^29.5.14",
     "@types/react": "~19.1.0",

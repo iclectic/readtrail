@@ -54,7 +54,11 @@ Build a calm reading habit offline. Track books, sessions and notes privately â€
 
 ## Feature graphic (Play, 1024Ã—500)
 
-See `docs/site/feature-graphic.svg`. Export to PNG before upload.
+- SVG source: `docs/site/feature-graphic.svg`
+- PNG ready to upload: `docs/site/feature-graphic.png`
+- Regenerate: `npm run export:feature-graphic`
+
+Paste-ready text fields also live under `store/metadata/en-GB/`.
 
 ## Explicit non-claims for listing copy
 

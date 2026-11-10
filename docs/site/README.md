@@ -3,7 +3,8 @@
 | Path | Purpose |
 |------|---------|
 | `privacy/` | Public privacy notice (host this folder) |
-| `feature-graphic.svg` | Play feature graphic draft (export PNG 1024×500) |
+| `feature-graphic.svg` | Play feature graphic source |
+| `feature-graphic.png` | Play feature graphic (1024×500) — upload this |
 
 ## GitHub Pages
 

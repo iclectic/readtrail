@@ -6,24 +6,23 @@ Living tracker. Update when phases complete. **Do not mark work done without evi
 
 ## Completed
 
-### Phase 0–9 engineering through resilience
+### Offline 1.0 engineering (stacked PRs through launch packaging)
 
-- Foundation → polish → release prep → quality gate → launch enablement → pre-launch polish → resilience
+- Foundation → polish → release prep → quality gate → launch enablement → pre-launch polish → resilience → launch packaging
 
-### Launch packaging (this stage)
+### Release assets (this stage)
 
-- [x] Owner [LAUNCH_RUNBOOK.md](./LAUNCH_RUNBOOK.md) consolidating merge + store steps
-- [x] `CHANGELOG.md` for the 1.0.0 candidate
-- [x] `npm run verify` (typecheck + test + lint)
-- [x] ENGINEERING_DECISIONS refreshed
-- [x] BookCover respects reduce motion (no image fade)
+- [x] Play feature graphic PNG (`docs/site/feature-graphic.png`, 1024×500)
+- [x] `npm run export:feature-graphic` renderer script
+- [x] Paste-ready store metadata under `store/metadata/en-GB/`
+- [x] Automated release readiness tests
 
 ---
 
 ## Current
 
-**Engineering for the offline 1.0 candidate is complete in the stacked PRs.**  
-Remaining work is owner-gated store launch (see the launch runbook).
+**Autonomous engineering for the offline 1.0 candidate is complete.**  
+Remaining steps require owner actions (merge stack, Pages, screenshots on device, licence, EAS/store authorisation). See [LAUNCH_RUNBOOK.md](./LAUNCH_RUNBOOK.md).
 
 ---
 
@@ -33,7 +32,7 @@ Remaining work is owner-gated store launch (see the launch runbook).
 - [ ] Cloud sync / social (deferred)
 - [ ] Execute Maestro on simulator/device
 - [ ] Enable Pages + set `PRIVACY_POLICY_URL`
-- [ ] Store screenshot capture (demo seed ready)
+- [ ] Store screenshot capture on device
 - [ ] Production signing / store submission (**needs explicit authorisation**)
 - [ ] Real-device performance / a11y device audit
 - [ ] Repository licence decision
@@ -44,14 +43,11 @@ Remaining work is owner-gated store launch (see the launch runbook).
 
 | Check | Result |
 |-------|--------|
-| `npm run typecheck` | Re-run on this stage |
-| `npm test` | Re-run on this stage |
-| `npm run lint` | Re-run on this stage |
-| `npm run verify` | Re-run on this stage |
+| `npm run verify` | Passed (51 tests) |
 | Native builds / device E2E | Not executed here |
 
 ---
 
 ## Next recommended action
 
-Follow [LAUNCH_RUNBOOK.md](./LAUNCH_RUNBOOK.md): merge the stack, enable Pages, capture screenshots, then authorise EAS/store submission.
+Owner: follow [LAUNCH_RUNBOOK.md](./LAUNCH_RUNBOOK.md). No further deferred product features should be started without an explicit request.

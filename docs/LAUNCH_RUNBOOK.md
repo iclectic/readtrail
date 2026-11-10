@@ -47,7 +47,8 @@ After each merge, confirm CI on `main` is green: `npm run verify`.
 1. Dev/preview build with empty library (auto seed) **or** Settings → Developer → Load screenshot demo library.  
 2. Follow [SCREENSHOT_GUIDE.md](./SCREENSHOT_GUIDE.md).  
 3. Listing copy: [STORE_LISTING.md](./STORE_LISTING.md).  
-4. Feature graphic: export `docs/site/feature-graphic.svg` → 1024×500 PNG.
+4. Feature graphic: upload `docs/site/feature-graphic.png` (or regenerate with `npm run export:feature-graphic`).
+5. Paste listing fields from `store/metadata/en-GB/`.
 
 ---
 

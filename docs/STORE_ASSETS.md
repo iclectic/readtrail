@@ -39,7 +39,10 @@ Full en-GB drafts (short/long description, keywords, what’s new): [STORE_LISTI
 
 ## Feature graphic
 
-SVG draft: [`docs/site/feature-graphic.svg`](./site/feature-graphic.svg) (export 1024×500 PNG for Play).
+- SVG: [`docs/site/feature-graphic.svg`](./site/feature-graphic.svg)
+- PNG: [`docs/site/feature-graphic.png`](./site/feature-graphic.png) (1024×500)
+- Regenerate: `npm run export:feature-graphic`
+- Listing text pack: `store/metadata/en-GB/`
 
 ## Privacy
 
