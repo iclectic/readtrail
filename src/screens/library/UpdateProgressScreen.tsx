@@ -98,7 +98,11 @@ export function UpdateProgressScreen({ navigation, route }: Props) {
 
   if (loading) {
     return (
-      <View style={styles.loading}>
+      <View
+        style={styles.loading}
+        accessibilityRole="progressbar"
+        accessibilityLabel="Loading progress form"
+      >
         <Text style={{ color: colors.inkMuted }}>Loading…</Text>
       </View>
     );

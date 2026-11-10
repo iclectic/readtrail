@@ -98,10 +98,14 @@ export function ReadingMemoryScreen({}: Props) {
         { backgroundColor: colors.paper, padding: spacing.md, gap: spacing.md },
       ]}
     >
-      <Text style={[typography.caption, { color: colors.inkMuted }]}>
+      <Text
+        accessibilityRole="summary"
+        accessibilityLabel={`${due.length} due, ${upcomingCount} upcoming`}
+        style={[typography.caption, { color: colors.inkMuted }]}
+      >
         {due.length} due · {upcomingCount} upcoming
       </Text>
-      <Text style={[typography.title, { color: colors.ink }]}>
+      <Text style={[typography.title, { color: colors.ink }]} accessibilityRole="header">
         {current.book?.title ?? "Your note"}
       </Text>
       <Text style={[typography.caption, { color: colors.accent }]}>

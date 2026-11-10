@@ -6,7 +6,7 @@
 
 Phases are **dependency-aware**. Later phases assume earlier foundation work lands first. Nothing in Phases 1–9 is claimed complete unless listed under Phase 0 / current progress in [IMPLEMENTATION_PROGRESS.md](./IMPLEMENTATION_PROGRESS.md).
 
-**Status note (10 November 2026):** Phases 0–9 engineering for the offline MVP are on `main`, including privacy URL, screenshot pack, and npm audit triage. Remaining work is primarily owner-gated store launch (device screenshots, EAS/submit, licence) plus deferred AI/cloud/social.
+**Status note (10 November 2026):** Phases 0–9 engineering for the offline MVP are on `main`, including privacy URL, screenshot pack, npm audit triage, and accessibility hardening (phone-first). Remaining work is primarily owner-gated store launch (device screenshots, EAS/submit, licence) plus deferred AI/cloud/social.
 
 ---
 

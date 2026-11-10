@@ -64,7 +64,7 @@ Legend: ☐ not done · ☑ done with evidence in repo or CI · ◐ prepared / d
 | Adaptive icon Android | ◐ | Asset referenced; visual QA pending |
 | Splash screen | ◐ | Present; brand polish pending |
 | Screenshots (phone) en-GB | ☐ | Drop zone ready: `store/screenshots/en-GB/` |
-| Screenshots (tablet) if claiming tablet support | ☐ | `ios.supportsTablet: true` |
+| Screenshots (tablet) if claiming tablet support | ☑ N/A | `ios.supportsTablet: false` (phone-first 1.0) |
 | Short / long description (en-GB) | ☑ | STORE_LISTING.md |
 | Keywords / subtitle | ☑ | STORE_LISTING.md |
 | Feature graphic (Play) | ☑ | PNG + SVG in `docs/site/`; `npm run export:feature-graphic` |
@@ -93,8 +93,8 @@ Legend: ☐ not done · ☑ done with evidence in repo or CI · ◐ prepared / d
 
 | Item | Status | Notes |
 |------|--------|-------|
-| VoiceOver / TalkBack labels on primary flows | ◐ | Helpers + labels added; full device audit pending |
-| Contrast checked | ◐ | Light/dark palettes defined; formal audit pending |
+| VoiceOver / TalkBack labels on primary flows | ◐ | Labels/roles on primary flows; full device audit pending |
+| Contrast checked | ◐ | WCAG AA token tests for body/muted ink; device spot-check pending |
 | Dynamic type / large text | ◐ | `maxFontSizeMultiplier` 1.6 on design-system text; device QA pending |
 | Dark mode | ☑ | System / light / dark in Settings |
 | Orientation locked as intended | ☑ | Portrait in `app.json` |
@@ -133,7 +133,7 @@ Legend: ☐ not done · ☑ done with evidence in repo or CI · ◐ prepared / d
 | Encryption export compliance answered | ☑ | `ITSAppUsesNonExemptEncryption: false` + EXPORT_COMPLIANCE.md |
 | Account “Sign in with Apple” N/A explained if no auth | ☑ documented |
 | TestFlight external notes | ☐ |
-| iPad layout acceptable if tablet supported | ☐ |
+| iPad layout acceptable if tablet supported | ☑ N/A | Phone-only for 1.0 |
 
 ---
 

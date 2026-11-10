@@ -70,4 +70,11 @@ describe("release readiness artefacts", () => {
     };
     expect(app.expo.ios.infoPlist.ITSAppUsesNonExemptEncryption).toBe(false);
   });
+
+  it("ships phone-first (no iPad tablet claim for 1.0)", () => {
+    const app = JSON.parse(read("app.json")) as {
+      expo: { ios: { supportsTablet?: boolean } };
+    };
+    expect(app.expo.ios.supportsTablet).toBe(false);
+  });
 });

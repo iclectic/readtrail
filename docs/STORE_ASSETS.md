@@ -24,7 +24,7 @@ Splash / adaptive background colour aligned to paper token `#F7F3EC`.
 
 ## Screenshots still required
 
-Capture on real devices or simulators (phone + tablet where required). Follow [SCREENSHOT_GUIDE.md](./SCREENSHOT_GUIDE.md).  
+Capture on real devices or simulators (phone only for 1.0 — `ios.supportsTablet: false`). Follow [SCREENSHOT_GUIDE.md](./SCREENSHOT_GUIDE.md).  
 Drop zone + captions: [`store/screenshots/en-GB/`](../store/screenshots/en-GB/). Validate with `npm run check:screenshots`.
 
 1. Library with covers and status filters → `01-library.png`

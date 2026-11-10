@@ -31,6 +31,12 @@ First public offline-first release candidate.
 
 - Expo 54 patch alignment; npm audit triage with accepted residual tooling advisories (see `docs/SECURITY.md`)
 
+### Accessibility
+
+- Stronger labels on goals, sessions, notes, onboarding and memory; form error live regions
+- Chip targets meet 44pt; WCAG AA contrast checks for light/dark body text tokens
+- Phone-first 1.0 (`ios.supportsTablet: false`)
+
 ### Known owner follow-ups
 
 - Capture store screenshots into `store/screenshots/en-GB/` (Maestro flows + `npm run check:screenshots` ready)

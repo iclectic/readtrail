@@ -8,20 +8,20 @@ Living tracker. Update when phases complete. **Do not mark work done without evi
 
 ### Offline 1.0 on `main`
 
-Engineering stack + privacy URL (jsDelivr) + screenshot pack (#13) merged.
+Engineering stack + privacy URL + screenshot pack + security audit merged.
 
-### Security audit (this stage)
+### Accessibility pass (this stage)
 
-- [x] Expo-aligned upgrades (`expo` ~54.0.37, `expo-file-system` ~19.0.24)
-- [x] Non-breaking `npm audit fix`
-- [x] Overrides for `image-size` / `postcss` (cleared remaining highs)
-- [x] `npm run audit:security` + [SECURITY.md](./SECURITY.md) residual-risk record
+- [x] Contrast helpers + WCAG AA token tests (light/dark body text)
+- [x] TextField error live regions; Button busy/disabled state; Chip 44pt targets
+- [x] Goals, session timer, notes, onboarding, progress, memory labels/headers
+- [x] Phone-first: `ios.supportsTablet: false` for 1.0 (no tablet screenshot set required)
 
 ---
 
 ## Current
 
-Owner-gated launch items: device screenshots, licence, support mailbox, EAS/store authorisation. See [LAUNCH_RUNBOOK.md](./LAUNCH_RUNBOOK.md).
+Owner-gated launch items: device screenshots (phone), licence, support mailbox, EAS/store authorisation. See [LAUNCH_RUNBOOK.md](./LAUNCH_RUNBOOK.md).
 
 ---
 
@@ -32,8 +32,9 @@ Owner-gated launch items: device screenshots, licence, support mailbox, EAS/stor
 - [ ] Execute Maestro on simulator/device + drop PNG screenshots
 - [ ] Optional: GitHub Pages / Cursor host for cleaner privacy URL
 - [ ] Production signing / store submission (**needs explicit authorisation**)
-- [ ] Real-device performance / a11y device audit
+- [ ] Real-device VoiceOver / TalkBack / Dynamic Type audit
 - [ ] Repository licence decision
+- [ ] Optional: re-enable iPad with tablet screenshots
 
 ---
 
@@ -41,12 +42,11 @@ Owner-gated launch items: device screenshots, licence, support mailbox, EAS/stor
 
 | Check | Result |
 |-------|--------|
-| `npm run verify` | Passed (typecheck, 53 tests, lint) |
-| `npm run check:screenshots` | Passed (no PNGs yet — expected) |
-| `npm run audit:security` | Passed (0 critical; 24 low/moderate residual tooling) |
+| `npm run verify` | Passed (typecheck, 58 tests, lint) |
+| `npm run audit:security` | Passed on prior stage (0 critical) |
 
 ---
 
 ## Next recommended action
 
-Capture the six phone screenshots on a device/simulator into `store/screenshots/en-GB/`, choose a repository licence, then authorise EAS when ready.
+Capture phone screenshots into `store/screenshots/en-GB/`, choose a repository licence, then authorise EAS when ready.

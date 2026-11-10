@@ -1,10 +1,7 @@
 import { PixelRatio } from "react-native";
-import { touchTarget } from "../theme/tokens";
 
-/** Ensure interactive targets meet a minimum size for accessibility. */
-export function ensureMinTouchSize(size?: number): number {
-  return Math.max(touchTarget, size ?? touchTarget);
-}
+export { contrastRatio, relativeLuminance } from "./contrast";
+export { ensureMinTouchSize } from "./touchTarget";
 
 /** Soft clamp for font scaling so layouts remain usable on very large text. */
 export function cappedFontScale(max = 1.6): number {
